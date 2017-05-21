@@ -1,5 +1,8 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     // Disable the linting feature int pylint
-    "python.linting.enabled": false
+    "python.linting.enabled": false,
+    "files.exclude": {
+        "**/__pycache__": true
+    }
 }
