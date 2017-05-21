@@ -1,4 +1,3 @@
-import math
 import pygame
 from .graphics import Display, Camera, Shader, Texture, Geometry, DrawMode
 from .geometry.create.various import Triangle
@@ -54,22 +53,62 @@ class Engine:
 
             # Create a counter
             counter = 0
+            last_mouse_location = [None, None]
             # Start the Main loop for the program
             while not display.isClosed:     
-                # Manage the event from the gui
+                #Manage the event from the gui
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         display.close()
                     if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                         display.close()
-                    if event.type == pygame.KEYUP and event.key == pygame.K_UP:
-                        camera.position.y += 0.1
-                    if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-                        camera.position.y -= 0.1
-                    if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
-                        camera.position.x += 0.1
-                    if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
-                        camera.position.x -= 0.1
+                    if event.type == pygame.MOUSEMOTION:
+                        # This events wil mange the events done by the mouse
+                        button = pygame.mouse.get_pressed()  
+                        current_mouse_location = pygame.mouse.get_pos()
+                        # Check the current mouse button pressed
+                        if button[0]:
+                              # Left click to the button
+                            if  last_mouse_location[0] is not None:
+                                # Get the offset from the last position
+                                camera.orient( last_mouse_location[0] - current_mouse_location[0],
+                                              current_mouse_location[1] - last_mouse_location[1] )
+                            
+                        elif button[1]:
+                            pass
+                        elif button[2]:
+                            pass
+                        
+                        # Update the mouse location for the next iteration
+                        last_mouse_location = current_mouse_location
+
+                # Events when holding 
+                pygame.event.pump()
+                keys = pygame.key.get_pressed() 
+               
+                if keys[pygame.K_UP]:
+                    camera.zoom(1)
+                elif keys[pygame.K_DOWN]:
+                    camera.zoom(-1)
+                elif keys[pygame.K_RIGHT]:
+                    camera.strafe(1)
+                elif keys[pygame.K_LEFT]:
+                    camera.strafe(-1)
+                elif keys[pygame.K_y] and keys[pygame.K_LSHIFT]:
+                    camera.yaw(-0.1)
+                elif keys[pygame.K_y]:
+                    camera.yaw(0.1)
+                elif keys[pygame.K_p] and keys[pygame.K_LSHIFT]:
+                    camera.pitch(-0.1)
+                elif keys[pygame.K_p]:
+                    camera.pitch(0.1)          
+                elif keys[pygame.K_r] and keys[pygame.K_LSHIFT]:
+                    camera.roll(-0.1)
+                elif keys[pygame.K_r]:
+                    camera.roll(0.1)
+                elif keys[pygame.K_ESCAPE]:
+                    display.close()
+                    
                             
                 # Clear the display
                 display.clear()
@@ -80,19 +119,19 @@ class Engine:
                 # Use the current texture after the shader
                 texture.bind(0)
             
-                # Perform some motion to the object
-                sincount = math.sin(counter)
-                coscount = math.cos(counter)
+                # # Perform some motion to the object
+                # sincount = math.sin(counter)
+                # coscount = math.cos(counter)
 
-                geo.transform.position.x = sincount
-                geo.transform.rotation.z = counter*50
-                geo.transform.scale = [coscount,coscount,coscount]
+                # geo.transform.position.x = sincount
+                # geo.transform.rotation.z = counter*50
+                # geo.transform.scale = [coscount,coscount,coscount]
 
-                counter += 0.01;
+                # counter += 0.01;
 
                 shader.update("WORLD_MATRIX",geo.transform.model)
                 shader.update("VIEW_MATRIX",camera.view)
-                shader.update("PROJECTION_MATRIX",camera.projection)
+                shader.update("PROJECTION_MATRIX",camera.perspective_projection)
 
                 # Render the  geometry
                 geo.render()

@@ -15,3 +15,9 @@ def empty(value):
             return False
     return True
 
+
+def normalize(value):
+    """Normalize the value passed by parameteres
+    It can be vectors, arrays, matrices, etc...
+    """
+    return value/np.linalg.norm(value)
