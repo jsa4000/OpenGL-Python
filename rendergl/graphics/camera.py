@@ -153,8 +153,11 @@ class Camera:
     def orient(self,x,y):
         """ Orient the current camera with the current x,y 
         """
-        self.yaw(x*self._speed)
-        self.pitch(y*self._speed)
+        rotationYaw = Quaternion.from_axis_rotation(self._up, -x*self._speed * Camera.sensitivity)
+        rotationPitch = Quaternion.from_axis_rotation(self._side, y*self._speed * Camera.sensitivity)
+        rotation = rotationYaw * rotationPitch
+        self._forward = normalize(quaternion.apply_to_vector(rotation, self._forward))
+        self._side = normalize(np.cross(self._up, self._forward))
 
     def pan(self, x, y):
         """It moves the camera using the up and side vectors
