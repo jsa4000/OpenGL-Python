@@ -71,13 +71,16 @@ class Engine:
                               # Left click to the button
                             if  last_mouse_location[0] is not None:
                                 # Get the offset from the last position
-                                camera.orient( last_mouse_location[0] - current_mouse_location[0],
-                                              current_mouse_location[1] - last_mouse_location[1] )
+                                camera.orient(current_mouse_location[0] - last_mouse_location[0],
+                                              current_mouse_location[1] - last_mouse_location[1])
                             
                         elif button[1]:
-                            pass
+                                # Get the offset from the last position
+                                camera.pan(current_mouse_location[0] - last_mouse_location[0],
+                                           current_mouse_location[1] - last_mouse_location[1])
                         elif button[2]:
-                            pass
+                            # Control the zoom
+                            camera.zoom(current_mouse_location[1] - last_mouse_location[1])
                         
                         # Update the mouse location for the next iteration
                         last_mouse_location = current_mouse_location
