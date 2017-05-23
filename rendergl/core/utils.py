@@ -21,3 +21,8 @@ def normalize(value):
     It can be vectors, arrays, matrices, etc...
     """
     return value/np.linalg.norm(value)
+
+def length(value):
+    """ Return the magnitude of a vector
+    """
+    return np.linalg.norm(value)

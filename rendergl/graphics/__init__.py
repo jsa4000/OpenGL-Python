@@ -16,7 +16,7 @@ from . import (
     texture,
 )
 
-from .camera import Camera
+from .camera import Camera, ProjectionType
 from .display import Display
 from .geometry import Geometry, DrawMode, UsageMode
 from .shader import Shader

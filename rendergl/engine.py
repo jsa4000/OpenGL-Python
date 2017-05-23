@@ -71,7 +71,7 @@ class Engine:
                               # Left click to the button
                             if  last_mouse_location[0] is not None:
                                 # Get the offset from the last position
-                                camera.orient(current_mouse_location[0] - last_mouse_location[0],
+                                camera.orbit(current_mouse_location[0] - last_mouse_location[0],
                                               current_mouse_location[1] - last_mouse_location[1])
                             
                         elif button[1]:
@@ -80,7 +80,7 @@ class Engine:
                                            current_mouse_location[1] - last_mouse_location[1])
                         elif button[2]:
                             # Control the zoom
-                            camera.zoom(current_mouse_location[1] - last_mouse_location[1])
+                            camera.zoom(last_mouse_location[1] - current_mouse_location[1] )
                         
                         # Update the mouse location for the next iteration
                         last_mouse_location = current_mouse_location
@@ -94,9 +94,9 @@ class Engine:
                 elif keys[pygame.K_DOWN]:
                     camera.zoom(-1)
                 elif keys[pygame.K_RIGHT]:
-                    camera.strafe(1)
-                elif keys[pygame.K_LEFT]:
                     camera.strafe(-1)
+                elif keys[pygame.K_LEFT]:
+                    camera.strafe(1)
                 elif keys[pygame.K_y] and keys[pygame.K_LSHIFT]:
                     camera.yaw(-0.1)
                 elif keys[pygame.K_y]:
@@ -133,8 +133,8 @@ class Engine:
                 # counter += 0.01;
 
                 shader.update("WORLD_MATRIX",geo.transform.model)
-                shader.update("VIEW_MATRIX",camera.view)
-                shader.update("PROJECTION_MATRIX",camera.perspective_projection)
+                shader.update("VIEW_MATRIX",camera.view_matrix())
+                shader.update("PROJECTION_MATRIX",camera.projection_matrix())
 
                 # Render the  geometry
                 geo.render()
