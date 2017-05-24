@@ -4,13 +4,13 @@ from ..core.utils import *
 
 # Projection Modes
 class ProjectionType:
-    Orthogonal = 0
-    Perspective = 1
+    orthogonal = 0
+    perspective = 1
 
 # Projection Modes
 class CameraMode:
-    Orbit = 0
-    FirstPerson = 1
+    orbit = 0
+    firstPerson = 1
 
 class Camera:
     """
@@ -127,8 +127,8 @@ class Camera:
         return self._look_at(self.position,self.position + self._forward, self._up)
         #return self._look_at(self.position,self.target, self._up)
 
-    def projection_matrix(self, ptype=ProjectionType.Perspective):
-        if (ptype == ProjectionType.Perspective):
+    def projection_matrix(self, ptype=ProjectionType.perspective):
+        if (ptype == ProjectionType.perspective):
             # Return the current perspective projection Matrix
             return matrix44.create_perspective_projection_matrix(self._fov,self._aspect,self._zNear,self._zFar)
         else:

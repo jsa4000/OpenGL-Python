@@ -2,7 +2,7 @@ import os
 import numpy as np
 from PIL import Image
 
-def isfile(filename):
+def file_exists(filename):
     """
         Check if file exists
     """
@@ -10,18 +10,17 @@ def isfile(filename):
         return True
     return False
 
-def readfile(filename):
+def read_file(filename):
     """
         Read the current file entirely and return a 
         string variable with all the content with
         special characters like new_line, etc..
     """
     result = None
-    if isfile(filename):
+    if file_exists(filename):
         with open(filename,'r') as file:
             result = file.read()
     return result
-
 
 def load_image(filename, bpp=8):
     #Load the image using the path configured

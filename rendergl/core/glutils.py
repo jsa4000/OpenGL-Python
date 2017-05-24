@@ -1,7 +1,7 @@
 import numpy as np
 import OpenGL.GL as GL
 
-def typeGL(dtype):
+def gldtype(dtype):
     """
         This function will convert the types supported by OpenGL from
         numpy types. 

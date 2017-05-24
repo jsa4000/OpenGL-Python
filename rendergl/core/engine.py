@@ -12,17 +12,6 @@ class Engine:
         # Initialize the engine with default variables
         self._init()
 
-    def start(self):
-        """This method Starts the engine.
-        """
-        # Start the engine (new process)
-        self._process()
-
-    def end(self):
-        """This method Stops the engine
-        """
-        pass
-
     def _init(self):
         """Initialize engine
         """
@@ -143,3 +132,14 @@ class Engine:
 
                 # Update the display
                 display.update()
+
+    def start(self):
+        """This method Starts the engine.
+        """
+        # Start the engine (new process)
+        self._process()
+
+    def end(self):
+        """This method Stops the engine
+        """
+        pass

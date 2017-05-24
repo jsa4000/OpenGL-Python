@@ -37,7 +37,7 @@ class Texture:
 
     def _load_Texture(self,filename):
         # Check if the file exists
-        if isfile(filename):
+        if file_exists(filename):
             # Load the image using the path configured
             img_data, size = load_image(filename)
             width, height = size
@@ -53,7 +53,7 @@ class Texture:
             GL.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
             GL.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
             GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, width, height, 0,
-                            GL.GL_RGB, typeGL(img_data.dtype), img_data)
+                            GL.GL_RGB, gldtype(img_data.dtype), img_data)
             # Create different Mipmaps for the current texure
             GL.glGenerateMipmap(GL.GL_TEXTURE_2D)
             return texture

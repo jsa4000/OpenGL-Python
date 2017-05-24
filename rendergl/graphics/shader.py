@@ -133,9 +133,9 @@ class Shader:
 
     def _load_shader(self, filename, shader_type):
         # Check if the file exists
-        if isfile(filename):
+        if file_exists(filename):
             #Load current shader code-source from file
-            shader_source = readfile(filename)
+            shader_source = read_file(filename)
             # Create curent shader
             shader = GL.glCreateShader(shader_type)
             # Set the source for the current sshader
@@ -214,7 +214,7 @@ class Shader:
                 #Enable current attribute in the shader
                 GL.glEnableVertexAttribArray(attribute_id)
                 # Describe the attribute data layout in the buffer
-                GL.glVertexAttribPointer(attribute_id, size, typeGL(dtype),
+                GL.glVertexAttribPointer(attribute_id, size, gldtype(dtype),
                                     False, 0, ctypes.c_void_p(0))
                 # Return the attribute id
                 return attribute_id
