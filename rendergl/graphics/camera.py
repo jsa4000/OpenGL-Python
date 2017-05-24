@@ -27,6 +27,8 @@ class Camera:
             Pivot implementation. So it's rotate based on a point.
             Advanced transformations such as shear, bend, twist, et..
 
+            np.around([1,2,3,11], decimals=-1)
+
     """
     
     def __init__(self, position=[0.0,0.0,-3.0], fov=70.0, aspect=1.33, 
@@ -38,10 +40,10 @@ class Camera:
         """
         # Create private members for the setters (properties)
         self._speed = speed
-        self.__target = convert([0.0,0.0,0.0])
+        self.target = Vector3(convert([0.0,0.0,0.0]))
         self._sensitivity = sensitivity
         # View Matrix
-        self.__position = Vector3(convert(position))
+        self.position = Vector3(convert(position))
         self._forward = normalize(convert([0.0,0.0,1.0]))
         self._up = normalize(convert([0.0,1.0,0.0]))
         self._side = normalize(np.cross(self._up, self._forward))
@@ -63,7 +65,7 @@ class Camera:
 
     @position.setter
     def position(self, value):
-        self.__position = Vector3(convert(value))
+        self.__position = np.around(value,5)
 
     @property
     def target(self):
@@ -71,7 +73,7 @@ class Camera:
 
     @target.setter
     def target(self, value):
-        self.__target = Vector3(convert(value))
+        self.__target = np.around(value,5)
     
     def __enter__(self):
         # Enter will always return the object itself. Use with With expressons
@@ -174,15 +176,22 @@ class Camera:
         self.orient(x,y)
         magnitude = length(self.target - self.position)
         self.position =  (-self._forward + self.target) * magnitude
+
+        print(self.position)
+        print(self.target)
+
+        print(self._forward)
+        print(self._up)
+        print(self._side)
+        print(magnitude)
  
     def pan(self, x, y):
         """It moves the camera using the up and side vectors
         """
-        magnitude = length(self.target - self.position)
         # First move in the up and side direction from camera perspective
         self.position += self._up * (self._speed * y * self._sensitivity)
         self.position += self._side * (self._speed * x * self._sensitivity)
-        # Also the target should be mode in orbit mode.
-        #self.target = (self.position + self._forward) * magnitude
-        #self.target += self._up * (self._speed * y * self._sensitivity)
-        #self.target += self._side * (self._speed * x * self._sensitivity)
+
+        self.target += self._up * (self._speed * y * self._sensitivity)
+        self.target += self._side * (self._speed * x * self._sensitivity)
+       

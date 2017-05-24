@@ -20,9 +20,9 @@ def normalize(value):
     """Normalize the value passed by parameteres
     It can be vectors, arrays, matrices, etc...
     """
-    return value/np.linalg.norm(value)
+    return np.around(value/np.linalg.norm(value),5)
 
 def length(value):
     """ Return the magnitude of a vector
     """
-    return np.linalg.norm(value)
+    return round(np.linalg.norm(value),3)
