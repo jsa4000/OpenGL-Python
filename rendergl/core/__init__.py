@@ -2,7 +2,6 @@
 from __future__ import absolute_import, division, print_function
 
 __all__ = [
-    'convert',
     'engine',
     'glutils',
     'ioutils',
@@ -11,7 +10,6 @@ __all__ = [
 ]
 
 from . import (
-    convert,
     engine,
     glutils,
     ioutils,
@@ -19,7 +17,6 @@ from . import (
     utils,
 )
 
-from .convert import *
 from .glutils import *
 from .ioutils import *
 from .transform import Transform
