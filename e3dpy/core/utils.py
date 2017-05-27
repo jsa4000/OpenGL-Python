@@ -1,4 +1,5 @@
 import numpy as np
+from collections import OrderedDict as dict
 
 def empty(value):
     """
@@ -36,4 +37,3 @@ def nparray(value, dtype=np.float32):
     the specified datatype
     """
     return np.array(value,dtype)
-

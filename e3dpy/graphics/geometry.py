@@ -2,7 +2,7 @@ import ctypes
 import numpy as np
 import pandas as pd
 import OpenGL.GL as GL
-from ..core.transform import Transform
+from ..components.transform import Transform
 from ..core.utils import *
 
 

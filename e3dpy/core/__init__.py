@@ -2,24 +2,30 @@
 from __future__ import absolute_import, division, print_function
 
 __all__ = [
+    'base',
+    'component',
     'engine',
+    'entity',
     'glutils',
     'ioutils',
-    'transform',
     'utils',
 ]
 
 from . import (
+    base,
+    component,
     engine,
+    entity,
     glutils,
     ioutils,
-    transform,
     utils,
 )
 
+from .base import Base
+from .component import Component
+from .engine import Engine
+from .entity import Entity
 from .glutils import *
 from .ioutils import *
-from .transform import Transform
-from .engine import Engine
 from .utils import *
 

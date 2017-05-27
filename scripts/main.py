@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 # Add the currnent parent path so it recognize rendegl package entirely
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
