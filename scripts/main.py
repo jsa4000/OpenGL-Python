@@ -14,7 +14,15 @@ if __name__ == '__main__':
     print('##############################')
     print('Starting rendergl main')
     print('##############################')
+
+
+    # The idea is to be able to run the Engine e3dpy and at the same
+    # time be able to manipulate the geometry, adding new entitys etc.
+    # This should be done by using another thread aor another process
+    # that share memory or files to be able to update the scene.
+
     
+
     # Create Engine instance and Start
     engine = Engine()
     engine.start()
