@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 # )
 
 from .base import Base
-from .catalogue import Catalogue
+from .catalogue import CatalogueManager
 from .component import Component
 from .engine import Engine
 from .entity import Entity

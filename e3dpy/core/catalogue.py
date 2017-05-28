@@ -1,8 +1,6 @@
 from collections import OrderedDict as dict
 import pandas as pd
 import numpy as np
-from .entity import Entity
-from .component import Component
 
 class BaseDict(object):
     """ Subclass used for catalogue
@@ -189,12 +187,12 @@ class Catalogue(object):
         element entity or a Component entity.
         """    
         item = self._items[id][key]
-        if isinstance(item, (Entity)):
-            # Add new row to the dataframe
-            pass
-        elif isinstance(item, (Component)):
-            # Add new relation to the dataframe
-            pass
+        # if isinstance(item, (Entity)):
+        #     # Add new row to the dataframe
+        #     pass
+        # elif isinstance(item, (Component)):
+        #     # Add new relation to the dataframe
+        #     pass
     
     def _remove_mapping(self, id, key):
         """
@@ -223,3 +221,17 @@ class Catalogue(object):
             # Create new mapping based on the added item
             self._modify_mapping(id, key)
 
+
+class CatalogueManager(object):
+    """Create a global instance of a Catalog
+    """
+
+    # Singletone instance    
+    _catalogue = None
+    
+    def instance():
+        """ Return a singletone instance
+        """
+        if CatalogueManager._catalogue is None:
+            CatalogueManager._catalogue = Catalogue()
+        return CatalogueManager._catalogue

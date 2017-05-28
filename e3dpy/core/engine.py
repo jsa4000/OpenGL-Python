@@ -1,19 +1,20 @@
 import pygame
 from ..graphics import Display, Camera, Shader, Texture, Geometry, DrawMode
 from ..geometry.create.various import Triangle
+from .catalogue import CatalogueManager
 
 class Engine:
     """Class engine
 
-
     """
+    
     def __init__(self):
         # Initialize the engine with default variables
         self._init()
 
     def _init(self):
-        """Initialize engine
-        """
+        # Initialize the engine with default variables
+        pass
 
     def _process(self):
         """Main process running the engine

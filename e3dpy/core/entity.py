@@ -1,5 +1,6 @@
 from collections import OrderedDict as dict
 from .base import Base
+from .catalogue import CatalogueManager
 from .component import Component
 
 class Entity(Base):
@@ -90,6 +91,8 @@ class Entity(Base):
         self.items = self.items or set()
         # Create and ordered dict for the components
         self._check_components(self.components)
+        #Add current instance to the catalog manager
+        CatalogueManager.instance()[self.type][self.id] = self
       
     def _check_components(self, components):
         """ This function will add the components into the entity
