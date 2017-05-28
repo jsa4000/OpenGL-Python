@@ -7,7 +7,6 @@ class Engine:
 
 
     """
-
     def __init__(self):
         # Initialize the engine with default variables
         self._init()

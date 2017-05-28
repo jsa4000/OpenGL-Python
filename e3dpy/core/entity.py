@@ -4,6 +4,7 @@ from .component import Component
 
 class Entity(Base):
     """ Entity class.
+
     This class should be used for all the entities that will be
     created in the engine. Each entity could have child entities and
     components. Each of these entities will store it parent, so all
@@ -77,9 +78,6 @@ class Entity(Base):
     Finally the entities will be stored using the Scene Manager
     """
 
-    # Global variable to store all the items stored
-    catalogue = dict()
-
     # Slots that will admit the base class of Entity class
     __slots__ = ["name","id","type","parent","items","components"]
 
@@ -92,9 +90,7 @@ class Entity(Base):
         self.items = self.items or set()
         # Create and ordered dict for the components
         self._check_components(self.components)
-        # Add current entity into the main catalogue with entities
-        Entity.catalogue[self.id] = self
-
+      
     def _check_components(self, components):
         """ This function will add the components into the entity
         The class will detect if the component is already a component
@@ -110,14 +106,15 @@ class Entity(Base):
            1.  component of type <Component>
            2.  id of the component to add
         """
-        if isinstance(component,(Component)):
-            # Add directly to the dictionary
-            self.components.add(component.id)
-        else:
-            # Search for this component in the component list
-            if (component in Component.catalogue):
-                 # Add directly to the ldictionary
-                self.components.add(Component.catalogue[component].id)
+        # if isinstance(component,(Component)):
+        #     # Add directly to the dictionary
+        #     self.components.add(component.id)
+        # else:
+        #     # Search for this component in the component list
+        #     if (component in Component.catalogue):
+        #         # Add directly to the ldictionary
+        #         self.components.add(Component.catalogue[component].id)
+        pass
        
     def remove(self, component):
         """ This function will remove a component to the entity
@@ -138,8 +135,6 @@ class Entity(Base):
         # Check if has parent to unset this child.
         # if (parent is not None):
         #     parent
-        # Remove from the catalogue 
-        del Entity.catalogue[self.id]
         super(Entity, self).__del__()
 
     def __setitem__(self, key, value):

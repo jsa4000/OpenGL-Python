@@ -26,6 +26,5 @@ if __name__ == '__main__':
     entity01 = Entity(**entity_str)
     print(repr(entity01))
 
-    print(Entity.catalogue)
-    print(Component.catalogue)
+    
 
