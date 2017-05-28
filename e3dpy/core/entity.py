@@ -47,7 +47,7 @@ class Entity(Base):
     hash search or anything we want to perform later.
     Also the entity will have two dictionary of elements.
         - components. Componets that will be setup for this enity
-        - items. child entities that will inherit the components
+        - childs. child entities that will inherit the components
         of this entity and so on.
 
     Default creation process of an entity:
@@ -80,7 +80,7 @@ class Entity(Base):
     """
 
     # Slots that will admit the base class of Entity class
-    __slots__ = ["name","id","type","parent","items","components"]
+    __slots__ = ["name","id","type","parent","childs","components"]
 
     def __init__(self, *args, **kwargs):
         """This is the main contructor of the class
@@ -88,50 +88,24 @@ class Entity(Base):
         """
         super(Entity,self).__init__(*args,**kwargs)
         # Create a list for the child (not sorted)
-        self.items = self.items or set()
+        self._set_childs(self.childs)
         # Create and ordered dict for the components
-        self._check_components(self.components)
+        self._set_components(self.components)
         #Add current instance to the catalog manager
         CatalogueManager.instance()[self.type][self.id] = self
       
-    def _check_components(self, components):
-        """ This function will add the components into the entity
-        The class will detect if the component is already a component
+    def _set_childs(self, childs):
+        """ This function will add the entities into the current one.
+        The class will detect if the entity is already an entity
         of just an id.
         """
-        self.components = set()
-        for component in components:
-            self.add(component)
-
-    def add(self, component):
-        """ This function will add new component to the entity.
-        The parameter could be:
-           1.  component of type <Component>
-           2.  id of the component to add
-        """
-        if isinstance(component,(Component)):
-            # Add directly to the dictionary
-            self.components.add(component.id)
-        else:
-            # Search for this component in the component list
-            if (component in  CatalogueManager.instance()[self.type]):
-                # Add directly to the ldictionary
-                self.components.add(Component.catalogue[component].id)
-        pass
-       
-    def remove(self, component):
-        """ This function will remove a component to the entity
-        """
-        if component in self.components:
-            # If the component is an Id remove directly using key
-            del self.components[component]
-        else:
-            # if it's a name iterate through all the components
-            # And remove all the items with the same name
-            for component in self.components:
-                if component.id == component:
-                     del self.components[component]
-  
+        self.childs = list()
+        # Check the values are not None initially
+        if childs is not None:
+            # Iterate through all the components
+            for child in childs:
+                self.add_child(child)
+ 
     def __del__(self):
         """ Destroy current entity
         """
@@ -139,41 +113,87 @@ class Entity(Base):
                 # Check if has parent to unset this child.
         # if (parent is not None):
         #     parent
-        # Remove also the 
+        # Remove also the references to the catalog
         del CatalogueManager.instance()[self.type][self.id]
 
-    def __setitem__(self, key, value):
-        """Add a new items into the items list.
+    def _set_components(self, components):
+        """ This function will add the components into the entity
+        The class will detect if the component is already a component
+        of just an id.
         """
-        self.items[key] = value
+        self.components = dict()
+        # Check the values are not None initially
+        if components is not None:
+            # Iterate through all the components
+            for component in components:
+                self.add_component(component)
 
+    def __getattr__(self,key):
+        if key in self.__slots__:
+            return getattr(self, key)
+        else:
+            return self.components[key]
+
+    def __setitem__(self, key, value):
+        """ Not allowed insert component this way
+        """
+        pass
+ 
     def __getitem__(self, key):
         """Retrieve the items with the given key
         """
-        return self.items[key]
+        return self.components[key]
 
     def __contains__(self, key):
         """Returns whether the key is in items or not.
         """
-        return key in self.items
+        return key in self.components
 
     def __iter__(self):
         """Retrieve the items elements using loops
         statements. This usually are more efficent in
         term of memory
         """
-        for item in self.items:
-            yield item
+        for component in self.components:
+            yield component
  
     def __repr__(self):
         """Returns the string representation of this instance
         """
-        # Create components deserialization
-        # item_list = [id for id in self.items]   
-        # component_list = [id for id in self.components]
-        # return "{}('{}','{}','{}',{},{})".format(self.__class__.__name__, 
-        #                                     self.name, self.id, self.parent,
-        #                                     item_list, component_list)
-        return super(Entity,self).__repr__()
+        #Create components deserialization
+        child_list = [child for child in self.childs]   
+        component_list = [self.components[component].id for component in self.components]
+        return "{}('{}','{}','{}',{},{})".format(self.__class__.__name__, 
+                                            self.name, self.id, self.parent,
+                                            child_list, component_list)
 
+    def add_child(self, entity):
+        """Add a new items into the items list.
+        """
+        if not isinstance(entity,(Entity)):
+            entity = CatalogueManager.instance().get(entity)
+        # Add to the current entity
+        self.childs.add(entity)
 
+    def remove_child(self, id):
+        """ This function will remove a child to the entity
+        """
+        self.childs = filter(lambda child: child.id == entity, self.childs)
+
+    def add_component(self, component):
+        """ This function will add new component to the entity.
+        The parameter could be:
+        1.  Component of type <Component>
+        2.  id of the component to add
+        """
+        if not isinstance(component,(Component)):
+            component = CatalogueManager.instance().get(component)
+        # Directly attach to the current component (id)
+        self.components[component.type] = component
+        # Bind current component to the current entity
+        CatalogueManager.instance().bind(self.id, component.type, component.id)
+
+    def remove_component(self, id):
+        """ Remove the component with given id from the entity
+        """
+        del self.components[id]

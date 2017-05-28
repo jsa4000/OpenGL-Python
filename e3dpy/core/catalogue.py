@@ -2,11 +2,27 @@ from collections import OrderedDict as dict
 import pandas as pd
 import numpy as np
 
-class BaseDict(object):
-    """ Subclass used for catalogue
+class BaseDictionay(object):
+    """ BaseDictionay class.
+    
+    This is the dictionaty used by Catalogue class. The idea is to be able 
+    store different type of data inside the main catalogue instance. 
+    Since it's a Sorted Dictionary all the data main remain in order 
+    and the performances are better than standard lists.
 
-    This catalogue will manage the callback so the catalogue will be able
-    to be notify when an element has been added.
+    This catalogue will manage the callbacks so the catalogue will be able
+    to know whether an element has been added, removed or modified.
+
+    Each BaseDictionay has a (name) and a function (callback) when action is 
+    performed inside the dictionary.
+
+    The function callback need to be implemented as follows:
+        def callback_name(id, key, option):
+ 
+    Where:
+        name: name of the current BaseDictionay
+        key: the item that has been, added, removed or modifed
+        option: action performed added, removed or modifed
     """
     ADDED = 0
     REMOVED = 1
@@ -17,35 +33,29 @@ class BaseDict(object):
         return self._items
 
     @property
-    def id(self):
-        return self._id
+    def name(self):
+        return self._name
 
-    def __init__(self, id, callback=None):
+    def __init__(self, name, callback=None):
         """ Initialize all the variables
         """
-        self._id = id
+        self._name = name
         self._items = dict()
         self._callback = callback
 
     def _notify(self, key, option):
-        """Notify when a new element has been added. delegate 
-        function to implement has the following arguments:
-        >>>  def callback_name(id, key, option):
-        Where:
-            id: id of the current BaseDict
-            key: the item that has been, added, removed or modifed
-            option: action performed added, removed or modifed
+        """Notify when a new element has been added.  
         """
         if self._callback is not None:
-            self._callback(self._id, key, option)
+            self._callback(self._name, key, option)
 
     def __setitem__(self, key, value):
         """Add a new items into the items list.
         """
         if key in self._items:
-            option = BaseDict.MODIFIED
+            option = BaseDictionay.MODIFIED
         else:
-            option = BaseDict.ADDED
+            option = BaseDictionay.ADDED
         #Set the current item (added or modified)
         self._items[key] = value
         # Finally callback to the function
@@ -56,7 +66,7 @@ class BaseDict(object):
          """
          del self._items[key] 
          # Finally notify to the callback
-         self._notify(key, BaseDict.REMOVED)
+         self._notify(key, BaseDictionay.REMOVED)
 
     def __getitem__(self, key):
         """Retrieve the items with the given key
@@ -191,7 +201,7 @@ class Catalogue(object):
     """
     @property
     def dataframe(self):
-        return self._df
+        return self._dataframe
 
     @property
     def index(self):
@@ -209,7 +219,7 @@ class Catalogue(object):
         self._items = dict()
         self._index = index
         # Create the datafram to map the entity - components
-        self._df = pd.DataFrame()
+        self._dataframe = pd.DataFrame()
             
     def __setitem__(self, key, value):
         """ Catlogue doesn't allow to create new items manually
@@ -221,7 +231,7 @@ class Catalogue(object):
         """
         # Check if the calalogue has been already created.
         if key not in self._items:
-            self._items[key] = BaseDict(key, self._callback_items)
+            self._items[key] = BaseDictionay(key, self._callback_items)
         return self._items[key]
 
     def __contains__(self, key):
@@ -252,55 +262,68 @@ class Catalogue(object):
         """
         pass
 
-    def _item_added(self, id, key):
+    def _subitem_added(self, key, subitem):
         """ Iten has been added
         """    
         #print("Element added in {}: {}".format(id,key))
         pass
     
-    def  _item_removed(self, id, key):
+    def  _subitem_removed(self, key, subitem):
         """ Item has been removed from the Dict
         """   
         #print("Element removed in {}: {}".format(id,key))
-        if id is self._index:
+        if key is self._index:
             # Remove the current row
-            self._df.drop(key, inplace=True)
+            self._dataframe.drop(subitem, inplace=True)
         else:
             # Remove the element from the curren col
-            self._df[self._df[id]==key] = np.NaN
+            self.unbind(key, subitem)
 
-    def _item_modified(self, id, key):
+    def _subitem_modified(self, key, subitem):
         """ Item has been modified
         """  
         #print("Element modified in {}: {}".format(id,key))
         pass
     
-    def _callback_items(self, id, key, option):
+    def _callback_items(self, key, subitem, option):
         """ Function call-call back when new element is
         inserted into a list.
         """
-        if option == BaseDict.ADDED:
+        if option == BaseDictionay.ADDED:
             # Create new mapping based on the added item
-            self._item_added(id, key)
-        elif option == BaseDict.REMOVED:
+            self._subitem_added(key, subitem)
+        elif option == BaseDictionay.REMOVED:
             # Create new mapping based on the added item
-            self._item_removed(id, key)
+            self._subitem_removed(key, subitem)
         else:
             # Create new mapping based on the added item
-            self._item_modified(id, key)
+            self._subitem_modified(key, subitem)
 
-    def bind(self, index, column, value):
-        """ This function will map the current value with the
+    def get(self, subitem):
+        """ This function will look for the current value
+        inside all the items stored
+        """
+        for item in self:
+            if (subitem in self[item]):
+                return self[item][subitem]
+            
+    def bind(self, index, column, subitem):
+        """ This function will map the current subitem with the
         given index and col.
         """
         # Bind the current index, col using dataframe
-        if self._df.empty:
+        if self._dataframe.empty:
             # Add the current data into the attributes frame
-            self._df = pd.DataFrame([value], index = [index], columns=[column])
+            self._dataframe = pd.DataFrame([subitem], index = [index], columns=[column])
         else:
             # Add the current data into the attributes frame
-            self._df.loc[index,column] = value
-           
+            self._dataframe.loc[index,column] = subitem
+    
+    def unbind(self, column, subitem):
+        """ This function will unbind the current key from the catalogue.
+        """
+        # Remove the element from the curren col
+        self._dataframe[self._dataframe[column]==subitem] = np.NaN
         
 class CatalogueManager(object):
     """Create a global instance of a Catalog
