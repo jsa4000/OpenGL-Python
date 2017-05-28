@@ -94,6 +94,12 @@ class Entity(Base):
         #Add current instance to the catalog manager
         CatalogueManager.instance()[self.type][self.id] = self
       
+    def __call__(self, components):
+        """
+        """
+        self._set_components(components)
+        return self
+
     def _set_childs(self, childs):
         """ This function will add the entities into the current one.
         The class will detect if the entity is already an entity
@@ -124,9 +130,26 @@ class Entity(Base):
         self.components = dict()
         # Check the values are not None initially
         if components is not None:
-            # Iterate through all the components
-            for component in components:
-                self.add_component(component)
+            lists_types = (set,tuple,list,dict)
+            if isinstance(components,lists_types ):
+                # Iterate through all the components
+                for component in components:
+                    self._add_component(component)
+            else:
+                self._add_component(components)
+
+    def _add_component(self, component):
+        """ This function will add new component to the entity.
+        The parameter could be:
+        1.  Component of type <Component>
+        2.  id of the component to add
+        """
+        if not isinstance(component,(Component)):
+            component = CatalogueManager.instance().get(component)
+        # Directly attach to the current component (id)
+        self.components[component.type] = component
+        # Bind current component to the current entity
+        CatalogueManager.instance().bind(self.id, component.type, component.id)
 
     def __getattr__(self,key):
         if key in self.__slots__:
@@ -143,6 +166,11 @@ class Entity(Base):
         """Retrieve the items with the given key
         """
         return self.components[key]
+
+    def __delitem__(self, key):
+        """ Remove the component with given id from the entity
+        """
+        del self.components[id]       
 
     def __contains__(self, key):
         """Returns whether the key is in items or not.
@@ -167,33 +195,19 @@ class Entity(Base):
                                             self.name, self.id, self.parent,
                                             child_list, component_list)
 
-    def add_child(self, entity):
+    def add(self, entity):
         """Add a new items into the items list.
         """
         if not isinstance(entity,(Entity)):
             entity = CatalogueManager.instance().get(entity)
         # Add to the current entity
         self.childs.add(entity)
+        return self
 
-    def remove_child(self, id):
+    def remove(self, id):
         """ This function will remove a child to the entity
         """
         self.childs = filter(lambda child: child.id == entity, self.childs)
+        return self
 
-    def add_component(self, component):
-        """ This function will add new component to the entity.
-        The parameter could be:
-        1.  Component of type <Component>
-        2.  id of the component to add
-        """
-        if not isinstance(component,(Component)):
-            component = CatalogueManager.instance().get(component)
-        # Directly attach to the current component (id)
-        self.components[component.type] = component
-        # Bind current component to the current entity
-        CatalogueManager.instance().bind(self.id, component.type, component.id)
 
-    def remove_component(self, id):
-        """ Remove the component with given id from the entity
-        """
-        del self.components[id]
