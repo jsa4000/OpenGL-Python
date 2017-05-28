@@ -16,12 +16,13 @@ class Component(Base):
             Initially set the dafult valiues
         """
         super().__init__(*args,**kwargs)
-        #Add current instance to the catalog manager
+        #Add/bind current instance-entity to the catalog manager
         CatalogueManager.instance()[self.type][self.id] = self
+        CatalogueManager.instance().bind(self.entity, self.type, self.id)
 
     def __del__(self):
         """ Destroy current compoennt
         """
-        pass
+        del CatalogueManager.instance()[self.type][self.id]
     
  

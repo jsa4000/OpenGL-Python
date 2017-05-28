@@ -42,7 +42,7 @@ class BaseDict(object):
     def __setitem__(self, key, value):
         """Add a new items into the items list.
         """
-        if (key in self._items):
+        if key in self._items:
             option = BaseDict.MODIFIED
         else:
             option = BaseDict.ADDED
@@ -87,56 +87,127 @@ class BaseDict(object):
 class Catalogue(object):
     """ Catalogue Class
 
-    This class will be used to store all the ECS system.
+    This class will be used to store all the entities, components
+    and any other type of data. The class will manage different
+    dictionaries depending on the types to be stored. One of these
+    types need to be the index for the main catalogue. The index
+    is given in the contructor of the class, where index is the name
+    of the dcitionaries that will be used as an index.
 
-    Catalogue will store:
+    However this Class could be used for any other pourpose
+    like managing resources, references or any map-reduce 
+    systems that requires a Hastable to store some data
+    and make relation between data
+
+    Basically, Catalogue will store:
     - Entities created (depending on the type)
     - Components created (depensding on the type)
     - Systems created ( depending on the type)
     - Mapping between entities, components and Systems
-        -> In order to so this Catalogue will check whether an
-        element is an Entity or a Component.
+        
+    The maping between each data will be performed by
+    calling the link function of catalogue. This is to
+    link entities and components.
 
     Basic example
-    
-    >>> ENTITY = "ENTITY"
-        >>> COMPONENT_TYPE1 = "COMPONENT_TYPE1"
-    >>> COMPONENT_TYPE2 = "COMPONENT_TYPE2"
 
-    >>> db = Catalogue()
-    >>> print(db)
-    >>> # Don't do anyrhing  > Not allowed
-    >>> db[ENTITY] = "pepe"
-    >>> print(db)
+    # Test
+    catalogue_index = "Entity"
+    catalogue_col1 = "Transform"
+    catalogue_col2 = "Position"
+    catalogue_col3 = "Health"
+    catalogue_col4 = "Renderable"
 
-    >>> # Adding elements
-    >>> db[COMPONENT_TYPE1]["comp1"]="Component2"
-    >>> db[COMPONENT_TYPE1]["comp2"]="Component2"
-    >>> db[ENTITY]["entity"]="Entity2"
-    >>> db[COMPONENT_TYPE2]["comp1"]="Component2"
-    >>> db[COMPONENT_TYPE2]["comp2"]="Component2"
-    >>> db[COMPONENT_TYPE2]["comp3"]="Component3"
-    >>> print(db)
-    >>> # Modifying elements
-    >>> db[COMPONENT_TYPE2]["comp2"]="Component2Mod"
-    >>> db[ENTITY]["entity"]="Entity2Mod"
-    >>> print(db)
-    >>> # Removing elements
-    >>> del db[COMPONENT_TYPE2]["comp3"]
-    >>> del db[ENTITY]["entity"]
-    >>> del db[COMPONENT_TYPE1]["comp2"]
-    >>> print(db)
+    entities = ["entity01", "entity02", "entity03", "entity04","entity05"]
+    components = [catalogue_col1, catalogue_col2, catalogue_col3,catalogue_col4]
+    entity01_comp = ["Transform01", None        , None       ,  "Renderable01" ]
+    entity02_comp = ["Transform02", None        , "Health02" ,  "Renderable02" ]
+    entity03_comp = ["Transform03", "Position03", None       ,  None           ]
+    entity04_comp = ["Transform04", "Position04", "Health04" ,  None           ]
+    entity05_comp = ["Transform05", None        , "Health05" ,  "Renderable05" ]
+
+    entities_comp =  [entity01_comp, entity02_comp, entity03_comp, entity04_comp, entity05_comp ]
+
+    # Create the main Catalogue
+    catalogue = Catalogue(index = catalogue_index)
+    # Add all the entities into the catalogue
+    for index, entity in enumerate(entities):
+        # Add current entity
+        catalogue[catalogue_index][entity] = entity
+        # Add component for the current entity
+        for cindex, ctype in enumerate(components):
+            comp_instance = entities_comp[index][cindex]
+            if comp_instance is not None:
+                # Add current component to the catalogue
+                catalogue[ctype][comp_instance] = comp_instance
+                # Bind the current comp with it's entity
+                catalogue.bind(entity, ctype, comp_instance)
+
+    print(catalogue)
+    print(catalogue.dataframe.head(10))
+
+    Output:
+
+    ITEM Entity:
+        item 0 <entity01> : entity01 
+        item 1 <entity02> : entity02 
+        item 2 <entity03> : entity03 
+        item 3 <entity04> : entity04 
+        item 4 <entity05> : entity05 
+    ITEM Transform:
+        item 0 <Transform01> : Transform01 
+        item 1 <Transform02> : Transform02 
+        ...
+        item 1 <Health04> : Health04 
+        item 2 <Health05> : Health05 
+    ITEM Position:
+        item 0 <Position03> : Position03 
+        item 1 <Position04> : Position04 
+
+    Dataframe:
+
+                Transform    Renderable    Health    Position
+    entity01  Transform01  Renderable01       NaN         NaN
+    entity02  Transform02  Renderable02  Health02         NaN
+    entity03  Transform03           NaN       NaN  Position03
+    entity04  Transform04           NaN  Health04  Position04
+    entity05  Transform05  Renderable05  Health05         NaN
+
+    # Delete and index entity
+    del catalogue[catalogue_index]["entity01"]
+    del catalogue[catalogue_index]["entity04"]
+    print(catalogue.dataframe.head(10))
+    # Delete components
+    del catalogue[catalogue_col1]["Transform02"]
+    del catalogue[catalogue_col4]["Renderable05"]
+    del catalogue[catalogue_col2]["Position04"]
+
+                Transform Renderable Health    Position
+    entity02          NaN        NaN    NaN         NaN
+    entity03  Transform03        NaN    NaN  Position03
+    entity05          NaN        NaN    NaN         NaN
+
 
     """
     @property
-    def df(self):
+    def dataframe(self):
         return self._df
 
-    def __init__(self):
-        """Initialize  variables and objects
+    @property
+    def index(self):
+        return self._index
+
+    @index.setter
+    def index(self, value):
+        self._index = value
+
+    def __init__(self, index):
+        """Initialize  variables and objects.
+
         """
         # Create a catalogue with all the entities and components
         self._items = dict()
+        self._index = index
         # Create the datafram to map the entity - components
         self._df = pd.DataFrame()
             
@@ -181,27 +252,27 @@ class Catalogue(object):
         """
         pass
 
-    def _create_mapping(self, id, key):
-        """ This function will create new mapping.
-        This function will depend on the id, wheter is an
-        element entity or a Component entity.
+    def _item_added(self, id, key):
+        """ Iten has been added
         """    
-        item = self._items[id][key]
-        # if isinstance(item, (Entity)):
-        #     # Add new row to the dataframe
-        #     pass
-        # elif isinstance(item, (Component)):
-        #     # Add new relation to the dataframe
-        #     pass
-    
-    def _remove_mapping(self, id, key):
-        """
-        """   
+        #print("Element added in {}: {}".format(id,key))
         pass
+    
+    def  _item_removed(self, id, key):
+        """ Item has been removed from the Dict
+        """   
+        #print("Element removed in {}: {}".format(id,key))
+        if id is self._index:
+            # Remove the current row
+            self._df.drop(key, inplace=True)
+        else:
+            # Remove the element from the curren col
+            self._df[self._df[id]==key] = np.NaN
 
-    def _modify_mapping(self, id, key):
-        """
+    def _item_modified(self, id, key):
+        """ Item has been modified
         """  
+        #print("Element modified in {}: {}".format(id,key))
         pass
     
     def _callback_items(self, id, key, option):
@@ -209,29 +280,42 @@ class Catalogue(object):
         inserted into a list.
         """
         if option == BaseDict.ADDED:
-            #print("Element added in {}: {}".format(id,key))
             # Create new mapping based on the added item
-            self._create_mapping(id, key)
+            self._item_added(id, key)
         elif option == BaseDict.REMOVED:
-            #print("Element removed in {}: {}".format(id,key))
             # Create new mapping based on the added item
-            self._remove_mapping(id, key)
+            self._item_removed(id, key)
         else:
-            #print("Element modified in {}: {}".format(id,key))
             # Create new mapping based on the added item
-            self._modify_mapping(id, key)
+            self._item_modified(id, key)
 
-
+    def bind(self, index, column, value):
+        """ This function will map the current value with the
+        given index and col.
+        """
+        # Bind the current index, col using dataframe
+        if self._df.empty:
+            # Add the current data into the attributes frame
+            self._df = pd.DataFrame([value], index = [index], columns=[column])
+        else:
+            # Add the current data into the attributes frame
+            self._df.loc[index,column] = value
+           
+        
 class CatalogueManager(object):
     """Create a global instance of a Catalog
     """
 
     # Singletone instance    
     _catalogue = None
+
+    # Main data index to use within the catalog
+    index = "Entity"
     
     def instance():
         """ Return a singletone instance
         """
         if CatalogueManager._catalogue is None:
-            CatalogueManager._catalogue = Catalogue()
+            CatalogueManager._catalogue = Catalogue(Catalogue.index)
         return CatalogueManager._catalogue
+

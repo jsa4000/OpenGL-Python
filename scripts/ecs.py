@@ -27,7 +27,7 @@ if __name__ == '__main__':
     print(repr(entity01))
 
 
-    print(CatalogueManager.instance())
+    print(CatalogueManager.instance().dataframe.head())
 
     """
         I need to know whether entity and components are aware of each other

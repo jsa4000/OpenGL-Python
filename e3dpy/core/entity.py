@@ -109,14 +109,14 @@ class Entity(Base):
            1.  component of type <Component>
            2.  id of the component to add
         """
-        # if isinstance(component,(Component)):
-        #     # Add directly to the dictionary
-        #     self.components.add(component.id)
-        # else:
-        #     # Search for this component in the component list
-        #     if (component in Component.catalogue):
-        #         # Add directly to the ldictionary
-        #         self.components.add(Component.catalogue[component].id)
+        if isinstance(component,(Component)):
+            # Add directly to the dictionary
+            self.components.add(component.id)
+        else:
+            # Search for this component in the component list
+            if (component in  CatalogueManager.instance()[self.type]):
+                # Add directly to the ldictionary
+                self.components.add(Component.catalogue[component].id)
         pass
        
     def remove(self, component):
@@ -135,10 +135,12 @@ class Entity(Base):
     def __del__(self):
         """ Destroy current entity
         """
-        # Check if has parent to unset this child.
+        super(Entity, self).__del__()
+                # Check if has parent to unset this child.
         # if (parent is not None):
         #     parent
-        super(Entity, self).__del__()
+        # Remove also the 
+        del CatalogueManager.instance()[self.type][self.id]
 
     def __setitem__(self, key, value):
         """Add a new items into the items list.
