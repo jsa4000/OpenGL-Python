@@ -20,15 +20,18 @@ class Component(CatalogueBase):
         """
         super().__init__(*args,**kwargs)
         # Update the default properties if None
-        self._update_properties(Component.defaults, False)
+        self._update_properties(self.defaults, False)
                 
     def _update_properties(self, properties, force=True):
         """
         """ 
         # Set defaults if not set in parameters
-        for slot in self.__slots__:
-            if slot in properties and (force or (not force and getattr(self,slot) is None)):
-                setattr(self,slot,properties[slot])
+        # for slot in self.__slots__:
+        #     if slot in properties and (force or (not force and getattr(self,slot) is None)):
+        #         setattr(self,slot,properties[slot])
+        for param in properties:
+            if force or (not force and param not in self.catalogue):
+                 self.catalogue[param] = properties[param] 
        
     def __del__(self):
         """ Destroy current component

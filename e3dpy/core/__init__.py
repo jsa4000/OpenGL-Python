@@ -7,7 +7,7 @@ from .cataloguebase import CatalogueBase, CatalogueTree
 from .component import Component
 from .engine import Engine
 from .entity import Entity
-from .glutils import *
-from .ioutils import *
+from .graphics import *
+from .file import *
 from .utils import *
 

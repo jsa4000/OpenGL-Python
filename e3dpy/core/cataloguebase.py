@@ -136,16 +136,20 @@ class CatalogueBase(Base):
                                               format_key="{}.lower()"))
         # Bind components to the current entity                                  
         for item in self.catalogue:
-            item = self.catalogue[item]                                  
-            CatalogueBase.Catalogue.bind(self.id, getattr(item,item.key), item.id)
+            item = self.catalogue[item]
+            # Bind current items that are derived from Base class
+            if isinstance(item,(Base)):                        
+                CatalogueBase.Catalogue.bind(self.id, getattr(item,item.key), item.id)
 
     def _substract_catalogue(self, catalogue):
         # Remove given items from catalogue
         catalogue_keys = self._get_keys_from_dict(self.catalogue,catalogue)
         for key in catalogue_keys:
             item = self.catalogue[key]
-            # unbind current component (Not shared component yet)
-            CatalogueBase.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
+            # Bind current items that are derived from Base class
+            if isinstance(item,(Base)):   
+                # unbind current component (Not shared component yet)
+                CatalogueBase.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
             # Finally remove the item from the dictionary
             del self.catalogue[key]
 
@@ -155,7 +159,7 @@ class CatalogueBase(Base):
         it will use the catalog to search the current value in the 
         catalog Manager.
         """
-        if not isinstance(value,(Base)):
+        if value and not isinstance(value,(Base)):
             value = CatalogueBase.Catalogue.get(value)
         return value
 
@@ -258,8 +262,10 @@ class CatalogueBase(Base):
         # Remove all the components
         for key in self.catalogue.keys():
             item = self.catalogue[key]
-            # unbind current component (Not shared component yet)
-            CatalogueBase.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
+            # Bind current items that are derived from Base class
+            if isinstance(item,(Base)):   
+                # unbind current component (Not shared component yet)
+                CatalogueBase.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
             # Finally remove the item from the dictionary
             del self.catalogue[key]
         # Remove also the references to the catalog

@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 
 # Add the currnent parent path so it recognize rendegl package entirely
 PACKAGE_PARENT = '..'
@@ -9,33 +10,33 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 from e3dpy.core import Entity, Component, CatalogueManager
 
 class Transform(Component):
-    pass
+    defaults = dict({"position":[0,1,2,3],
+                     "rotation":np.array(range(10))})
 
 class Camera(Component):
-    pass
+    defaults = dict({"mode":0,
+                     "orbit":False,
+                     "view": np.reshape(range(9),(3,3))})
 
 if __name__ == '__main__':
     # test the current entity
 
-    print("COMP1 #1")
-    comp1 = Camera("Camera1")
-    print(repr(comp1))
+    transform1 = Transform("tranform1",key="name")
+    transform2 = Transform("tranform2",key="name")
 
-    # print("ENTITY #1")
-    # entity_str = {"name":"Entity01","components":[comp1.id,Transform("Transform1")]}
-    # entity01 = Entity(**entity_str)
-    # print(repr(entity01))
+    camera = Camera("Camera1")
+    
+    
+    print(camera.mode)
+    print(camera.orbit)
+    print(camera.view)
 
+    entity = Entity("root", catalogue=[transform1,camera])
+    entity[None] = transform2.id
+    print(repr(entity))
 
+ 
+    print(CatalogueManager.instance())
     print(CatalogueManager.instance().dataframe.head())
 
-    """
-        I need to know whether entity and components are aware of each other
-        Don't know why Catalog isn't compile when includes are redundant..
-        Is good to have a repository where all component and entity are stored inside the
-        engine as a Singleton class.
-
-        Try to do it.
-    """
-    
 

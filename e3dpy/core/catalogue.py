@@ -217,6 +217,7 @@ class Catalogue(object):
         """
         # Create a catalogue with all the entities and components
         self._items = dict()
+        self._all = dict()
         self._index = index
         # Create the datafram to map the entity - components
         self._dataframe = pd.DataFrame()
@@ -266,7 +267,8 @@ class Catalogue(object):
         """ Iten has been added
         """    
         #print("Element added in {}: {}".format(id,key))
-        pass
+        # Add current iten into the all list
+        self._all[subitem] = self[key][subitem]
     
     def  _subitem_removed(self, key, subitem):
         """ Item has been removed from the Dict
@@ -278,12 +280,14 @@ class Catalogue(object):
         else:
             # Remove the element from the curren col
             self.unbind(key, subitem)
+        # Remove the item from the full list
+        del self._all[subitemd]
 
     def _subitem_modified(self, key, subitem):
         """ Item has been modified
         """  
-        #print("Element modified in {}: {}".format(id,key))
-        pass
+        # Replace the subitem 
+        self._all[subitem] = self[key][subitem]
     
     def _callback_items(self, key, subitem, option):
         """ Function call-call back when new element is
@@ -303,9 +307,10 @@ class Catalogue(object):
         """ This function will look for the current value
         inside all the items stored
         """
-        for item in self:
-            if (subitem in self[item]):
-                return self[item][subitem]
+        # for item in self:
+        #     if (subitem in self[item]):
+        #         return self[item][subitem]
+        return self._all[subitem]
             
     def bind(self, index, column, subitem):
         """ This function will map the current subitem with the
