@@ -1,6 +1,6 @@
 import pygame
 from ..graphics import Display, Camera, Shader, Texture, Geometry, DrawMode
-from ..geometry.create.various import Triangle
+from ..geometry.various import Triangle
 from .catalogue import CatalogueManager
 
 class Engine:
