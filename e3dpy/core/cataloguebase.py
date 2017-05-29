@@ -1,7 +1,7 @@
 from collections import OrderedDict as dict
-from utils import *
-from base import Base
-from catalogue import CatalogueManager
+from .utils import *
+from .base import Base
+from .catalogue import CatalogueManager
 
 class CatalogueBase(Base):
     """ CatalogueBase class.

@@ -21,10 +21,10 @@ if __name__ == '__main__':
     comp1 = Camera("Camera1")
     print(repr(comp1))
 
-    print("ENTITY #1")
-    entity_str = {"name":"Entity01","components":[comp1.id,Transform("Transform1")]}
-    entity01 = Entity(**entity_str)
-    print(repr(entity01))
+    # print("ENTITY #1")
+    # entity_str = {"name":"Entity01","components":[comp1.id,Transform("Transform1")]}
+    # entity01 = Entity(**entity_str)
+    # print(repr(entity01))
 
 
     print(CatalogueManager.instance().dataframe.head())

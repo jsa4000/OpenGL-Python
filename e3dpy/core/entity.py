@@ -1,13 +1,32 @@
 from collections import OrderedDict as dict
-from utils import *
-from cataloguebase import CatalogueTree
-from catalogue import CatalogueManager
-from component import Component
+from .utils import *
+from .cataloguebase import CatalogueTree
+from .catalogue import CatalogueManager
+from .component import Component
 
 class Entity(CatalogueTree):
     """ Entity class.
 
+    Example:
+
+        class SubEntity(Entity):
+            pass
+
+        entity = Entity("Javier")
+        print(repr(entity))
+        print(entity.type)
+
+        entity = SubEntity("SubJavier")
+        print(repr(entity))
+        print(entity.type)
    
+    Outputs:
+
+        Entity('Javier','6b8f0077-5c4d-45ff-a6b0-a38d746b79aa',[])
+        Entity
+        SubEntity('SubJavier','e1ff3be1-f1a9-4e71-9c7c-887f00594136',[])
+        Entity
+
     """
 
     # Slots that allows the instances of Entity class
@@ -33,25 +52,10 @@ class Entity(CatalogueTree):
         oirder.
         """
         super(Entity,self).__init__(*args,**kwargs)
-        # Overwrite the type with DEFAULT_TYPE
-        # self.type = Entity.DEFAULT_TYPE
-        # # Get the parent
-        # self.set_parent(self.parent)
-        # # Initialize childs and components dictionaries
-        # self.childs = self.childs or dict()
-        # Extract current Componets and childs correctly
-        #self.add(self.components,self.childs)
 
 
-print(entity)
 
-comp11 = Transform("Transform01")
-comp12 = Transform("Transform02")
-comp2 = Camera("Camera01")
 
-entity = Entity("Javier", id = 1234, type = Entity.DEFAULT_TYPE, components = comp11 )
-print(repr(entity))
-print(entity.transform.name)
 
  
 

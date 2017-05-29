@@ -39,6 +39,7 @@ class Base(object):
 
     # Default UUID
     DEFAULT_UUID = UUID4
+    DEFAULT_TYPE = None
 
     # Slots to fix Memory allocation and ensure integrity in the data
     __slots__ = ["name","id","type"] 
@@ -60,7 +61,7 @@ class Base(object):
         # Initialize custom paremters if none
         self.name = self.name or self.__class__.__name__
         self.id = self.id or str(Base.DEFAULT_UUID()) 
-        self.type = self.type or self.__class__.__name__
+        self.type = self.type or self.DEFAULT_TYPE or self.__class__.__name__
 
     def __del__(self):
         """  Destroy current object
