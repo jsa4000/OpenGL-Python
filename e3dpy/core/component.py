@@ -1,6 +1,6 @@
 from collections import OrderedDict as dict
-from .base import Base
-from .catalogue import CatalogueManager
+from base import Base
+from catalogue import CatalogueManager
 
 class Component(Base):
     """ Component Class

@@ -1,8 +1,8 @@
+import .utils 
 from collections import OrderedDict as dict
-from utils import *
-from base import Base
-from catalogue import CatalogueManager
-from component import Component
+from .base import Base
+from .catalogue import CatalogueManager
+from .component import Component
 
 class Entity(Base):
     """ Entity class.
@@ -85,7 +85,7 @@ class Entity(Base):
 
     # This default_type is important to maintain the current type as an
     # "Entity", in case the class will be inherited from another sub-class.
-    DEFAULT_TYPE = "Entity"
+    default_type = "Entity"
 
     def __init__(self, *args, **kwargs):
         """This is the main contructor of the class.
@@ -97,90 +97,80 @@ class Entity(Base):
         the entity.
         """
         super(Entity,self).__init__(*args,**kwargs)
-        # Create a list for the child
-        self.childs = self._get_items(self.childs)
+        # Create a list for the child (not sorted)
+        self.childs = self._get_objects(self.childs)
         # Create and ordered dict for the components
-        self.components = self._get_items(self.components, default_key="type")
-        # Overwrite the type with DEFAULT_TYPE
-        self.type = Entity.DEFAULT_TYPE
+        self._set_components(self.components)
+        # Overrides the default type
+        self.type = Entity.default_type
         # Add current instance to the catalog manager
         CatalogueManager.instance()[self.type][self.id] = self
-
-    def _get_item(self, value):
-        """ Check if the current value is already a Base object.
-        If the object is nos an instance of a Base object, then
-        it will use the catalog to search the current value in the 
-        catalog Manager.
+      
+    def _set_childs(self, entities):
+        """ This function will add the entities into the childs.
+        The class will detect if the entity is already an entity
+        of just an id.
         """
-        if not isinstance(value,(Base)):
-            value = CatalogueManager.instance().get(value)
-        return value
-
-    def _get_items(self, values, default_key="id"):
-        """ This function return a dictionary with the parsed
-        base objects. The class will detect if the values
-        are a list, objects, ids, etc..
-
-        The returned dictionary will be a key, value using the
-        default_key of the Base class and the value with the 
-        final item. Typical use is set default_key as: "id" or
-        "type"
-        """
-        result = dict()
+        self.childs = dict()
         # Check the values are not None initially
-        if values is not None:
-            # Check if the values is a collection or single value
-            if is_collection(values):
-                # Iterate through all the values
-                for value in values:
-                    value = self._get_item(value)
-                    result[getattr(value,default_key)] = value
+        if entities is not None:
+            # check if the input is a collection or single value
+            if is_collection(components):
+                # Iterate through all the components
+                for entity in entities:
+                    self.add_child(child)
             else:
-                value = self._get_item(values)
-                result[getattr(value,default_key)] = value
+                self.add_child(child)
 
-        # Return the result
-        return result
+    def _set_components(self, components):
+        """ This function will add the components into the entity
+        The class will detect if the component is already a component
+        of just an id.
+        """
+        self.components = dict()
+        # Check the values are not None initially
+        if components is not None:
+            # check if the input is a collection or single value
+            if is_collection(components):
+                # Iterate through all the components
+                for component in components:
+                    self._add_component(component)
+            else:
+                self._add_component(components)
 
-    # def _add_child(self, entity):
-    #     """Add a new items into the items list.
-    #     """
-    #     if not isinstance(entity,(Entity)):
-    #         entity = CatalogueManager.instance().get(entity)
-    #     # Add to the current entity
-    #     self.childs.add(entity)
-    #     return self
+    def _add_child(self, entity):
+        """Add a new items into the items list.
+        """
+        if not isinstance(entity,(Entity)):
+            entity = CatalogueManager.instance().get(entity)
+        # Add to the current entity
+        self.childs.add(entity)
+        return self
 
-    # def _add_component(self, component):
-    #     """ This function will add new component to the entity.
-    #     The parameter could be:
-    #     1.  Component of type <Component>
-    #     2.  id of the component to add
-    #     """
-    #     if not isinstance(component,(Component)):
-    #         component = CatalogueManager.instance().get(component)
-    #     # Directly attach to the current component (id)
-    #     self.components[component.type] = component
-    #     # Bind current component to the current entity
-    #     CatalogueManager.instance().bind(self.id, component.type, component.id)
+    def _add_component(self, component):
+        """ This function will add new component to the entity.
+        The parameter could be:
+        1.  Component of type <Component>
+        2.  id of the component to add
+        """
+        if not isinstance(component,(Component)):
+            component = CatalogueManager.instance().get(component)
+        # Directly attach to the current component (id)
+        self.components[component.type] = component
+        # Bind current component to the current entity
+        CatalogueManager.instance().bind(self.id, component.type, component.id)
 
     def __del__(self):
         """ Destroy current entity
         """
         super(Entity, self).__del__()
-        # Check if has parent to unset this child.
+                # Check if has parent to unset this child.
         # if (parent is not None):
         #     parent
         # Remove also the references to the catalog
         del CatalogueManager.instance()[self.type][self.id]
 
-    def __getattr__(self, key):
-        """ This function will be used to return the current attr
-        of the entity. First it will search for the key inside the
-        __slots__ of the object. If it's not inside the slots, then
-        it will search inside the component dictionary. This will 
-        allows to access inside the components just using the key.
-        """
+    def __getattr__(self,key):
         if key in self.__slots__:
             return getattr(self, key)
         else:
@@ -224,26 +214,11 @@ class Entity(Base):
                                             self.name, self.id, self.parent,
                                             child_list, component_list)
 
-    # def remove(self, id):
-    #     """ This function will remove a child to the entity
-    #     """
-    #     self.childs = filter(lambda child: child.id == entity, self.childs)
-    #     return self
-
-class Transform(Component):
-    pass
-
-class Camera(Component):
-    pass
-
-entity = Entity("Javier", 1234, Entity.DEFAULT_TYPE )
-print(entity)
-
-comp11 = Transform("Transform01")
-comp12 = Transform("Transform02")
-comp2 = Camera("Camera01")
-
-entity = Entity("Javier", id = 1234, type = Entity.DEFAULT_TYPE, components = comp11 )
-print(entity)
+   
+    def remove(self, id):
+        """ This function will remove a child to the entity
+        """
+        self.childs = filter(lambda child: child.id == entity, self.childs)
+        return self
 
 

@@ -1,6 +1,16 @@
 import numpy as np
 from collections import OrderedDict as dict
 
+def is_collection(value):
+    """ Function that check whether the value is a collection type
+    or a single value, like an object or basic types like int, str..
+    """
+    collection_types =  (list, dict, np.ndarray, tuple, set)
+    if isinstance(value,collection_types):
+        return True
+    return False
+        
+
 def empty(value):
     """
         Ths function will return is some list or variable is empty.

@@ -272,7 +272,7 @@ class Catalogue(object):
         """ Item has been removed from the Dict
         """   
         #print("Element removed in {}: {}".format(id,key))
-        if key is self._index:
+        if key == self._index and key in self._dataframe.index:
             # Remove the current row
             self._dataframe.drop(subitem, inplace=True)
         else:
@@ -322,8 +322,9 @@ class Catalogue(object):
     def unbind(self, column, subitem):
         """ This function will unbind the current key from the catalogue.
         """
-        # Remove the element from the curren col
-        self._dataframe[self._dataframe[column]==subitem] = np.NaN
+        if column in self._dataframe.columns:
+            # Remove the element from the curren col
+            self._dataframe[self._dataframe[column]==subitem] = np.NaN
         
 class CatalogueManager(object):
     """Create a global instance of a Catalog
@@ -332,13 +333,13 @@ class CatalogueManager(object):
     # Singletone instance    
     _catalogue = None
 
-    # Main data index to use within the catalog
+    # Main data index type to use within the catalog
     index = "Entity"
     
     def instance():
         """ Return a singletone instance
         """
         if CatalogueManager._catalogue is None:
-            CatalogueManager._catalogue = Catalogue(Catalogue.index)
+            CatalogueManager._catalogue = Catalogue(CatalogueManager.index)
         return CatalogueManager._catalogue
 
