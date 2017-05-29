@@ -81,7 +81,7 @@ class Entity(Base):
     """
 
     # Slots that allows the instances of Entity class
-    __slots__ = ["name","id","type","parent","childs","components"]
+    __slots__ = ["name","id","components","parent","childs","type"]
 
     # This default_type is important to maintain the current type as an
     # "Entity", in case the class will be inherited from another sub-class.
@@ -89,20 +89,29 @@ class Entity(Base):
 
     def __init__(self, *args, **kwargs):
         """This is the main contructor of the class.
-        Initially set the dafult items like childs and componets.
+
+        Initially set the dafult items like name, childs, componets
+        and parent.
+
         Components and Childs could be changed from the inputs,
         the way the are going to be represented. Both childs and
         components will be implemented as a dictionary. This way
         there is no option to add the same components or childs to
         the entity.
+
+        The order of the paramters are the same as the __slots__
+        oirder.
         """
         super(Entity,self).__init__(*args,**kwargs)
-        # Create a list for the child
-        self.childs = self._get_items(self.childs)
-        # Create and ordered dict for the components
-        self.components = self._get_items(self.components, default_key="type")
         # Overwrite the type with DEFAULT_TYPE
         self.type = Entity.DEFAULT_TYPE
+        # Get the parent
+        self.set_parent(self.parent)
+        # Initialize childs and components dictionaries
+        self.components = self.components or dict()
+        self.childs = self.childs or dict()
+        # Extract current Componets and childs correctly
+        self.add(self.components,self.childs)
         # Add current instance to the catalog manager
         CatalogueManager.instance()[self.type][self.id] = self
 
@@ -116,7 +125,7 @@ class Entity(Base):
             value = CatalogueManager.instance().get(value)
         return value
 
-    def _get_items(self, values, default_key="id"):
+    def _get_items(self, values, default_key="id", format_key=None):
         """ This function return a dictionary with the parsed
         base objects. The class will detect if the values
         are a list, objects, ids, etc..
@@ -124,7 +133,12 @@ class Entity(Base):
         The returned dictionary will be a key, value using the
         default_key of the Base class and the value with the 
         final item. Typical use is set default_key as: "id" or
-        "type"
+        "type". 
+
+        Also there is an option to change the key formats by
+        specifying a eval function in the format_key.
+        ex. Following eval function lower the keys:
+            format_key="{}.lower()"
         """
         result = dict()
         # Check the values are not None initially
@@ -134,45 +148,58 @@ class Entity(Base):
                 # Iterate through all the values
                 for value in values:
                     value = self._get_item(value)
-                    result[getattr(value,default_key)] = value
+                    key = str(getattr(value,default_key))
+                    if (format_key is None):
+                        result[key] = value
+                    else:
+                        result[eval(format_key.format("key"))] = value
             else:
                 value = self._get_item(values)
-                result[getattr(value,default_key)] = value
-
+                key = str(getattr(value,default_key))
+                if (format_key is None):
+                    result[key] = value
+                else:
+                    result[eval(format_key.format("key"))] = value
         # Return the result
         return result
 
-    # def _add_child(self, entity):
-    #     """Add a new items into the items list.
-    #     """
-    #     if not isinstance(entity,(Entity)):
-    #         entity = CatalogueManager.instance().get(entity)
-    #     # Add to the current entity
-    #     self.childs.add(entity)
-    #     return self
-
-    # def _add_component(self, component):
-    #     """ This function will add new component to the entity.
-    #     The parameter could be:
-    #     1.  Component of type <Component>
-    #     2.  id of the component to add
-    #     """
-    #     if not isinstance(component,(Component)):
-    #         component = CatalogueManager.instance().get(component)
-    #     # Directly attach to the current component (id)
-    #     self.components[component.type] = component
-    #     # Bind current component to the current entity
-    #     CatalogueManager.instance().bind(self.id, component.type, component.id)
+    def _get_keys_from_dict(self, dict_orig, items):
+        """ This function will return the keys for all the items.
+        Items should be a value or a collection with ids for the 
+        Base instance to return.
+        """
+        # Check if the values is a collection or single value
+        if is_collection(items):
+            return [key for key in dict_orig for item in items if item == dict_orig[key].id]
+        else:
+            return [key for key in dict_orig if items == dict_orig[key].id]
 
     def __del__(self):
         """ Destroy current entity
+        All the dictiionaries iterates using the key so they can be deleted
+        inside the for loop. This warranty no errors during the deletion.
         """
-        super(Entity, self).__del__()
+        # Remove all the components
+        for key in self.components.keys():
+            component = self.components[key]
+            # unbind current component (Not shared component yet)
+            CatalogueManager.instance().unbind(component.type, component.id)
+            # Finally remove the item from the dictionary
+            del self.components[key]
+            
+        # Remove all the childs
+        for key in self.childs.keys():
+            # Finally remove the item from the dictionary (chain?)
+            del self.childs[key]
+
         # Check if has parent to unset this child.
-        # if (parent is not None):
-        #     parent
+        if self.parent is not None:
+            # Remove current entity from the parent childs
+            parent.remove(childs=self.id)
         # Remove also the references to the catalog
         del CatalogueManager.instance()[self.type][self.id]
+        # Finally del base class
+        super(Entity, self).__del__()
 
     def __getattr__(self, key):
         """ This function will be used to return the current attr
@@ -199,7 +226,7 @@ class Entity(Base):
     def __delitem__(self, key):
         """ Remove the component with given id from the entity
         """
-        del self.components[id]       
+        del self.components[key]       
 
     def __contains__(self, key):
         """Returns whether the key is in items or not.
@@ -224,11 +251,63 @@ class Entity(Base):
                                             self.name, self.id, self.parent,
                                             child_list, component_list)
 
-    # def remove(self, id):
-    #     """ This function will remove a child to the entity
-    #     """
-    #     self.childs = filter(lambda child: child.id == entity, self.childs)
-    #     return self
+    def set_parent(self, value):
+        """ This function will set the current value as the parent
+
+        """
+        #Set current parent
+        self.parent = self._get_item(value)
+        # Aso add self to the parents childs
+        if self.parent:
+            self.parent.add(childs=self)
+        return self
+    
+    def add(self, components=None, childs=None):
+        """Add new components or childs into the entity.
+        """
+        if components:
+            # Create and ordered dict for the components
+            self.components.update(self._get_items(components, default_key="type",
+                                                    format_key="{}.lower()"))
+            # Bind components to the current entity                                  
+            for component in self.components:
+                component = self.components[component]                                  
+                CatalogueManager.instance().bind(self.id, component.type, component.id)
+
+        if childs:
+            # Create a list for the child
+            childs = self._get_items(childs)
+            # Set the parent for the new childs
+            for child in childs:
+                child = childs[child]
+                # Set the parent if None or not the same
+                if child.parent is None or child.parent.id != self.id:
+                    child.set_parent(self)
+            self.childs.update(childs)
+
+        return self
+
+    def remove(self, components=None, childs=None):
+        # Remove given components
+        if components:
+            components_keys = self._get_keys_from_dict(self.components,components)
+            for key in components_keys:
+                component = self.components[key]
+                # unbind current component (Not shared component yet)
+                CatalogueManager.instance().unbind(component.type, component.id)
+                # Finally remove the item from the dictionary
+                del self.components[key]
+        if childs:
+            # Remove given childs
+            child_keys = self._get_keys_from_dict(self.childs,childs)
+            for key in child_keys:
+                # Remove parent from the childs since no inheritance anymore
+                self.childs[key].set_parent(None)
+                # Remove current child from the component
+                del self.childs[key]
+
+        return self
+
 
 class Transform(Component):
     pass
@@ -236,7 +315,55 @@ class Transform(Component):
 class Camera(Component):
     pass
 
-entity = Entity("Javier", 1234, Entity.DEFAULT_TYPE )
+class Position(Component):
+    pass
+
+# Set childs by add function
+Santiago = Entity("Santiago")
+Javier = Entity("Javier")
+Alvaro = Entity("Alvaro")
+Alberto = Entity("Alberto")
+# Add childs by using objects and ids
+Santiago.add(childs=[Javier,Alvaro])
+Santiago.add(childs=Alberto.id)
+print(repr(Santiago))
+print(Santiago.childs)
+
+# Santiago is the root parent = None
+# Javier, Alvaro and Alberto parent is Santiago
+print(Javier.parent.name)
+print(Alvaro.parent.name)
+print(Alberto.parent.name)
+# TRy to remove the parent and set manually set_parent
+print("REMOVE JAVER FROM CHILDS")
+Santiago.remove(childs=Javier.id)
+print(repr(Santiago))
+print(Santiago.childs)
+# print(Javier.parent.name) # ERROR!  No parent anymore
+print("ADD JAVER AGAIN")
+Javier.set_parent(Santiago)
+print(repr(Santiago))
+print(Santiago.childs)
+print(Javier.parent.name)
+
+# Set directly childs into the constructor
+# PPlay adding entitys by object or id
+# By id it will look into the catalog of entities
+Mateo = Entity("Mateo")
+Ines = Entity("Ines")
+Alberto = Entity("Alberto", childs = [Mateo, Ines.id])
+print(repr(Alberto))
+print(Albert.childs)
+
+
+
+
+
+Santiago
+
+
+
+
 print(entity)
 
 comp11 = Transform("Transform01")
@@ -244,6 +371,9 @@ comp12 = Transform("Transform02")
 comp2 = Camera("Camera01")
 
 entity = Entity("Javier", id = 1234, type = Entity.DEFAULT_TYPE, components = comp11 )
-print(entity)
+print(repr(entity))
+print(entity.transform.name)
+
+ 
 
 
