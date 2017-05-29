@@ -32,11 +32,10 @@ class Base(object):
         >>> print(repr(base))
         Base({'id': 'bec10fa6-b9b5-442a-bf00-d9ea5d26dbfa', 'name': 'Node1', 'type': 'Base'})
     """
+
     # Available UUID functions
     UUID1 = uuid.uuid1 # make a UUID based on the host ID and current time
-    UUID2 = uuid.uuid3 # make a UUID using an MD5 hash of a namespace UUID and a name
-    UUID3 = uuid.uuid4 # make a random UUID
-    UUID4 = uuid.uuid5 # make a UUID using a SHA-1 hash of a namespace UUID and a name
+    UUID4 = uuid.uuid4 # make a random UUID
 
     # Default UUID
     DEFAULT_UUID = UUID4
@@ -80,4 +79,3 @@ class Base(object):
         for attrib in self.__slots__:
             attribs[attrib] = getattr(self,attrib)
         return "{}({})".format(self.__class__.__name__,str(attribs))
-

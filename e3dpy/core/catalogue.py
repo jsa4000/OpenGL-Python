@@ -344,3 +344,4 @@ class CatalogueManager(object):
             CatalogueManager._catalogue = Catalogue(CatalogueManager.DEFAULT_INDEX)
         return CatalogueManager._catalogue
 
+
