@@ -6,6 +6,105 @@ from catalogue import CatalogueManager
 class CatalogueBase(Base):
     """ CatalogueBase class.
 
+
+    Example:
+
+        # Subclas of CatalogueBase is needed to bind elementes
+        class Category1(CatalogueBase):
+            pass
+
+        class Category2(CatalogueBase):
+            pass
+
+        class Category3(CatalogueBase):
+            pass
+
+        class Category4(CatalogueBase):
+            pass
+
+        class Category5(CatalogueBase):
+            pass
+
+        # Change current index for the Catalog Manager
+        Base.DEFAULT_UUID = Base.UUID1
+        CatalogueManager.DEFAULT_INDEX = "CatalogueBase"
+        # Create several catalogues to be manager to CatalogManager singletone
+        catalogue1 = CatalogueBase("catalogue1","catalogue1")
+        catalogue2 = CatalogueBase("catalogue2","catalogue2")
+        catalogue3 = CatalogueBase("catalogue3","catalogue3")
+        catalogue4 = CatalogueBase("catalogue4","catalogue4")
+        catalogue5 = CatalogueBase("catalogue5","catalogue5")
+        # Create several items for the caralogue to bind
+        items1 = [None                    , Category2("item12","12"), None                    , Category4("item14","14"), Category5("item15","15") ]
+        items2 = [Category1("item21","21"), None                    , Category3("item23","23"), None                    , None                   ]
+        items3 = [Category1("item31","31"), None                    , None                    , None                    , Category5("item35","35") ]
+        items4 = [Category1("item41","41"), Category2("item42","42"), None                    , Category5("item44","44"), None                   ]
+
+        # Start adding the items into the catalogs
+        print("START ADDING CATALOGUE BY CONSTRUCTOR")
+        print("---------------------------------------")
+        catalogue1 = CatalogueBase("catalogue1","catalogue1",catalogue=items1)
+        print(catalogue1.catalogue.keys())
+        # Change name instead the type to create the catalogues
+        catalogue1 = CatalogueBase("catalogue1","catalogue1",catalogue=items1, key="name")
+        print(catalogue1.catalogue.keys())
+        print(CatalogueBase.Catalogue.dataframe.head(10))
+
+        # Add catalogue using indexing. Key is irrelevant
+        print("ADDING MULTIPLE CATEGORIES BY INDEXING")
+        print("---------------------------------------")
+        catalogue2[None] = items2
+        print(catalogue2.catalogue.keys())
+        print(CatalogueBase.Catalogue.dataframe.head(10))
+        # Add another category (single element)
+        print("ADDING SINGLE A CATEGORY BY INDEXING")
+        print("---------------------------------------")
+        catalogue2[None] = Category2("item22",22)
+        print(catalogue2.catalogue.keys())
+        print(CatalogueBase.Catalogue.dataframe.head(10))
+        # Remove categories (and bings)
+        print("REMOVE SINGLE A CATEGORY BY INDEXING")
+        print("---------------------------------------")
+        del catalogue2["21"]
+        print(catalogue2.catalogue.keys())
+        print(CatalogueBase.Catalogue.dataframe.head(10))
+        print("REMOVE SINGLE A CATEGORY BY MULTIPLE  INDEXING")
+        print("-----------------------------------------------")
+        del catalogue1[("12","14")]
+        print(catalogue1.catalogue.keys())
+        print(CatalogueBase.Catalogue.dataframe.head(10))
+
+        print("REPORT CATALOGUE")
+
+        print(CatalogueBase.Catalogue)
+        print(CatalogueBase.Catalogue.dataframe.head(10))
+
+        Output:
+
+        ADDING SINGLE A CATEGORY BY INDEXING
+        ---------------------------------------
+        odict_keys(['category1', 'category3', 'category2'])
+                Category2 Category4 Category5 Category1 Category3
+        catalogue1        12        14        15       NaN       NaN
+        catalogue2        22       NaN       NaN        21        23
+        REMOVE SINGLE A CATEGORY BY INDEXING
+        ---------------------------------------
+        odict_keys(['category3', 'category2'])
+                Category2 Category4 Category5 Category1 Category3
+        catalogue1        12        14        15       NaN       NaN
+        catalogue2        22       NaN       NaN       NaN        23
+        REMOVE SINGLE A CATEGORY BY MULTIPLE  INDEXING
+        ---------------------------------------
+        odict_keys(['category3', 'category2'])
+                Category2 Category4 Category5 Category1 Category3
+        catalogue1        12        14        15       NaN       NaN
+        catalogue2        22       NaN       NaN       NaN        23
+        REMOVE SINGLE A CATEGORY BY MULTIPLE  INDEXING
+        -----------------------------------------------
+        odict_keys(['item15'])
+                Category2 Category4 Category5 Category1 Category3
+        catalogue1       NaN       NaN        15       NaN       NaN
+        catalogue2        22       NaN       NaN       NaN        23
     """
 
     Catalogue = CatalogueManager.instance()
@@ -175,75 +274,4 @@ class CatalogueBase(Base):
         catalogue = [self.catalogue[item].id for item in self.catalogue]
         return "{}('{}','{}',{})".format(self.__class__.__name__,self.name, 
                                         self.id, catalogue)
-
-
-
-
-
-# Subclas of CatalogueBase is needed to bind elementes
-class Category1(CatalogueBase):
-    pass
-
-class Category2(CatalogueBase):
-    pass
-
-class Category3(CatalogueBase):
-    pass
-
-class Category4(CatalogueBase):
-    pass
-
-class Category5(CatalogueBase):
-    pass
-
-# Change current index for the Catalog Manager
-Base.DEFAULT_UUID = Base.UUID1
-CatalogueManager.DEFAULT_INDEX = "CatalogueBase"
-# Create several catalogues to be manager to CatalogManager singletone
-catalogue1 = CatalogueBase("catalogue1","catalogue1")
-catalogue2 = CatalogueBase("catalogue2","catalogue2")
-catalogue3 = CatalogueBase("catalogue3","catalogue3")
-catalogue4 = CatalogueBase("catalogue4","catalogue4")
-catalogue5 = CatalogueBase("catalogue5","catalogue5")
-# Create several items for the caralogue to bind
-items1 = [None                    , Category2("item12","12"), None                    , Category4("item14","14"), Category5("item15","15") ]
-items2 = [Category1("item21","21"), None                    , Category3("item23","23"), None                    , None                   ]
-items3 = [Category1("item31","31"), None                    , None                    , None                    , Category5("item35","35") ]
-items4 = [Category1("item41","41"), Category2("item42","42"), None                    , Category5("item44","44"), None                   ]
-
-# Start adding the items into the catalogs
-print("START ADDING CATALOGUE BY CONSTRUCTOR")
-print("---------------------------------------")
-catalogue1 = CatalogueBase("catalogue1","catalogue1",catalogue=items1)
-print(catalogue1.catalogue.keys())
-# Change name instead the type to create the catalogues
-catalogue1 = CatalogueBase("catalogue1","catalogue1",catalogue=items1, key="name")
-print(catalogue1.catalogue.keys())
-print(CatalogueBase.Catalogue.dataframe.head(10))
-
-# Add catalogue using indexing. Key is irrelevant
-print("ADDING MULTIPLE CATEGORIES BY INDEXING")
-print("---------------------------------------")
-catalogue2[None] = items2
-print(catalogue2.catalogue.keys())
-print(CatalogueBase.Catalogue.dataframe.head(10))
-# Add another category (single element)
-print("ADDING SINGLE A CATEGORY BY INDEXING")
-print("---------------------------------------")
-catalogue2[None] = Category2("item22",22)
-print(catalogue2.catalogue.keys())
-print(CatalogueBase.Catalogue.dataframe.head(10))
-# Remove categories (and bings)
-print("REMOVE SINGLE A CATEGORY BY INDEXING")
-print("---------------------------------------")
-del catalogue2["21"]
-print(catalogue2.catalogue.keys())
-print(CatalogueBase.Catalogue.dataframe.head(10))
-
-
-
-print("REPORT CATALOGUE")
-
-print(CatalogueBase.Catalogue)
-print(CatalogueBase.Catalogue.dataframe.head(10))
 
