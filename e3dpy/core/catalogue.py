@@ -319,13 +319,14 @@ class Catalogue(object):
             # Add the current data into the attributes frame
             self._dataframe.loc[index,column] = subitem
     
-    def unbind(self, column, subitem):
+    def unbind(self, index, column, subitem):
         """ This function will unbind the current key from the catalogue.
         """
-        if column in self._dataframe.columns:
+        if column in self._dataframe.columns and index in self._dataframe.index:
             # Remove the element from the curren col
-            self._dataframe[self._dataframe[column]==subitem] = np.NaN
-        
+            self._dataframe.loc[index,column] = np.NaN
+       
+   
 class CatalogueManager(object):
     """Create a global instance of a Catalog
     """
@@ -334,12 +335,12 @@ class CatalogueManager(object):
     _catalogue = None
 
     # Main data index type to use within the catalog
-    index = "Entity"
+    DEFAULT_INDEX = "Entity"
     
     def instance():
         """ Return a singletone instance
         """
         if CatalogueManager._catalogue is None:
-            CatalogueManager._catalogue = Catalogue(CatalogueManager.index)
+            CatalogueManager._catalogue = Catalogue(CatalogueManager.DEFAULT_INDEX)
         return CatalogueManager._catalogue
 
