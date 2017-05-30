@@ -80,6 +80,11 @@ class Display:
         # Set close to true
         self.isClosed = True
 
+    def dispose(self):
+        """ Stop the current task and close the window
+        """
+        self._dispose()
+
     def clear(self, color = defaulBGColor):
         # Clear will clean the windows color.
         GL.glClearColor(*color)

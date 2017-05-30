@@ -32,7 +32,16 @@ if __name__ == '__main__':
   
     # Create Engine instance and Start
     engine = CoreEngine(parameters.width, parameters.height, parameters.fps, scene)
+    engine.create_display("Core Engine")
     engine.start()
+
+    #######################
+    # Running in a Thread #
+    #######################
+
+    # End the engine and dispose the memory
+    engine.stop(True)
+    engine.dispose()
 
     # Program Ends   
     print('##############################') 
