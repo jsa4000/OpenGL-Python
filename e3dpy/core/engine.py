@@ -1,4 +1,5 @@
 import pygame
+import threading
 from ..graphics import Display, Camera, Shader, Texture, Geometry, DrawMode
 from ..geometry.various import Triangle
 from .base import Base
@@ -12,6 +13,9 @@ class CoreEngine (Base):
         the scene like inputs, updates, rendering, physics, etc..
 
     """
+
+    #Set variable multithread
+    MULTI_THREAD = True
 
     @property
     def display(self):
@@ -34,8 +38,8 @@ class CoreEngine (Base):
         return self._scene
     
     @property
-    def started(self):
-        return self._started
+    def is_running(self):
+        return self._is_running
 
     def __init__(self, width=800, height=600, fps=60, scene=None):
         """ Contructor for the class
@@ -47,11 +51,14 @@ class CoreEngine (Base):
         self._scene = scene
         # Initialize values
         self._display = None
-        self._started = False
+        self._thread = None
+        self._is_running = False
 
     def __del__(self):
         """ Clean up the memory
         """
+        # Stop the process if any running
+        self._thread_stop()
         # Dipose and close the display
         self._dispose_display()
 
@@ -64,11 +71,37 @@ class CoreEngine (Base):
             self._display.dispose()
             self._display = None
 
+    def _thread_stop(self):
+        """ This function will stop and dipose the thread
+        """
+        # Be sure to wait until the current process stops
+        self._is_running = False
+        # Wait and set to none
+        if self._thread:
+            self._thread.join()
+            self._thread = None
+
+    def _thread_start(self, process):
+        """ This function will start the thread
+        """
+        # Stop the process if any running
+        self._thread_stop()
+
+        # Set started to true
+        self._is_running = True
+        # Create a new thread and run the process
+        self._thread = threading.Thread(target=process)
+        self._thread.start()  
+   
     def _init_process(self):
         """Main process running the engine
 
-
         """
+        # Create display
+        #########################################################
+        # Display must be created in the same context as OpenGL #
+        #########################################################
+        self.create_display("Core Engine")
         #georaw = cube3D()
         georaw = Triangle()
         # Create a Camera
@@ -91,17 +124,14 @@ class CoreEngine (Base):
         counter = 0
         last_mouse_location = [None, None]
 
-        # Set started to true
-        self._started = True
-
         # Start the Main loop for the program
-        while not self.display.isClosed and self._started:     
+        while not self.display.isClosed and self._is_running:     
             #Manage the event from the gui
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self._started = False
+                    self._is_running = False
                 if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-                    self._started = False
+                    self._is_running = False
                 if event.type == pygame.MOUSEMOTION:
                     # This events wil mange the events done by the mouse
                     button = pygame.mouse.get_pressed()  
@@ -183,6 +213,9 @@ class CoreEngine (Base):
             # Update the display
             self.display.update()
 
+        # Set running to false
+        self._is_running = False
+
     def create_display(self, name="Main Window"):
         """ Function that create the main display
         """
@@ -194,23 +227,24 @@ class CoreEngine (Base):
     def start(self):
         """This method Starts the engine.
         """
-        # Check if the display has been created
-        if self.display is None:
-            print("ERROR: Display has not been initialized.")
-            return
- 
-        # Start the engine (new process)
-        self._init_process()
+        #Set wether the engin will be launch in a multi-thread context
+        if CoreEngine.MULTI_THREAD:
+            # Start the engine process (new thread)
+            self._thread_start(self._init_process)
+        else:
+            # Start using the same thread
+            self._init_process()
 
     def stop(self, close_display=False):
         """This method force to Stops the engine and close the window
         """
-        self._started = False
+         # Stop the process if any running
+        self._thread_stop()
         # Check if the user want to close the window
         if close_display:
             # close and dipose the display
             self._dispose_display()
-
+  
     def dispose(self):
         """This method Stops the engine and close the window
         """

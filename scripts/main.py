@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 # Add the currnent parent path so it recognize rendegl package entirely
 PACKAGE_PARENT = '..'
@@ -30,15 +31,15 @@ if __name__ == '__main__':
     # that share memory or files to be able to update the scene.
     scene = SceneGraph("RootGraph")
   
-    # Create Engine instance and Start
     engine = CoreEngine(parameters.width, parameters.height, parameters.fps, scene)
-    engine.create_display("Core Engine")
     engine.start()
 
     #######################
     # Running in a Thread #
     #######################
-
+    while engine.is_running:
+        print("hey")
+ 
     # End the engine and dispose the memory
     engine.stop(True)
     engine.dispose()

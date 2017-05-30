@@ -68,7 +68,7 @@ class Display:
                                         Display.defaultmode|self.displaymode,
                                         self.bpp)
             # Enable Depth test to avoid overlaped areas
-            GL.glEnable(GL.GL_DEPTH_TEST)
+            #GL.glEnable(GL.GL_DEPTH_TEST)
             # Clear the image
             self.clear()
             # Set isclosed to false
