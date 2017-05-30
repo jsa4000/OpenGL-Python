@@ -1,16 +1,29 @@
 import pygame
 from ..graphics import Display, Camera, Shader, Texture, Geometry, DrawMode
 from ..geometry.various import Triangle
+from .base import Base
 from .catalogue import CatalogueManager
+from .scene import SceneGraph
 
-class Engine:
-    """Class engine
+class CoreEngine (Base):
+    """ Core Engine Class
 
     """
     
-    def __init__(self):
+
+
+    def __init__(self, width=800, height=600, frames=60, scene=None):
+        """ Contructor for the class
+        """
         # Initialize the engine with default variables
         self._init()
+        # Initilaize parameters
+        self._width = width
+        self._height = height
+        self._frames = frames
+        self._scene = scene
+
+        print(self._scene.root)
 
     def _init(self):
         # Initialize the engine with default variables

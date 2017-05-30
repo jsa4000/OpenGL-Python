@@ -47,3 +47,48 @@ def nparray(value, dtype=np.float32):
     the specified datatype
     """
     return np.array(value,dtype)
+
+class ParseDict(object):
+    """ Parse a dictionary a convert it into a class
+    """
+    def __init__(self, dictionary):
+        """Constructor
+        """
+        for key in dictionary:
+            setattr(self, key, dictionary[key])
+    def __repr__(self):
+        """"""
+        return "<ParseDict: {}>".format(self.__dict__)
+
+def get_cmd_parameters(args, parameters):
+    """ Function to load the parameters using cmd. >>> sys.argv
+    
+        If parameters are not found (options) the it will use (default) values
+        It will return a object with the elements in paramters:
+        
+        parameters = {"width"  : {"options" : ["width","W"]  , "default": 800 },
+                     "height" : {"options" : ["height","H"] , "default": 600 },
+                     "fps"    : {"options" : ["fps","F"]    , "default": 60 }}
+
+        Output: 
+            <ParseDict: {'fps': '60', 'width': '800', 'height': '600'}>
+    """
+    # Dictionar yo be filled
+    result = dict()
+    # First set default parameters
+    for params in parameters:
+        # Set default value if not found
+        if "default" in  parameters[params]:
+            result[params] = parameters[params]["default"]
+    # Itereate trhrough the parameters (step by two)
+    for index in range(1, len(args), 2):
+        # Search for this param into the loop
+        for params in parameters:
+            for option in parameters[params]["options"]:
+                if option in args[index]:
+                    #print ("{}:{}".format(params,args[index + 1] ))
+                    result[params] = args[index + 1]
+                    break
+    # Return the parameters read or default
+    return ParseDict(result)
+

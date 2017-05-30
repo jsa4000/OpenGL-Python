@@ -8,9 +8,6 @@ class Component(CatalogueBase):
         inherit from.
     """
 
-    # Slots that will admit the base class of Entity class
-    __slots__ = ["name","id","type","catalogue","key"]
-
     # Default dinctionary with properties
     defaults = dict()
 

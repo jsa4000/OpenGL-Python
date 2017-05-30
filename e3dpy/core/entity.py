@@ -114,12 +114,12 @@ class Entity(CatalogueTree):
 
     """
 
-    # Slots that allows the instances of Entity class
-    __slots__ = ["name","id","catalogue","parent","children","alive","type","key"]
-
     # This default_type is important to maintain the current type as an
     # "Entity", in case the class will be inherited from another sub-class.
     DEFAULT_TYPE = "Entity"
+
+    def active(self):
+        return self._active
 
     def __init__(self, *args, **kwargs):
         """This is the main contructor of the class.
@@ -138,7 +138,7 @@ class Entity(CatalogueTree):
         """
         super(Entity,self).__init__(*args,**kwargs)
         # Set default variables
-        self.alive = True
+        self._active = True
 
 
 

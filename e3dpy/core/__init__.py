@@ -5,9 +5,10 @@ from .base import Base
 from .catalogue import CatalogueManager
 from .cataloguebase import CatalogueBase, CatalogueTree
 from .component import Component
-from .engine import Engine
+from .engine import CoreEngine
 from .entity import Entity
 from .graphics import *
+from .scene import SceneGraph
 from .file import *
 from .utils import *
 
