@@ -65,11 +65,19 @@ class CoreEngine (Base):
     def _dispose_display(self):
         """ Close and dipose the diplay
         """
-         # Be sure to close and dipose previous display
+        # Be sure to close and dipose previous display
         if self.display:
             self.display.close()
             self._display.dispose()
             self._display = None
+
+    def _create_display(self, name="Main Window"):
+        """ Function that create the main display
+        """
+        # Be sure to close and dipose previous display
+        self._dispose_display()
+        # Create the new display
+        self._display = Display(name, self.width, self.height)
 
     def _thread_stop(self):
         """ This function will stop and dipose the thread
@@ -86,7 +94,6 @@ class CoreEngine (Base):
         """
         # Stop the process if any running
         self._thread_stop()
-
         # Set started to true
         self._is_running = True
         # Create a new thread and run the process
@@ -96,12 +103,11 @@ class CoreEngine (Base):
     def _init_process(self):
         """Main process running the engine
 
+         Remark:
+            Display must be created in the same context as OpenGL
         """
         # Create display
-        #########################################################
-        # Display must be created in the same context as OpenGL #
-        #########################################################
-        self.create_display("Core Engine")
+        self._create_display()
         #georaw = cube3D()
         georaw = Triangle()
         # Create a Camera
@@ -215,14 +221,6 @@ class CoreEngine (Base):
 
         # Set running to false
         self._is_running = False
-
-    def create_display(self, name="Main Window"):
-        """ Function that create the main display
-        """
-        # Be sure to close and dipose previous display
-        self._dispose_display()
-        # Create the new display
-        self._display = Display(name, self.width, self.height)
 
     def start(self):
         """This method Starts the engine.
