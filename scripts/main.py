@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import math
 
 # Add the currnent parent path so it recognize rendegl package entirely
 PACKAGE_PARENT = '..'
@@ -34,12 +35,24 @@ if __name__ == '__main__':
     engine = CoreEngine(parameters.width, parameters.height, parameters.fps, scene)
     engine.start()
 
-    #######################
-    # Running in a Thread #
-    #######################
+
+    counter = 0
+    # Running in the main Thread
     while engine.is_running:
-        print("hey")
- 
+        time.sleep(1/60)
+        # print("Waiting for Implementation..")
+
+
+        # Perform some motion to the object
+        sincount = math.sin(counter)
+        coscount = math.cos(counter)
+        if engine._geo:
+            engine._geo.transform.position.x = sincount
+            engine._geo.transform.rotation.z = counter*50
+            engine._geo.transform.scale = [coscount,coscount,coscount]
+
+        counter += 0.01;
+
     # End the engine and dispose the memory
     engine.stop(True)
     engine.dispose()

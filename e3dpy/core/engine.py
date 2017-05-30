@@ -54,6 +54,8 @@ class CoreEngine (Base):
         self._thread = None
         self._is_running = False
 
+        self._geo = None
+
     def __del__(self):
         """ Clean up the memory
         """
@@ -117,7 +119,8 @@ class CoreEngine (Base):
         # Create the default shader
         shader = Shader("default_shader", "./assets/shaders")
         # Create the geometry
-        geo = Geometry("geo",shader,mode=DrawMode.triangles)
+        self._geo = Geometry("geo",shader,mode=DrawMode.triangles)
+        geo = self._geo
         #geo.addPoints(georaw[0], 4)
         geo.addPointAttrib("P",georaw[0], 4)
         #geo.addIndices(georaw[1])
