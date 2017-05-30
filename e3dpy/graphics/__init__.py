@@ -5,4 +5,5 @@ from .display import Display
 from .geometry import Geometry, DrawMode, UsageMode
 from .shader import Shader
 from .texture import Texture
+from .utils import *
 

@@ -1,12 +1,13 @@
 import pygame
 import threading
 from ..graphics import Display, Camera, Shader, Texture, Geometry, DrawMode
-from ..geometry.various import Triangle
+from ..geometry.create import Triangle
 from .base import Base
-from .catalogue import CatalogueManager
 from .scene import SceneGraph
+from .catalogue import CatalogueManager
 
-class CoreEngine (Base):
+
+class Engine(Base):
     """ Core Engine Class
 
         This class is the main loop of the process that will manage all
@@ -15,7 +16,7 @@ class CoreEngine (Base):
     """
 
     #Set variable multithread
-    MULTI_THREAD = True
+    MULTI_THREAD = False
 
     @property
     def display(self):
@@ -38,12 +39,13 @@ class CoreEngine (Base):
         return self._scene
     
     @property
-    def is_running(self):
-        return self._is_running
+    def running(self):
+        return self._running
 
     def __init__(self, width=800, height=600, fps=60, scene=None):
         """ Contructor for the class
         """
+        super(Engine,self).__init__()
         # Initilaize parameters
         self._width = width
         self._height = height
@@ -52,7 +54,7 @@ class CoreEngine (Base):
         # Initialize values
         self._display = None
         self._thread = None
-        self._is_running = False
+        self._running = False
 
         self._geo = None
 
@@ -85,7 +87,7 @@ class CoreEngine (Base):
         """ This function will stop and dipose the thread
         """
         # Be sure to wait until the current process stops
-        self._is_running = False
+        self._running = False
         # Wait and set to none
         if self._thread:
             self._thread.join()
@@ -97,12 +99,12 @@ class CoreEngine (Base):
         # Stop the process if any running
         self._thread_stop()
         # Set started to true
-        self._is_running = True
+        self._running = True
         # Create a new thread and run the process
         self._thread = threading.Thread(target=process)
         self._thread.start()  
    
-    def _init_process(self):
+    def _process(self):
         """Main process running the engine
 
          Remark:
@@ -134,13 +136,13 @@ class CoreEngine (Base):
         last_mouse_location = [None, None]
 
         # Start the Main loop for the program
-        while not self.display.isClosed and self._is_running:     
+        while not self.display.isClosed and self._running:     
             #Manage the event from the gui
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self._is_running = False
+                    self._running = False
                 if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-                    self._is_running = False
+                    self._running = False
                 if event.type == pygame.MOUSEMOTION:
                     # This events wil mange the events done by the mouse
                     button = pygame.mouse.get_pressed()  
@@ -223,18 +225,20 @@ class CoreEngine (Base):
             self.display.update()
 
         # Set running to false
-        self._is_running = False
+        self._running = False
 
     def start(self):
         """This method Starts the engine.
         """
         #Set wether the engin will be launch in a multi-thread context
-        if CoreEngine.MULTI_THREAD:
+        if Engine.MULTI_THREAD:
             # Start the engine process (new thread)
-            self._thread_start(self._init_process)
+            self._thread_start(self._process)
         else:
+            # Set started to true
+            self._running = True
             # Start using the same thread
-            self._init_process()
+            self._process()
 
     def stop(self, close_display=False):
         """This method force to Stops the engine and close the window

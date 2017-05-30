@@ -1,6 +1,6 @@
 import OpenGL.GL as GL
 from ..core.file import *
-from ..core.graphics import *
+from .utils import *
 
 class Texture:
     """

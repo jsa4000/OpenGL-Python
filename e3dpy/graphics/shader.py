@@ -2,7 +2,7 @@ import ctypes
 import numpy as np
 import OpenGL.GL as GL
 from ..core.file import *
-from ..core.graphics import *
+from .utils import *
 
   
 # Shader typas allow and extension for the files to use

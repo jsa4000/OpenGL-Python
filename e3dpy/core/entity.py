@@ -114,36 +114,34 @@ class Entity(CatalogueTree):
 
     """
 
-    # This default_type is important to maintain the current type as an
-    # "Entity", in case the class will be inherited from another sub-class.
+    # This default type, it's important to maintain the current type as an
+    # "Entity". In case this class will be inherited from another sub-class,
+    # this type will be maintained. This si like using __new__ to create
+    # Singletone instances.
     DEFAULT_TYPE = "Entity"
 
+    @property
     def active(self):
+        """ Get wether the entity is active or not
+        """
         return self._active
+
+    @active.setter
+    def active(self,value):
+        """ Set wether the entity is active or not
+        """
+        self._active = value
 
     def __init__(self, *args, **kwargs):
         """This is the main contructor of the class.
 
         Initially set the dafult items like name, childs, componets
-        and parent.
+        (as catalogue) and parent. Additionally Entities have
+        another paramter such as active or functions to initialize,
+        update or destroy all the collecions.
 
-        Components and Childs could be changed from the inputs,
-        the way the are going to be represented. Both childs and
-        components will be implemented as a dictionary. This way
-        there is no option to add the same components or childs to
-        the entity.
-
-        The order of the paramters are the same as the __slots__
-        oirder.
         """
         super(Entity,self).__init__(*args,**kwargs)
         # Set default variables
         self._active = True
-
-
-
-
-
- 
-
 

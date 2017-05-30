@@ -4,8 +4,16 @@ from .cataloguebase import CatalogueBase
 
 class Component(CatalogueBase):
     """ Component Class
-        This is the base component class that all component must
-        inherit from.
+    This is the base component class that all component must
+    inherit from.
+
+    In classes create from this base class propoerties and
+    default paramters can be given by the defaults variable
+
+    class Camera(Component):
+        defaults = dict({"mode":0,
+                         "orbit":False,
+                         "view": np.reshape(range(9),(3,3))})
     """
 
     # Default dinctionary with properties
@@ -20,19 +28,11 @@ class Component(CatalogueBase):
         self._update_properties(self.defaults, False)
                 
     def _update_properties(self, properties, force=True):
-        """
+        """ Update current properties given in the parameters
         """ 
-        # Set defaults if not set in parameters
-        # for slot in self.__slots__:
-        #     if slot in properties and (force or (not force and getattr(self,slot) is None)):
-        #         setattr(self,slot,properties[slot])
         for param in properties:
             if force or (not force and param not in self.catalogue):
                  self.catalogue[param] = properties[param] 
        
-    def __del__(self):
-        """ Destroy current component
-        """
-        pass
     
  
