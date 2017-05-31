@@ -26,7 +26,58 @@ class Base(object):
         create a new child class and set __slots__ list with the
         desired parameters to be overriding or added:
         
-        >>> __slots__ = ["name","id","type","children",...] 
+            class CustomBase(Base):
+                
+                __slots__ = ["name","id","type","children",...]
+
+                def __init__(self, *args, **kwargs):
+                    # Create default Database object
+                    super(CustomBase, self).__init__(*args, **kwargs)
+
+        IMPORTANT:
+            If you set __slots__ you won't be able to set any attribute.
+            You have tow options:
+                1. Don't include __slots__ so only be considered previous
+                slots in inherited classes. Then you could start adding new
+                paramters as always. 
+
+                  def __init__(self, *args, **kwargs):
+                        # Create default Database object
+                        super(CustomBase, self).__init__(*args, **kwargs)
+                        # add new parameters
+                        self._new_parameter = None
+                
+                In this case you cannot pass this parameter in the constructor
+                since the base class will use them and it will be ignored.
+
+                2. Use Defaults Base class defined at the bottom. Both class 
+                could be inherited by using multiple-inheritance. However
+                you should call to the constructors independently-
+
+                    class Custom(Base, Defaults):
+        
+                        defaults = dict( {"job":"driver"})
+
+                        def __init__(self, *args, **kwargs):
+                            # Create default Database object
+                            Base.__init__(*args, **kwargs)
+                            Defaults.__init__(*args, **kwargs)
+
+                    custom = Custom(name = "Javier", job = "Senior Programmer")
+                    custom.name
+                    custom.job
+
+                3. Add a new value in __slots__ called "attributes" (ex)
+                and when the attribute ins called the it will use the override 
+                method  __getattr__(self, key) that will take "attributes" 
+                if it doesn't found in the inner attribs because the __slots__
+                limitation.
+                
+                    __getattr__(self, key):
+                        if key in self.__slots__:
+                            return getattr(self, key)
+                        else:
+                            return self.attributes[key]
 
         >>> sample = Base("node1", "123", "Geometry",["12","23"])
         >>> sample.name 
@@ -220,7 +271,74 @@ class Defaults(object):
         parameters = ["{}:{}".format(key, attribs[key]) for key in attribs if key in self.defaults]
         return "{}({})".format(self.__class__.__name__,parameters)
 
-class DataBase(Base):
+
+class DefaultBase(Base, Defaults):
+    """ DefaultBase Class
+
+        This class is a subclass of Base and Defaults. This provide
+        multi-inheritance functionality to allow to set more attributes
+        to Base and also set default values to the attributes.
+
+        Example
+
+            class Flexible(DefaultBase):
+                defaults = dict( {"nick":None})
+
+                def __init__(self, *args, **kwargs):
+                    # Create default objects in order
+                    super.__init__(*args, **kwargs)
+
+            (Or simply)
+            class Flexible(DefaultBase):
+                 defaults = dict( {"nick": "Awesome"})
+
+            flexible = Flexible()
+            flexible = Flexible("Javier", 12)
+            flexible = Flexible("Javier", type="JavierType", nick="jsa000")
+
+            # Following is allowed by Base class, but you always need to 
+            # include nick in the creation since it can not be created inside 
+            # the class. See the init function at the top for CustomBase
+            #flexible = CustomBase("Javier", type="JavierType", nick="jsa000")
+
+            #flexible = Flexible(id=23)
+            print(flexible.name)
+            print(flexible.nick)
+            print(str(flexible))
+            print(repr(flexible))
+
+            <FlexibleDB> 
+            FlexibleDB(OrderedDict([('name', 'Javier'), ('id', '5f212236-8214-4ae7-bc86-eca5aae8b3a5'),
+                                 ('type', 'JavierType')])) 
+            FlexibleDB(['nick:jsa000'])
+            FlexibleDB(FlexibleDB(OrderedDict([('name', 'Javier'), ('id', '5f212236-8214-4ae7-bc86-eca5aae8b3a5'), 
+                            ('type', 'JavierType')])) FlexibleDB(['nick:jsa000']))
+
+    """
+    defaults = dict()
+
+    def __init__(self, *args, **kwargs):
+        """
+        """
+        # Create default DefaultBase object
+        #    Note: "self"" it's required
+        Base.__init__(self,*args, **kwargs)
+        Defaults.__init__(self,*args, **kwargs)
+
+    def __str__(self):
+        """Returns the string representation of this instance
+        """
+        return "<{}> \n {} \n {}".format(self.__class__.__name__, 
+                                        Base.__repr__(self),Defaults.__repr__(self))
+
+    def __repr__(self):
+        """Returns the string representation of this instance
+        """
+        return "{}({} {})".format(self.__class__.__name__, 
+                                        Base.__repr__(self),Defaults.__repr__(self))
+
+
+class DataBase(DefaultBase):
     """ Data Base Class
 
         This element will create and store all the elements in
@@ -269,7 +387,7 @@ class DataBase(Base):
         # Initialize data variable where dataframe will be stored
         self.data = dict()
         # Initialize groups for attribute in Data frames
-        self.groups = dict()
+        self.attributes = dict()
    
     def __del__(self):
         # Dispose all the objects and memory allocated
@@ -344,8 +462,9 @@ class DataBase(Base):
 
     def addAttrib(self, index, name, values=None, size=3, default=None, dtype=None):
         # Check if current data frame is not create
-        if (index not in data[index]):
+        if (index not in self.data):
             self.data[index] = pd.DataFrame()
+            self.attributes[index] = dict()
         # Get the new attribute and dataframe
         result = self._createAttribute(self.data[index],name,size,values,default,dtype)
         if not empty(result):
@@ -358,15 +477,20 @@ class DataBase(Base):
         """Returns the string representation of this instance
         """
         # Get parents string represenation
-        base = super(DataBase, self).__str__()
+        #base = super(DataBase, self).__str__()
         current = ""
         for item in self.data:
             # Get the list of attributes
-            current += self.attributes[item] + "\n"
-            current += self.data[item].head()  + "\n"
+            current += "-----------------------------------------------------------\n"
+            current += " {}\n".format(item)
+            current += "-----------------------------------------------------------\n"
+            current += str(self.attributes[item]) + "\n"
+            current += "-----------------------------------------------------------\n"
+            current += self.data[item].head().to_string()  + "\n"
+            current += "-----------------------------------------------------------\n"
 
         # Returns the base and 
-        return "{}\n{}".format(base,current)
+        return current
 
     def __repr__(self):
         """Returns the string representation of this instance
