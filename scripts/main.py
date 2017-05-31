@@ -8,7 +8,7 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from e3dpy.core import Engine, SceneGraph, ThreadBase
+from e3dpy.core import Base, Engine, SceneGraph, ThreadBase, CatalogueManager
 from e3dpy.core.utils import get_cmd_parameters
 
 if __name__ == '__main__':  
@@ -26,13 +26,22 @@ if __name__ == '__main__':
     # Read the parameters 
     parameters = get_cmd_parameters(sys.argv, parameters)
 
-    # Create the main Scene graph
+
+    Base.DEFAULT_UUID = Base.COUNTER
+    # Create the main Scene graph and initialize
     scene_graph = SceneGraph()
+    scene_graph.init()
+
+    # print(scene_graph.root)
+    # print(repr(scene_graph.root))
+
+    print(CatalogueManager.instance())
+    print(repr(CatalogueManager.instance().head()))
 
     # Start the Engine in Mult-thread Mode
     ThreadBase.MULTI_THREAD = False
     engine = Engine(parameters.width, parameters.height, parameters.fps, scene_graph)
-    engine.start()
+    #engine.start()
 
     # Running in the main Thread
     while engine.running:

@@ -193,14 +193,22 @@ class CatalogueBase(Base):
                     if value is None:
                         continue
                     value = self._get_item(value)
-                    key = str(getattr(value,default_key))
+                    #key = str(getattr(value,default_key))
+                    if isinstance(value,(Base)):
+                        key = str(getattr(value,value.key))
+                    else:
+                        key = str(getattr(value,default_key))
                     if (format_key is None):
                         result[key] = value
                     else:
                         result[eval(format_key.format("key"))] = value
             else:
                 value = self._get_item(values)
-                key = str(getattr(value,default_key))
+                #key = str(getattr(value,default_key))
+                if isinstance(value,(Base)):
+                    key = str(getattr(value,value.key))
+                else:
+                    key = str(getattr(value,default_key))
                 if (format_key is None):
                     result[key] = value
                 else:

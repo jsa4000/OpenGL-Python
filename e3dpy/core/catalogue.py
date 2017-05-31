@@ -251,6 +251,14 @@ class Catalogue(object):
         for item in self._items:
             yield item
 
+    def __getattr__(self, key):
+        """  If not in attrbites the search on pandas dataframe
+        """
+        if key in self.__dict__:
+            return getattr(self, key)
+        else:
+            return getattr(self._dataframe, key)
+
     def __str__(self):
         """ Build the default function to represent the catalogue
         user friendly

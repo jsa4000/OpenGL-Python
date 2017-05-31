@@ -13,7 +13,8 @@ __all__ = ['file_exists',
            'round',
            'nparray', 
            'ParseDict', 
-           'get_cmd_parameters']
+           'get_cmd_parameters',
+           'BasicCounter']
 
 def file_exists(filename):
     """
@@ -56,8 +57,7 @@ def is_collection(value):
     if isinstance(value,collection_types):
         return True
     return False
-        
-
+     
 def empty(value):
     """
         Ths function will return is some list or variable is empty.
@@ -139,3 +139,9 @@ def get_cmd_parameters(args, parameters):
     # Return the parameters read or default
     return ParseDict(result)
 
+class BasicCounter(object):
+    def __init__(self, default):
+        self._counter = default
+    def __call__(self):
+        self._counter += 1
+        return self._counter

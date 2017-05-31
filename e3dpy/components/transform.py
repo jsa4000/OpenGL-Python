@@ -1,12 +1,17 @@
-from pyrr import Quaternion, matrix44, Matrix44, Vector3
-from ..core.utils import *
+from collections import OrderedDict as dict
+from ..core import Component
 
-class Transform:
+class Transform(Component):
+    """ Transform Component class
     """
-   
 
-    """
-    def __init__(self, position=None, rotation=None, scale=None):
-        # Create private members for the setters (properties)
-    
-        pass
+    defaults = dict( {"transform": None} )
+
+    def __init__(self, *args, **kwargs):
+        """ Transform initialization
+        """
+        super(Transform,self).__init__(*args, **kwargs)
+        
+
+
+

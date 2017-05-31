@@ -121,6 +121,8 @@ class Base(object):
     # Available UUID functions
     UUID1 = uuid.uuid1 # make a UUID based on the host ID and current time
     UUID4 = uuid.uuid4 # make a random UUID
+    COUNTER = BasicCounter(1)
+
 
     # Default UUID
     DEFAULT_UUID = UUID4

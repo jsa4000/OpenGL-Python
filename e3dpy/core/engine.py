@@ -1,52 +1,7 @@
-import threading
-from .base import Base, ThreadBase
-from .catalogue import CatalogueManager
-from .objects import Entity, Component
+from .base import ThreadBase 
 from ..drivers import Display 
 
-__all__ = ['SceneGraph',
-           'Engine']
-
-class SceneGraph(object):
-    """ SceneGraph Base class
-
-    This class will containt all the entities and componets.
-    The wat this will work is in a tree base model, where the
-    root property will be the main entity and the childs 
-    and components will populate the Scene.
-
-    """
-
-    @property
-    def root(self):
-        """ Get the new root element
-        """
-        return self._root
-
-    @root.setter
-    def root(self, value):
-        """ Set the new root element of the Scene Graph
-        """
-        self._root
-
-    def __init__(self, root=None):
-        """ Constructor method for the class
-        """
-        # Create an empty Entity initial
-        self._root = root or None
-
-    def init(self, file=None):
-        """ Initialize the current Scene.
-        If no file is specified then a Default Scene will be created.
-        The default scene will be the basic enities and components, like
-        camera, basic geometry (with basic materails), lights, etc..
-        """
-        if (file):
-            pass
-        else:
-            # Create the root object
-            self._root = Entity("root")
-
+__all__ = ['Engine']
 
 class Engine(ThreadBase):
     """ Core Engine Class
