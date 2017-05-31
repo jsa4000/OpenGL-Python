@@ -30,7 +30,7 @@ if __name__ == '__main__':
     scene_graph = SceneGraph()
 
     # Start the Engine in Mult-thread Mode
-    Engine.MULTI_THREAD = True
+    Engine.MULTI_THREAD = False
     engine = Engine(parameters.width, parameters.height, parameters.fps, scene_graph)
     engine.start()
 

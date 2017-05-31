@@ -2,9 +2,8 @@ import ctypes
 import numpy as np
 import pandas as pd
 import OpenGL.GL as GL
-from ..components.transform import Transform
+from .transform import Transform
 from ..core.utils import *
-
 
 class DrawMode:
     triangles    = GL.GL_TRIANGLES	

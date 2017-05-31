@@ -1,6 +1,6 @@
 import pygame
 import threading
-from ..graphics import Display, Camera, Shader, Texture, Geometry, DrawMode
+from ..drivers import Display, Camera, Shader, Texture, Geometry, DrawMode
 from ..geometry.create import Triangle
 from .base import Base
 from .scene import SceneGraph
