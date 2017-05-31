@@ -123,6 +123,17 @@ class Catalogue(object):
     calling the link function of catalogue. This is to
     link entities and components.
 
+    To show the data stored, with the catalogue and bindings,
+    you can use two ways.
+
+    # Create the main Catalogue
+    catalogue = Catalogue(index = catalogue_index)
+
+    print(catalogue)
+    print(repr(catalogue.head())) 
+    or 
+    print(catalogue.dataframe.head(10))
+
     Basic example
 
     # Test

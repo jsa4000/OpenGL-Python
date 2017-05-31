@@ -193,8 +193,8 @@ class CatalogueBase(Base):
                     if value is None:
                         continue
                     value = self._get_item(value)
-                    #key = str(getattr(value,default_key))
-                    if isinstance(value,(Base)):
+                    # This is to suport multiple items if not using ids
+                    if isinstance(value,(Base)) and default_key != "id":
                         key = str(getattr(value,value.key))
                     else:
                         key = str(getattr(value,default_key))
@@ -204,8 +204,8 @@ class CatalogueBase(Base):
                         result[eval(format_key.format("key"))] = value
             else:
                 value = self._get_item(values)
-                #key = str(getattr(value,default_key))
-                if isinstance(value,(Base)):
+                # This is to suport multiple items if not using ids
+                if isinstance(value,(Base)) and default_key != "id":
                     key = str(getattr(value,value.key))
                 else:
                     key = str(getattr(value,default_key))

@@ -35,8 +35,8 @@ if __name__ == '__main__':
     print(scene_graph)
     # print(repr(scene_graph.root))
 
-    # print(CatalogueManager.instance())
-    # print(repr(CatalogueManager.instance().head()))
+    print(CatalogueManager.instance())
+    print(repr(CatalogueManager.instance().head()))
 
     # Start the Engine in Mult-thread Mode
     ThreadBase.MULTI_THREAD = False
