@@ -1,3 +1,5 @@
+import numpy as np
+
 def Triangle():
      #Create default vertices 4f
     vertices = [ -0.5, -0.5, 0.0, 1.0,

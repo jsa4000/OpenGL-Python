@@ -1,7 +1,8 @@
 import numpy as np
+from ..core import DataBase
 from ..core.utils import *
 
-class Geometry(DataBase):
+class GeometryDB(DataBase):
     """ Geometry Class 
     
     This class will create and store all the geometry needed
@@ -35,7 +36,7 @@ class Geometry(DataBase):
     #  Geometry types supported.
     geometry_types = ParseDict({"points":"points",
                                 "vertices":"verts",
-                                "primitives":"prims"])
+                                "primitives":"prims"})
 
     # Some standard attributes to use manipulating geometry
     points_attributes = ParseDict({"position":"P",
@@ -51,10 +52,10 @@ class Geometry(DataBase):
     vertices_attributes = points_attributes
 
     # prims attributes
-    prims_attributes = ParseDict{"indexes":"Id",
+    prims_attributes = ParseDict({"indexes":"Id",
                                  "normal":"N",
                                  "color":"Cd",
-                                 "material":"M" }
+                                 "material":"M" })
 
     # When a group is created it use a prefix to differenciate between normal attribs
     group_preffix = "group_"
@@ -63,10 +64,10 @@ class Geometry(DataBase):
         """This is the main contructor of the class.
 
         """
-        super(Geometry,self).__init__(*args,**kwargs)
-        # SEt the 
-        self._iprims = prims_attributes.primitives
-        self._ipoints = prims_attributes.points
+        super(GeometryDB,self).__init__(*args,**kwargs)
+        # Get the indexed in the create (simplify the code) 
+        self._iprims = self.geometry_types.primitives
+        self._ipoints = self.geometry_types.points
    
     def has_indices(self):
         if self.prims_attributes.indexes in self.attributes[self._iprims]:
@@ -74,43 +75,40 @@ class Geometry(DataBase):
         return False
   
     def getPrimsAttrib(self, name):
-            return self.data[self._iprims][self.attributes[self._iprims][name]]
+        return self.data[self._iprims][self.attributes[self._iprims][name]]
 
     def delPrimsAttrib(self, name):
         self.data[self._iprims].drop(self.attributes[self._iprims][name], axis=1, inplace=True)
+        return self
 
     def addPrimsAttrib(self, name, values=None, size=3, default=None, dtype=None):
         # Get the new attribute and dataframe
-        result = self._createAttribute(self.data[self._iprims],name,size,values,default,dtype)
-        if not empty(result):
-            # Set the returned dataframe with the new attribute
-            self.data[self._iprims] = result[0]
-            # Set the columns into the the current Point attribute
-            self.attributes[prims_attributes.points][name] = result[1]
+        self.addAttrib(self._iprims, name, values, size, default, dtype)
+        return self
 
     def addIndices(self, values, size=3, dtype=np.uint32):
-         #Add prims Attributes Elements
+        #Add prims Attributes Elements
         self.addPrimsAttrib(self.prims_attributes.indexes, values, size, dtype=dtype)
+        return self
    
     def getPointAttrib(self, name):
         return self.data[self._ipoints][self.attributes[self._ipoints][name]]
 
     def delPointAttrib(self, name):
         self.data[self._ipoints].drop(self.attributes[self._ipoints][name], axis=1, inplace=True)
+        return self
 
     def addPointAttrib(self, name, values=None, size=3,  default=None, dtype=None):
-        # Get the new attribute and dataframe
-        result = self._createAttribute(self.data[self._ipoints],name,size,values,default,dtype)
-        if not empty(result):
-            # Set the returned dataframe with the new attribute
-            self.data[self._ipoints] = result[0]
-            # Set the columns into the the current Point attribute
-            self.attributes[self._ipoints][name] = result[1]
+         # Get the new attribute and dataframe
+        self.addAttrib(self._ipoints, name, values, size, default, dtype)
+        return self
 
     def addPoints(self, values, size=3, dtype=np.float32):
         #Add point Attributes Position
-        self.addPointAttrib(self.point_attributes.position, values, size, dtype)
+        self.addPointAttrib(self.points_attributes.position, values, size, dtype)
+        return self
 
     def addNormals(self, values, size=3, dtype=np.float32):
-          #Add point Attributes Normals
-        self.addPointAttrib(self.point_attributes.normal, values, size, dtype)
+        #Add point Attributes Normals
+        self.addPointAttrib(self.points_attributes.normal, values, size, dtype)
+        return self

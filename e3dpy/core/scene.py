@@ -1,5 +1,6 @@
 from .objects import Entity, Component
 from ..components import Camera, Geometry, Material, Render, Transform, Light
+from ..geometry import Triangle, GeometryDB
 
 __all__ = ['SceneGraph']
 
@@ -102,6 +103,19 @@ class SceneGraph(object):
         
         # Create Geometry component
         geometry_component = Geometry("geometry_component")
+        
+        
+        triangle = Triangle()
+        geometry = GeometryDB()
+        geometry.addPoints(triangle[0], 4)
+        geometry.addIndices(triangle[1])
+        geometry.addPointAttrib("Cd",triangle[2], 4)
+        geometry.addPointAttrib("UV",triangle[3], 2)
+
+        print(str(geometry))
+
+
+
         # Create Transform component
         transform_component = Transform("transform_component")
         # Create a default Material (key name material > 1)
