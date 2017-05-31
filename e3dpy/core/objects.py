@@ -286,6 +286,14 @@ class CatalogueBase(Base):
         # Finally del base class
         super(CatalogueBase, self).__del__()
 
+    def __str__(self):
+        """Returns the string representation of this instance
+        """
+        #Create components deserialization
+        catalogue = [self.catalogue[item] for item in self.catalogue]
+        return "{}({},{},{})".format(self.__class__.__name__,self.name, 
+                                        self.id, catalogue)
+
     def __repr__(self):
         """Returns the string representation of this instance
         """
@@ -442,6 +450,15 @@ class CatalogueTree(CatalogueBase):
         """
         self._remove_children(children)
         return self
+
+    def __str__(self):
+        """Returns the string representation of this instance
+        """
+        #Create components deserialization
+        catalogue = [str(self.catalogue[item]) for item in self.catalogue]
+        children = [str(self.children[item]) for item in self.children]
+        return "{}({},{},{},{})".format(self.__class__.__name__,self.name, 
+                                        self.id, catalogue, children)
 
 class Entity(CatalogueTree):
     """ Entity class.
