@@ -2,6 +2,10 @@ from collections import OrderedDict as dict
 import pandas as pd
 import numpy as np
 
+__all__ = ['BaseDictionay', 
+           'Catalogue',
+           'CatalogueManager']
+
 class BaseDictionay(object):
     """ BaseDictionay class.
     

@@ -1,22 +1,50 @@
-import pygame
 import threading
-from ..drivers import Display, Camera, Shader, Texture, Geometry, DrawMode
-from ..geometry.create import Triangle
-from .base import Base
-from .scene import SceneGraph
+from .base import Base, ThreadBase
 from .catalogue import CatalogueManager
+from .objects import Entity, Component
+from ..drivers import Display 
+
+__all__ = ['SceneGraph',
+           'Engine']
+
+class SceneGraph(Base):
+    """ SceneGraph Base class
+
+    This class will containt all the entities and componets.
+    The wat this will work is in a tree base model, where the
+    root property will be the main entity and the childs 
+    and components will populate the Scene.
+
+    """
+
+    @property
+    def root(self):
+        return self._root
+
+    @root.setter
+    def root(self, value):
+        self._root
+
+    def __init__(self, *args, **kwargs):
+        """ Constructor method for the class
+        """
+        super(SceneGraph,self).__init__(*args,**kwargs)
+        # Create an empty Entity initial
+        self._root = Entity("root")
+
+    def init(self, file=None):
+        """
+        """
+        pass
 
 
-class Engine(Base):
+class Engine(ThreadBase):
     """ Core Engine Class
 
         This class is the main loop of the process that will manage all
         the scene like inputs, updates, rendering, physics, etc..
 
     """
-
-    #Set variable multithread
-    MULTI_THREAD = False
 
     @property
     def display(self):
@@ -36,37 +64,48 @@ class Engine(Base):
 
     @property
     def scene(self):
+        """ Get current Scene Graph
+        """
         return self._scene
-    
-    @property
-    def running(self):
-        return self._running
 
+    @scene.setter
+    def scene(self, value):
+        """ This will set the new Scene Graph to render.
+        """
+        self._scene = value
+     
     def __init__(self, width=800, height=600, fps=60, scene=None):
         """ Contructor for the class
+
+        This class is the main loop for the Engine. In this class all the 
+        Managers will be created.
+
+        System, or managers, will take the Scene Graph and perfor
+        the work that corresponf, i.e. input, update, physics, render etc
+
+        Also the engine will initialize the Display and do the calls to
+        the display driver so the Scene could be rendered properly.
+        
         """
         super(Engine,self).__init__()
         # Initilaize parameters
         self._width = width
         self._height = height
         self._fps = fps
+        # Set the Scene Graph
         self._scene = scene
-        # Initialize values
+        # Initialize display
         self._display = None
-        self._thread = None
-        self._running = False
-
-        self._geo = None
 
     def __del__(self):
         """ Clean up the memory
         """
-        # Stop the process if any running
-        self._thread_stop()
+        # Call threadBase __del__
+        super(Engine,self).__del__()
         # Dipose and close the display
         self._dispose_display()
 
-    def _dispose_display(self):
+    def _close_display(self):
         """ Close and dipose the diplay
         """
         # Be sure to close and dipose previous display
@@ -79,179 +118,41 @@ class Engine(Base):
         """ Function that create the main display
         """
         # Be sure to close and dipose previous display
-        self._dispose_display()
+        self._close_display()
         # Create the new display
         self._display = Display(name, self.width, self.height)
 
-    def _thread_stop(self):
-        """ This function will stop and dipose the thread
-        """
-        # Be sure to wait until the current process stops
-        self._running = False
-        # Wait and set to none
-        if self._thread:
-            self._thread.join()
-            self._thread = None
-
-    def _thread_start(self, process):
-        """ This function will start the thread
-        """
-        # Stop the process if any running
-        self._thread_stop()
-        # Set started to true
-        self._running = True
-        # Create a new thread and run the process
-        self._thread = threading.Thread(target=process)
-        self._thread.start()  
-   
+    # Override
     def _process(self):
         """Main process running the engine
-
-         Remark:
-            Display must be created in the same context as OpenGL
+           
         """
-        # Create display
+        # Display must be created in the same context (thread) as OpenGL
         self._create_display()
-        #georaw = cube3D()
-        georaw = Triangle()
-        # Create a Camera
-        camera = Camera([0.0,0.0,-3.0],70.0,800/600,0.01,1000)
-        # Create a texture
-        texture = Texture("./assets/images/texture.png")
-        # Create the default shader
-        shader = Shader("default_shader", "./assets/shaders")
-        # Create the geometry
-        self._geo = Geometry("geo",shader,mode=DrawMode.triangles)
-        geo = self._geo
-        #geo.addPoints(georaw[0], 4)
-        geo.addPointAttrib("P",georaw[0], 4)
-        #geo.addIndices(georaw[1])
-        geo.addPointAttrib("Cd",georaw[2], 4)
-        geo.addPointAttrib("UV",georaw[3], 2)
-        #geo.addPoints(vertices, 4)
-        geo.update()
-
-        # Create a counter
-        counter = 0
-        last_mouse_location = [None, None]
-
+       
         # Start the Main loop for the program
         while not self.display.isClosed and self._running:     
-            #Manage the event from the gui
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self._running = False
-                if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-                    self._running = False
-                if event.type == pygame.MOUSEMOTION:
-                    # This events wil mange the events done by the mouse
-                    button = pygame.mouse.get_pressed()  
-                    current_mouse_location = pygame.mouse.get_pos()
-                    # Check the current mouse button pressed
-                    if button[0]:
-                            # Left click to the button
-                        if  last_mouse_location[0] is not None:
-                            # Get the offset from the last position
-                            camera.orbit(current_mouse_location[0] - last_mouse_location[0],
-                                            current_mouse_location[1] - last_mouse_location[1])
-                        
-                    elif button[1]:
-                            # Get the offset from the last position
-                            camera.pan(current_mouse_location[0] - last_mouse_location[0],
-                                        current_mouse_location[1] - last_mouse_location[1])
-                    elif button[2]:
-                        # Control the zoom
-                        camera.zoom(last_mouse_location[1] - current_mouse_location[1] )
-                    
-                    # Update the mouse location for the next iteration
-                    last_mouse_location = current_mouse_location
 
-            # Events when holding 
-            pygame.event.pump()
-            keys = pygame.key.get_pressed() 
-            
-            if keys[pygame.K_UP]:
-                camera.zoom(1)
-            elif keys[pygame.K_DOWN]:
-                camera.zoom(-1)
-            elif keys[pygame.K_RIGHT]:
-                camera.strafe(-1)
-            elif keys[pygame.K_LEFT]:
-                camera.strafe(1)
-            elif keys[pygame.K_y] and keys[pygame.K_LSHIFT]:
-                camera.yaw(-0.1)
-            elif keys[pygame.K_y]:
-                camera.yaw(0.1)
-            elif keys[pygame.K_p] and keys[pygame.K_LSHIFT]:
-                camera.pitch(-0.1)
-            elif keys[pygame.K_p]:
-                camera.pitch(0.1)          
-            elif keys[pygame.K_r] and keys[pygame.K_LSHIFT]:
-                camera.roll(-0.1)
-            elif keys[pygame.K_r]:
-                camera.roll(0.1)
-            elif keys[pygame.K_ESCAPE]:
-                display.close()
-                        
+            # Input
+            # Update
+
             # Clear the display
             self.display.clear()
-            
             # Render all the elements that share the same shader.
-            # Use the current Shader configuration
-            shader.use()
-            # Use the current texture after the shader
-            texture.bind(0)
-        
-            # # Perform some motion to the object
-            # sincount = math.sin(counter)
-            # coscount = math.cos(counter)
-
-            # geo.transform.position.x = sincount
-            # geo.transform.rotation.z = counter*50
-            # geo.transform.scale = [coscount,coscount,coscount]
-
-            # counter += 0.01;
-
-            shader.update("WORLD_MATRIX",geo.transform.model)
-            shader.update("VIEW_MATRIX",camera.view_matrix())
-            shader.update("PROJECTION_MATRIX",camera.projection_matrix())
-
-            # Render the  geometry
-            geo.render()
-            # End Use the current Shader configuration
-            shader.use(False)
-
+            # Render()
             # Update the display
             self.display.update()
 
         # Set running to false
         self._running = False
 
-    def start(self):
-        """This method Starts the engine.
-        """
-        #Set wether the engin will be launch in a multi-thread context
-        if Engine.MULTI_THREAD:
-            # Start the engine process (new thread)
-            self._thread_start(self._process)
-        else:
-            # Set started to true
-            self._running = True
-            # Start using the same thread
-            self._process()
-
-    def stop(self, close_display=False):
+    def stop(self, close=False):
         """This method force to Stops the engine and close the window
         """
-         # Stop the process if any running
-        self._thread_stop()
+        super(Engine,self).stop()
         # Check if the user want to close the window
-        if close_display:
+        if close:
             # close and dipose the display
-            self._dispose_display()
+            self._close_display()
   
-    def dispose(self):
-        """This method Stops the engine and close the window
-        """
-        # Force to clean the memory
-        self.__del__()
+ 

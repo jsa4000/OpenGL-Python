@@ -4,6 +4,12 @@ import pandas as pd
 import uuid
 from .utils import *
 
+__all__ = ['Base', 
+           'Defaults',
+           'DataBase',
+           'DefaultBase',
+           'ThreadBase']
+
 class Base(object):
     """ This is the default Base Object.
 
@@ -496,3 +502,81 @@ class DataBase(DefaultBase):
         """Returns the string representation of this instance
         """
         return super(DataBase, self).__repr__()
+
+
+class ThreadBase(object):
+    """ ThreadBase Engine Class
+
+        This class is the main loop of the process that will manage 
+        the threads in the engine. If threads are not supported
+        set global variable MULTI_THREAD to false at start
+
+        ThreadBase.MULTI_THREAD = False
+
+    """
+
+    #Set variable multithread globally
+    MULTI_THREAD = True
+
+    @property
+    def running(self):
+        return self._running
+
+    def __init__(self):
+        """ Contructor for the class
+        """
+        # Initilaize parameters
+        self._thread = None
+        self._running = False
+
+    def __del__(self):
+        """ Clean up the memory
+        """
+        # Stop the process if any running
+        self._thread_stop()
+   
+    def _thread_stop(self):
+        """ This function will stop and dipose the thread
+        """
+        # Be sure to wait until the current process stops
+        self._running = False
+        # Wait and set to none
+        if self._thread:
+            self._thread.join()
+            self._thread = None
+
+    def _thread_start(self, process):
+        """ This function will start the thread
+        """
+        # Stop the process if any running
+        self._thread_stop()
+        # Set started to true
+        self._running = True
+        # Create a new thread and run the process
+        self._thread = threading.Thread(target=process)
+        self._thread.start()  
+   
+    def _process(self):
+       """ Process to implement
+       """
+       pass
+
+    def start(self):
+        """This method Starts the thread.
+        """
+        if ThreadBase.MULTI_THREAD:
+            # Start the engine process (new thread)
+            self._thread_start(self._process)
+        else:
+            # Set started to true (possible while in process)
+            self._running = True
+            # Start using the same thread
+            self._process()
+            # Since it'not multithread set again to false
+            self._running = False
+ 
+    def stop(self):
+        """This method force to Stops the thread
+        """
+        self._thread_stop()
+        
