@@ -455,10 +455,11 @@ class CatalogueTree(CatalogueBase):
         """Returns the string representation of this instance
         """
         #Create components deserialization
-        catalogue = [str(self.catalogue[item]) for item in self.catalogue]
-        children = [str(self.children[item]) for item in self.children]
-        return "{}({},{},{},{})".format(self.__class__.__name__,self.name, 
-                                        self.id, catalogue, children)
+        catalogue = " \n    ".join([str(self.catalogue[item]) for item in self.catalogue])
+        children =  " \n   ".join([str(self.children[item]) for item in self.children])
+        return " {} ( name:{}, id:{} )\n Catalogue: \n    {}\n Children: \n   {}".format(
+                                            self.__class__.__name__,self.name, self.id, 
+                                            catalogue, children)
 
 class Entity(CatalogueTree):
     """ Entity class.

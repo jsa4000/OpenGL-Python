@@ -87,3 +87,28 @@ class SceneGraph(object):
         else:
             # Create the root object
             self._root = self._create_default_scene()
+
+    def _repr(self, node, level):
+       """
+       """
+       zeros = " " * (level * 3)
+       result = "---------------------------------------------------------------------\n"
+       result += zeros + " {} ( name:{}, id:{} )\n".format(node.type,
+                                                        node.name, node.id)
+       result += "----------------------------------------------------------------------\n"
+       result +=  zeros + "  Components: \n"
+       for item in node.catalogue:
+            item = node.catalogue[item]
+            result +=  zeros + "      {} ( name:{}, id:{} )\n".format(item.type,
+                                                                   item.name, item.id)
+       result += "---------------------------------------------------------------------\n"
+       result +=  zeros + "  Children: \n"     
+       for child in node.children:
+            result += self._repr(node.children[child], level+1)
+      
+       return result 
+
+    def __repr__(self):
+        """ Get current representation of the scene graph
+        """
+        return self._repr(self._root,0)

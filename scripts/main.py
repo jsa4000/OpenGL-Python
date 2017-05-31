@@ -32,7 +32,7 @@ if __name__ == '__main__':
     scene_graph = SceneGraph()
     scene_graph.init()
 
-    print(scene_graph.root)
+    print(scene_graph)
     # print(repr(scene_graph.root))
 
     # print(CatalogueManager.instance())
