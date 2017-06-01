@@ -106,11 +106,17 @@ class SceneGraph(object):
         
         
         triangle = Triangle()
-        geometry = Geometry()
-        geometry.add_vertices(triangle[0], 4)
-        geometry.add_indices(triangle[1])
-        geometry.add_point_attrib(geometry.point.color,triangle[2], 4)
-        geometry.add_point_attrib(geometry.point.textcoords,triangle[3], 2)
+        #return {"vertices":triangle[0], "indices":triangle[1], "colors":triangle[2], "textcoords":triangle[3], size=[4,3,4,2]}
+        # geometry = Geometry()
+        # geometry.add_vertices(triangle[0], 4)
+        # geometry.add_indices(triangle[1], 3)
+        # geometry.add_colors(triangle[2], 4)
+        # geometry.add_textcoords(triangle[3], 2)
+        geometry = Geometry(vertices=triangle.vertices, 
+                            indices=triangle.indices, 
+                            colors=triangle.colors, 
+                            textcoords=triangle.textcoords, 
+                            size=triangle.size)
 
         print(str(geometry))
 

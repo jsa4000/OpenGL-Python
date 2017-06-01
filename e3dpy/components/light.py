@@ -5,6 +5,9 @@ class LightComponent(Component):
     """ Light Component class
     """
 
+    # Defaut type/name the component will have
+    DEFAULT_TYPE = "light"
+
     defaults = dict( {"light": None} )
 
     def __init__(self, *args, **kwargs):

@@ -5,6 +5,9 @@ class TransformComponent(Component):
     """ Transform Component class
     """
 
+    # Defaut type/name the component will have
+    DEFAULT_TYPE = "transform"
+
     defaults = dict( {"transform": None} )
 
     def __init__(self, *args, **kwargs):

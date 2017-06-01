@@ -5,7 +5,16 @@ class GeometryComponent(Component):
     """ Geometry Component class
     """
 
-    defaults = dict({"geometry": None})
+    # Defaut type/name the component will have
+    DEFAULT_TYPE = "geometry"
+
+    # Default paramters of the component
+    defaults = dict({"geometry": None,
+                     "vertices":None, 
+                     "indices":None, 
+                     "colors":None, 
+                     "textcoords":None,
+                     "size":None})
 
     def __init__(self, *args, **kwargs):
         """ Geometry initialization

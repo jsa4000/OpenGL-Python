@@ -1,4 +1,5 @@
 import numpy as np
+from ..core.utils import *
 
 def Triangle():
      #Create default vertices 4f
@@ -12,7 +13,12 @@ def Triangle():
     uvs = [0.0, 0.0,
            0.5, 1.0,
            1.0, 0.0 ]
-    return [vertices, indices, color, uvs]
+    return ParseDict({"vertices":vertices, 
+                      "indices":indices, 
+                      "normals":None,
+                      "colors":color, 
+                      "textcoords":uvs, 
+                      "size": [4,3,3,4,2]})
 
 
 def Rectangle3D():

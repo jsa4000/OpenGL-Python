@@ -6,6 +6,9 @@ class RenderComponent(Component):
     """ Render Component class
     """
 
+    # Defaut type/name the component will have
+    DEFAULT_TYPE = "render"
+
     defaults = dict({"renderer": None,
                      "mode" : DrawMode.triangles, 
                      "usage": UsageMode.static_draw})

@@ -49,10 +49,20 @@ class Geometry(DataBase):
                         "acceleration":"accel"})
 
     # prims attributes
-    primitive = ParseDict({"indexes":"Id",
+    primitive = ParseDict({"indices":"Id",
                            "normal":"N",
                            "color":"Cd",
                            "material":"M" })
+
+    # defaults allowed in this class for the constructor
+    defaults = dict({"vertices":None, 
+                     "indices":None, 
+                     "normals":None, 
+                     "colors":None, 
+                     "textcoords":None,
+                     "size":None}) # Size will be a 4 vector
+
+    default_sizes = [4,3,3,3,2] #vertices, indices, normals, colors, textcoords
 
     # When a group is created it use a prefix to differenciate between normal attribs
     group_preffix = "group_"
@@ -73,7 +83,35 @@ class Geometry(DataBase):
         # Get the indexed in the create (simplify the code) 
         self._prims_index = self.geometry_types.primitives
         self._points_index = self.geometry_types.points
-   
+        # Extract attributes in defaults
+        self._extract_attributes()
+
+    def _extract_attributes(self):
+        # Extract all the values from the constructor
+  
+        # Set the default size if None
+        self.size = self.size or self.default_sizes
+        #loop over the defaults
+        for default in self.defaults:
+            if default == "size":
+                continue
+            # Get the current default value set
+            value = getattr(self, default)
+            if value is not None:
+                #Set the current value
+                if default == "vertices":
+                    self.add_vertices(value,self.size[0])
+                elif default == "indices":
+                    self.add_indices(value,self.size[1])
+                elif default == "normals":
+                    self.add_normals(value,self.size[2])
+                elif default == "colors":
+                    self.add_colors(value,self.size[3])
+                elif default == "textcoords":
+                    self.add_textcoords(value,self.size[4])
+            # Remove default attribute
+            delattr(self, default)
+
     def get_prim_attrib(self, name):
          return self.get(self._prims_index,name)
 
@@ -88,7 +126,7 @@ class Geometry(DataBase):
 
     def add_indices(self, values, size=3, dtype=np.uint32):
         #Add prims Attributes Elements
-        self.add_prim_attrib(self.primitive.indexes, values, size, dtype=dtype)
+        self.add_prim_attrib(self.primitive.indices, values, size, dtype=dtype)
         return self
    
     def get_point_attrib(self, name):
@@ -111,4 +149,14 @@ class Geometry(DataBase):
     def add_normals(self, values, size=3, dtype=np.float32):
         #Add point Attributes Normals
         self.add_point_attrib(self.point.normal, values, size, dtype)
+        return self
+
+    def add_textcoords(self, values, size=3, dtype=np.float32):
+            #Add point Attributes Normals
+        self.add_point_attrib(self.point.textcoords, values, size, dtype)
+        return self
+    
+    def add_colors(self, values, size=3, dtype=np.float32):
+            #Add point Attributes Normals
+        self.add_point_attrib(self.point.color, values, size, dtype)
         return self

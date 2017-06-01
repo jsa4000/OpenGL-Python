@@ -5,6 +5,9 @@ class CameraComponent(Component):
     """ Camera Component class
     """
 
+    # Defaut type/name the component will have
+    DEFAULT_TYPE = "camera"
+
     defaults = dict( {"camera": None} )
 
     def __init__(self, *args, **kwargs):
