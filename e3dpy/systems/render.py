@@ -1,4 +1,4 @@
-
+from ..drivers import Display 
 
 
 class RenderEngine(object):
@@ -6,6 +6,13 @@ class RenderEngine(object):
     
     This class will be the core for rendering the scene. This
     will take the scene and render all the renderable elements elements
+
+    Systems will be used as an interface between the components,
+    Geometry definition (vertices, primitives, etc..), shaders, material,
+    light, etc.. and the way they are manipulated for the drivers (OpenGL).
+
+    This Systems could be for Rendering, physics, manipulation,
+    Solvers, etc..
 
     Also this class will optimize the scene so only the visible and
     active elements will be renderd. Another aspects that will manage
@@ -56,3 +63,47 @@ class RenderEngine(object):
         """
         pass
 
+
+
+    
+    # @property
+    # def vertices(self):
+    #     # Check if geometry has been initialized
+    #     if self.geometry:
+    #         return self.geometry.get_point_attrib(geometry.point.position)
+    #     return None
+
+    # @property
+    # def normals(self):
+    #     # Check if geometry has been initialized
+    #     if self.geometry:
+    #         return self.geometry.get_point_attrib(geometry.point.normals)
+    #     return None
+
+    # @property
+    # def textcoords(self):
+    #     # Check if geometry has been initialized
+    #     if self.geometry:
+    #         return self.geometry.get_point_attrib(geometry.point.textcoords)
+    #     return None
+
+    # @property
+    # def colors(self):
+    #     # Check if geometry has been initialized
+    #     if self.geometry:
+    #         return self.geometry.get_point_attrib(geometry.point.colors)
+    #     return None
+
+    # @property
+    # def indices(self):
+    #     # Check if geometry has been initialized
+    #     if self.geometry:
+    #         return self.geometry.get_prim_attrib(geometry.primitives.indices)
+    #     return None
+    
+    # @property
+    # def indexed(self):
+    #     # Check if geometry has been initialized
+    #     if self.geometry:
+    #         return self.geometry.indexed
+    #     return False

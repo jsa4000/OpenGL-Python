@@ -1,9 +1,9 @@
 from .base import ThreadBase 
 from ..drivers import Display 
 
-__all__ = ['Engine']
+__all__ = ['CoreEngine']
 
-class Engine(ThreadBase):
+class CoreEngine(ThreadBase):
     """ Core Engine Class
 
         This class is the main loop of the process that will manage all
@@ -52,7 +52,7 @@ class Engine(ThreadBase):
         the display driver so the Scene could be rendered properly.
         
         """
-        super(Engine,self).__init__()
+        super(CoreEngine,self).__init__()
         # Initilaize parameters
         self._width = width
         self._height = height
@@ -114,7 +114,7 @@ class Engine(ThreadBase):
     def stop(self, close=False):
         """This method force to Stops the engine and close the window
         """
-        super(Engine,self).stop()
+        super(CoreEngine,self).stop()
         # Check if the user want to close the window
         if close:
             # close and dipose the display

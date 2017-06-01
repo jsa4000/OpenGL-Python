@@ -1,17 +1,17 @@
-from .objects import Entity, Component
+from .object import Entity, Component
 from ..components import *
-from ..geometry import Triangle, Geometry, Transform, Camera, Material
+from ..geometry import ( Triangle, Geometry, Transform, 
+                         Camera, Material, Controller)
 
-__all__ = ['SceneGraph']
+__all__ = ['SceneManager']
 
-class SceneGraph(object):
-    """ SceneGraph Base class
+class SceneManager(object):
+    """ SceneManager Base class
 
     This class will containt all the entities and componets.
     The wat this will work is in a tree base model, where the
     root property will be the main entity and the childs 
     and components will populate the Scene.
-
 
     In Scene graph the default scenario is created as follows:
 
@@ -68,6 +68,7 @@ class SceneGraph(object):
     # Set the dafult geometry in scene manger to add
     DEFAULT_GEOMETRY = Triangle()
     DEFAULT_MATERIAL = Material("./assets/images/texture.png")
+    DEFAULT_INPUT = Controller()
 
     @property
     def root(self):
@@ -107,19 +108,23 @@ class SceneGraph(object):
 
     def _create_default_scene(self):
         # Create the main roor for all the sub-entities
-        root = SceneGraph.create_empty("Root",position=[0.0,0.0,0.0])
+        root = SceneManager.create_empty("Root",position=[0.0,0.0,0.0])
        
         # Create the default camera
-        camera_entity = SceneGraph.create_camera("Camera", 
+        camera_entity = SceneManager.create_camera("Camera", 
                                                 position=[0.0,0.0,-3.0],
                                                 camera=Camera())
+        # Add an input to the camera for the viewport
+        camera_entity[None] = InputComponent("camera_input",
+                                            input=SceneManager.DEFAULT_INPUT)
+                                                
         # Create a default Geometrty with components 
-        geometry_entity = SceneGraph.create_geometry("Geometry", 
+        geometry_entity = SceneManager.create_geometry("Geometry", 
                                                     position=[0.0,0.0,0.0],
-                                                    geometry=SceneGraph.DEFAULT_GEOMETRY,
-                                                    material=SceneGraph.DEFAULT_MATERIAL)
+                                                    geometry=SceneManager.DEFAULT_GEOMETRY,
+                                                    material=SceneManager.DEFAULT_MATERIAL)
         # Create a default lighting
-        light_entity = SceneGraph.create_light(name="Light",
+        light_entity = SceneManager.create_light(name="Light",
                                                position=[0.0,1.0,0.0])
       
         # Add entitys to the root object
