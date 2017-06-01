@@ -21,7 +21,6 @@ def Triangle():
                     textcoords=textcoords, 
                     size=[3,3,None,4,2])
 
-
 def Rectangle3D():
     vertices = [
         -0.5, -0.5, 0.0, 1.0,

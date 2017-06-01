@@ -1,6 +1,6 @@
 from .objects import Entity, Component
 from ..components import *
-from ..geometry import Triangle, Geometry
+from ..geometry import Triangle, Geometry, Transform, Camera, Material
 
 __all__ = ['SceneGraph']
 
@@ -67,6 +67,7 @@ class SceneGraph(object):
 
     # Set the dafult geometry in scene manger to add
     DEFAULT_GEOMETRY = Triangle()
+    DEFAULT_MATERIAL = Material("./assets/images/texture.png")
 
     @property
     def root(self):
@@ -80,11 +81,24 @@ class SceneGraph(object):
         """
         self._root
 
+    @property
+    def camera(self):
+        """ Default active Camera component
+        """
+        return self._camera
+
+    @camera.setter
+    def camera(self, value):
+        """ Default active Camera component
+        """
+        self._camera = None
+
     def __init__(self, root=None):
         """ Constructor method for the class
         """
         # Create an empty Entity initial
         self._root = root or None
+        self._camera = None
 
     def __del__(self):
         """ Destroy all the variables
@@ -93,45 +107,23 @@ class SceneGraph(object):
 
     def _create_default_scene(self):
         # Create the main roor for all the sub-entities
-        root = Entity("root", catalogue = TransformComponent("transform_component"))
+        root = SceneGraph.create_empty("Root",position=[0.0,0.0,0.0])
        
         # Create the default camera
-        camera_entity = Entity("Camera")
-        # Create Transform component
-        transform_component = TransformComponent("transform_component")
-        # Create Camera Component
-        camera_component = CameraComponent("camera_component")
-        #Add components to the camera entity
-        camera_entity[None] = [transform_component, camera_component]
-        
-        # Create Geometry component (triangle by default)
-        geometry_component = GeometryComponent("geometry_component", geometry=SceneGraph.DEFAULT_GEOMETRY)
-        # Create Transform component
-        transform_component = TransformComponent("transform_component")
-        # Create a default Material (key name material > 1)
-        material_component_1 = MaterialComponent("mat1_component", key="name")
-        # Create a default Material (key name material > 1)
-        material_component_2 = MaterialComponent("mat2_component", key="name")
-        # Create a render component
-        render_component = RenderComponent("render_component")
-        # Create components array
-        components = [geometry_component,transform_component, material_component_1, 
-                      material_component_2, render_component]
+        camera_entity = SceneGraph.create_camera("Camera", 
+                                                position=[0.0,0.0,-3.0],
+                                                camera=Camera())
         # Create a default Geometrty with components 
-        geometry_entity = Entity("Geometry", catalogue = components)
-
+        geometry_entity = SceneGraph.create_geometry("Geometry", 
+                                                    position=[0.0,0.0,0.0],
+                                                    geometry=SceneGraph.DEFAULT_GEOMETRY,
+                                                    material=SceneGraph.DEFAULT_MATERIAL)
         # Create a default lighting
-        light_entity = Entity("AmbientLight")
-        # Create Transform component
-        transform_component = TransformComponent("transform_component")
-        # Create Transform component
-        light_component = LightComponent("light_component")
-        # Add components lo light entity
-        light_entity[None] = [transform_component, light_component ]
-
+        light_entity = SceneGraph.create_light(name="Light",
+                                               position=[0.0,1.0,0.0])
+      
         # Add entitys to the root object
-        childs = [camera_entity, geometry_entity, light_entity ]
-        root.add(childs)
+        root.add(children=[camera_entity, geometry_entity, light_entity])
 
         # Finally return the childs
         return root
@@ -145,8 +137,61 @@ class SceneGraph(object):
         if (file):
             pass
         else:
-            # Create the root object
+            #Reset current scene and create the default root object
             self._root = self._create_default_scene()
+
+    def create_empty(name="Empty", position=None, active=True):  
+        """ Create an empty object with only transformation
+        """
+        return Entity(name, active=active,catalogue=TransformComponent("transform_component",
+                                                        transform=Transform(position)))
+
+    def create_geometry(name="Geometry", position=None, geometry=None, material=None, active=True):
+        """ Create a default geometry
+        """
+        # Create Geometry component (triangle by default)
+        geometry_component = GeometryComponent("geometry_component",geometry=geometry)
+        # Create Transform component
+        transform_component = TransformComponent("transform_component",
+                                                transform=Transform(position))
+       # Create a default Material (key name material > 1)
+        material_component = MaterialComponent("material_component",material=material)
+        # Create a render component
+        render_component = RenderComponent("render_component")
+        # Create components array
+        components = [geometry_component,transform_component, 
+                      material_component,render_component]
+        # Create a default Geometrty with components 
+        geometry_entity = Entity(name,catalogue=components,active=active)
+        return geometry_entity
+
+    def create_camera(name="Camera", position=None, camera=None, active=True):
+        """ Create a default camera
+        """
+         # Create the default camera
+        camera_entity = Entity("Camera",active=active)
+        # Create Transform component
+        transform_component = TransformComponent("transform_component",
+                                                transform=Transform(position))
+        # Create Camera Component
+        camera_component = CameraComponent("camera_component", camera=camera)
+        #Add components to the camera entity
+        camera_entity[None] = [transform_component, camera_component]
+        return camera_entity
+
+    def create_light(name="Light", position=None, light=None, active=True):
+        """ Create a default light
+        """
+          # Create a default lighting
+        light_entity = Entity(name,active=active)
+        # Create Transform component
+        transform_component = TransformComponent("transform_component",
+                                                transform=Transform(position))
+        # Create Transform component
+        light_component = LightComponent("light_component", light=light)
+        # Add components lo light entity
+        light_entity[None] = [transform_component, light_component]
+        return light_entity
 
     def _repr(self, node, level):
        """ This function will print the scene entirely

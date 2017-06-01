@@ -1,6 +1,6 @@
 from collections import OrderedDict as dict
 from ..core import Component
-from ..drivers.geometry import DrawMode, UsageMode
+from ..drivers.render import DrawMode, UsageMode
 
 class RenderComponent(Component):
     """ Render Component class
@@ -9,8 +9,7 @@ class RenderComponent(Component):
     # Defaut type/name the component will have
     DEFAULT_TYPE = "render"
 
-    defaults = dict({"renderer": None,
-                     "mode" : DrawMode.triangles, 
+    defaults = dict({"mode" : DrawMode.triangles, 
                      "usage": UsageMode.static_draw})
 
     def __init__(self, *args, **kwargs):

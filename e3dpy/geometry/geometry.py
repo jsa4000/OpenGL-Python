@@ -33,7 +33,7 @@ class Geometry(DataBase):
     #Defaule type that will be used for indexing using OpenGL elements array buffer
     index_type = np.uint32
     
-    #  Geometry types supported => Mapping name
+    # Geometry types supported => Mapping name
     geometry_types = ParseDict({"points":"points",
                                 "vertices":"verts",
                                 "primitives":"prims"})
