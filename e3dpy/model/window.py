@@ -33,18 +33,22 @@ class Window:
 
     def init(self):
         self._display.init()
+        return self
    
     def update(self):
         """ Update the window
         """
         self._display.update()
+        return self
 
     def close(self,dispose=False):
         """ Close the window
         """
         self._display.close(force)
+        return self
 
     def dispose(self):
         """ Dispose manuallt the window
         """
         self._display.dispose()
+        return self

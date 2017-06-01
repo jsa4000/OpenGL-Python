@@ -1,5 +1,6 @@
 from .base import ThreadBase 
-from ..model import Window 
+from ..model import Window
+from ..workers import InputsWorker, SceneWorker, RenderWorker
 
 __all__ = ['CoreEngine']
 
@@ -48,6 +49,10 @@ class CoreEngine(ThreadBase):
         self._fps = fps
         # Set the Scene Graph
         self._scene = scene
+        # Initialize the variables for the Workers
+        self._input_worker = None
+        self._scene_worker = None
+        self._render_worker = None
 
     def __del__(self):
         """ Clean up the memory
@@ -55,10 +60,20 @@ class CoreEngine(ThreadBase):
         # Call threadBase __del__
         super(CoreEngine,self).__del__()
 
+    
+    def init(self):
+        """ Initialize all the Workers at start
+        """
+        self._input_worker = InputsWorker().init()
+        self._scene_worker = SceneWorker().init()
+        self._render_worker = RenderWorker().init()
+        return self
+
+
     # Override
     def _process(self):
         """Main process running the engine
-           
+        Basically the overal loop will be: Input, Update and Render           
         """
         # Display must be created in the same context (thread) as OpenGL
         self._display.init()
@@ -66,11 +81,15 @@ class CoreEngine(ThreadBase):
         # Start the Main loop for the program
         while not self._display.isClosed and self._running:     
 
-            # Input
-            # Update
+            # Process Inputs from the user
+            self._input_worker.run()
 
-            # Render all the elements that share the same shader.
-            # Render()
+            # Update Scene, Physics, Logic and solvers
+            # Update depend on time, inputs, collisions, logic, etc..
+            self._scene_worker.run()
+
+            # Finally render the scene
+            self._render_worker.run()
 
             # Update the display
             self._display.update()
@@ -83,5 +102,3 @@ class CoreEngine(ThreadBase):
         """
         super(CoreEngine,self).stop()
 
-  
- 

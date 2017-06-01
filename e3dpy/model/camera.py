@@ -142,6 +142,7 @@ class Camera:
         """
         rotation = Quaternion.from_axis_rotation(self._up, value*self._speed)
         self._forward = normalize(quaternion.apply_to_vector(rotation, self._forward))
+        return self
 
     def pitch(self, value):
         """ Rotate using cross product between up and forward vectors (side).
@@ -150,17 +151,20 @@ class Camera:
         rotation = Quaternion.from_axis_rotation(side, value*self._speed)
         self._forward = normalize(quaternion.apply_to_vector(rotation, self._forward))
         self._up = normalize(np.cross(self._forward,side))
+        return self
   
     def roll(self, value):
         """Rotate using the forward direction
         """
         rotation = Quaternion.from_axis_rotation(self._forward, value*self._speed)
         self._up = normalize(quaternion.apply_to_vector(rotation, self._up))
+        return self
 
     def zoom(self, value):
         """Move towards the target (forward vector)
         """
         self.position += self._forward * (self._speed * value)
+        return self
 
     def strafe(self, value):
         """Move towards the side vector
@@ -169,6 +173,7 @@ class Camera:
         """
         side = normalize(np.cross(self._up,self._forward))
         self.position += side * (self._speed * value)
+        return self
   
     def orient(self,x,y):
         """ Orient the current camera with the current x, y 
@@ -183,12 +188,14 @@ class Camera:
         rotationPitch = Quaternion.from_axis_rotation(side, y*self._speed * self._sensitivity)
         rotation = rotationYaw * rotationPitch
         self._forward = normalize(quaternion.apply_to_vector(rotation, self._forward))
+        return self
 
     def orbit(self, x, y):
         """orient + translation from target to camera following the forward vector computed
         """
         self.orient(x,y)
         self.position = self.target + (-self._forward * self._zoom) 
+        return self
 
     def pan(self, x, y):
         """It moves the camera using the up and side vectors
@@ -201,6 +208,7 @@ class Camera:
         self.position += side * pan_x
         # Place the target using the same transformation
         self.target = self.position + (self._forward * self._zoom)
+        return self
        
     
         

@@ -1,3 +1,4 @@
+from ..core import Worker 
 
 class InputsWorker(Worker):
     """ Input Worker Class
@@ -20,16 +21,17 @@ class InputsWorker(Worker):
     def __del__(self):
         """ Dispose and close the worker.
         """
-
-    def init():
-        """
-        """
         pass
 
-    def run():
+    def init(self):
+        """
+        """
+        return self
+
+    def run(self):
         """ Start the worker process
         """
-    
+        print("Input Working")
 
 
-        pass
+        return self

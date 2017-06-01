@@ -1,5 +1,4 @@
-from ..controller import Display 
-
+from ..core import Worker 
 
 class RenderWorker(Worker):
     """ Render Worker Class
@@ -52,16 +51,18 @@ class RenderWorker(Worker):
     def __del__(self):
         """ Dispose and close the worker.
         """
-
-    def init():
-        """
-        """
         pass
 
-    def run():
+    def init(self):
+        """
+        """
+        return self
+
+    def run(self):
         """ Start the worker process
         """
-        pass
+        print("Render Working")
+        return self
 
 
 

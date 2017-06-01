@@ -80,7 +80,8 @@ class SceneManager(object):
     def root(self, value):
         """ Set the new root element of the Scene Graph
         """
-        self._root
+        self._root = value
+        return self
 
     @property
     def camera(self):
@@ -144,6 +145,7 @@ class SceneManager(object):
         else:
             #Reset current scene and create the default root object
             self._root = self._create_default_scene()
+        return self
 
     def create_empty(name="Empty", position=None, active=True):  
         """ Create an empty object with only transformation

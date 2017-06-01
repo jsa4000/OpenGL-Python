@@ -1,4 +1,5 @@
 from collections import OrderedDict as dict
+import threading
 import numpy as np
 import pandas as pd
 import uuid
@@ -8,7 +9,8 @@ __all__ = ['Base',
            'Defaults',
            'DataBase',
            'DefaultBase',
-           'ThreadBase']
+           'ThreadBase',
+           'Worker']
 
 class Base(object):
     """ This is the default Base Object.
@@ -576,9 +578,34 @@ class ThreadBase(object):
             self._process()
             # Since it'not multithread set again to false
             self._running = False
+        return self
  
     def stop(self):
         """This method force to Stops the thread
         """
         self._thread_stop()
+        return self
         
+
+class Worker(object):
+    """ Abstract Worker Class
+    """
+    def __init__(self):
+        """ Initialization of the Worker
+        """
+        pass
+
+    def __del__(self):
+        """ Dispose and close the worker.
+        """
+        pass
+
+    def init(self):
+        """ Initialize the worker
+        """
+        return self
+
+    def run(self):
+        """ Start the worker process
+        """
+        return self

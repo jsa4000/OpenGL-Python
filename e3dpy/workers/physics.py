@@ -1,3 +1,4 @@
+from ..core import Worker 
 
 class PhysicsWorker(Worker):
     """ Input Worker Class
@@ -11,13 +12,14 @@ class PhysicsWorker(Worker):
     def __del__(self):
         """ Dispose and close the worker.
         """
-
-    def init():
-        """
-        """
         pass
 
-    def run():
+    def init(self):
+        """
+        """
+        return self
+
+    def run(self):
         """ Start the worker process
         """
-        pass
+        return self

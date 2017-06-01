@@ -30,8 +30,7 @@ if __name__ == '__main__':
     # For testing pourposes create simple uid
     Base.DEFAULT_UUID = Base.COUNTER
     # Create the main Scene graph and initialize
-    scene = SceneManager()
-    scene.init()
+    scene = SceneManager().init()
 
     ###################################################
     print(scene)
@@ -44,14 +43,12 @@ if __name__ == '__main__':
     # Create the display
     display = Display("e3dpy render engine", parameters.width, parameters.height)    
     # Create the engine and set the display used
-    engine = CoreEngine(display, parameters.fps)
-    engine.scene = scene
-    engine.start()
+    engine = CoreEngine(display,fps=parameters.fps,scene=scene).init().start()
 
     # Running in the main Thread
     while engine.running:
         time.sleep(1/60)
-        # print("Waiting for Implementation..")
+        print("Waiting for Implementation..")
 
     # End the engine and dispose the memory
     engine.stop(True)

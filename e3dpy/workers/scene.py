@@ -1,3 +1,4 @@
+from ..core import Worker
 
 class SceneWorker(Worker):
     """ Input Worker Class
@@ -11,13 +12,15 @@ class SceneWorker(Worker):
     def __del__(self):
         """ Dispose and close the worker.
         """
-
-    def init():
-        """
-        """
         pass
 
-    def run():
+    def init(self):
+        """
+        """
+        return self
+
+    def run(self):
         """ Start the worker process
         """
-        pass
+        print("Scene Working")
+        return self
