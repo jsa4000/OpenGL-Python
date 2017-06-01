@@ -1,8 +1,8 @@
 from ..controller import Display 
 
 
-class RenderEngine(object):
-    """ Render Engine Class
+class RenderWorker(Worker):
+    """ Render Worker Class
     
     This class will be the core for rendering the scene. This
     will take the scene and render all the renderable elements elements
@@ -45,12 +45,12 @@ class RenderEngine(object):
     """
 
     def __init__(self):
-        """ Initialization of the Render Engine
+        """ Initialization of the Worker
         """
         pass
 
     def __del__(self):
-        """ Dispose and close the render.
+        """ Dispose and close the worker.
         """
 
     def init():
@@ -58,8 +58,8 @@ class RenderEngine(object):
         """
         pass
 
-    def render():
-        """ Process to render the entire scene
+    def run():
+        """ Start the worker process
         """
         pass
 

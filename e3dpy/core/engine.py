@@ -1,5 +1,5 @@
 from .base import ThreadBase 
-from ..controller import Display 
+from ..model import Window 
 
 __all__ = ['CoreEngine']
 

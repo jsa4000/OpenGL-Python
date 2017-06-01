@@ -6,4 +6,5 @@ from .input import Input
 from .settings import Settings
 from .geometry import Geometry
 from .material import Material
+from .window import Window
 
