@@ -1,24 +1,25 @@
 import numpy as np
+from .geometry import Geometry
 from ..core.utils import *
 
 def Triangle():
      #Create default vertices 4f
-    vertices = [ -0.5, -0.5, 0.0, 1.0,
-                  0.0,  0.5, 0.0, 1.0,
-                  0.5, -0.5, 0.0, 1.0]
+    vertices = [ -0.5, -0.5, 0.0,
+                  0.0,  0.5, 0.0,
+                  0.5, -0.5, 0.0]
     indices = [ 0, 1, 2 ]
-    color = [ 1.0, 0.0, 0.0, 1.0,
+    colors = [ 1.0, 0.0, 0.0, 1.0,
               0.0, 1.0, 0.0, 1.0,
               0.0, 0.0, 1.0, 1.0]
-    uvs = [0.0, 0.0,
+    textcoords = [0.0, 0.0,
            0.5, 1.0,
            1.0, 0.0 ]
-    return ParseDict({"vertices":vertices, 
-                      "indices":indices, 
-                      "normals":None,
-                      "colors":color, 
-                      "textcoords":uvs, 
-                      "size": [4,3,3,4,2]})
+
+    return Geometry(vertices=vertices, 
+                    indices=indices, 
+                    colors=colors, 
+                    textcoords=textcoords, 
+                    size=[3,3,None,4,2])
 
 
 def Rectangle3D():

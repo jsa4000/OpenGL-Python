@@ -62,7 +62,8 @@ class Geometry(DataBase):
                      "textcoords":None,
                      "size":None}) # Size will be a 4 vector
 
-    default_sizes = [4,3,3,3,2] #vertices, indices, normals, colors, textcoords
+    #vertices, indices, normals, colors (alpha), textcoords
+    default_sizes = [3,3,3,4,2] 
 
     # When a group is created it use a prefix to differenciate between normal attribs
     group_preffix = "group_"
@@ -74,7 +75,7 @@ class Geometry(DataBase):
         if self.primitive.indexes in self.attributes[self._prims_index]:
             return True
         return False
-  
+    
     def __init__(self,*args, **kwargs):
         """This is the main contructor of the class.
 

@@ -65,7 +65,10 @@ def empty(value):
         more that one element. For other variables the condition
         will check if the object is None.
     """    
-    if isinstance(value, (list, dict, np.ndarray, tuple, set)):
+    if isinstance(value, (np.ndarray)):
+        if value.size > 1:
+             return False
+    elif isinstance(value, (list, dict, tuple, set)):
         if len(value) > 0:
             return False
     else:

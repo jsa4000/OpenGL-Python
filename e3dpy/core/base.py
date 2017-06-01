@@ -463,7 +463,7 @@ class DataBase(DefaultBase):
         return (df, columns)
 
     def get(self, index, name):
-            return self.data[index][self.attributes[index][name]]
+        return self.data[index][self.attributes[index][name]].values
 
     def remove(self, index, name):
         self.data[index].drop(self.attributes[index][name],axis=1,inplace=True)

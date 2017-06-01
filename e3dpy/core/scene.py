@@ -65,6 +65,9 @@ class SceneGraph(object):
 
     """
 
+    # Set the dafult geometry in scene manger to add
+    DEFAULT_GEOMETRY = Triangle()
+
     @property
     def root(self):
         """ Get the new root element
@@ -101,27 +104,8 @@ class SceneGraph(object):
         #Add components to the camera entity
         camera_entity[None] = [transform_component, camera_component]
         
-        # Create Geometry component
-        geometry_component = GeometryComponent("geometry_component")
-        
-        
-        triangle = Triangle()
-        #return {"vertices":triangle[0], "indices":triangle[1], "colors":triangle[2], "textcoords":triangle[3], size=[4,3,4,2]}
-        # geometry = Geometry()
-        # geometry.add_vertices(triangle[0], 4)
-        # geometry.add_indices(triangle[1], 3)
-        # geometry.add_colors(triangle[2], 4)
-        # geometry.add_textcoords(triangle[3], 2)
-        geometry = Geometry(vertices=triangle.vertices, 
-                            indices=triangle.indices, 
-                            colors=triangle.colors, 
-                            textcoords=triangle.textcoords, 
-                            size=triangle.size)
-
-        print(str(geometry))
-
-
-
+        # Create Geometry component (triangle by default)
+        geometry_component = GeometryComponent("geometry_component", geometry=SceneGraph.DEFAULT_GEOMETRY)
         # Create Transform component
         transform_component = TransformComponent("transform_component")
         # Create a default Material (key name material > 1)
