@@ -1,3 +1,4 @@
+import time
 from .base import ThreadBase 
 from ..model import Window
 from ..managers import InputsManager, SceneManager, RenderManager
@@ -84,10 +85,12 @@ class CoreEngine(ThreadBase):
 
             # Update Scene, Physics, Logic and solvers
             # Update depend on time, inputs, collisions, logic, etc..
-            self._scene_manager.run()
+            #  self._scene_manager.run()
 
             # Finally render the scene
-            self._render_manager.run()
+            # self._render_manager.run()
+
+            time.sleep(1/60)
 
             # Update the display
             self._display.update()

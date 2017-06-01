@@ -16,17 +16,23 @@ class Device:
         """
         pass
 
+    def init(self):
+        """
+        """
+        #pygame.init()
+        return self
+
     def set_mouse_visible(self, visible):
         """ Set visible the cursor
         """
-         pygame.mouse.set_visible(visible)
-         return self
+        pygame.mouse.set_visible(visible)
+        return self
 
     def set_mouse_position(self, x, y):
         """ Set current position
         """
-         pygame.mouse.set_pos([x,y]])
-         return self
+        pygame.mouse.set_pos([x,y])
+        return self
 
     def get_mouse_motion(self):
         """
@@ -39,7 +45,7 @@ class Device:
         """
         return pygame.mouse.get_pos()
   
-    def get_events():
+    def get_events(self):
         """ This functiin will return an array of (type, key)
         elements with the inpus received.
 

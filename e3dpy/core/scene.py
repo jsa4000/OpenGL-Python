@@ -134,8 +134,13 @@ class SceneGraph(object):
         # Finally return the childs
         return root
 
-    def init(self, file=None):
-        """ Initialize the current Scene.
+    def init(self):
+        """ Initializes the scene manager with the current configuration
+        """
+        return self
+
+    def load(self, file=None):
+        """ Load or reset the current Scene.
         If no file is specified then a Default Scene will be created.
         The default scene will be the basic enities and components, like
         camera, basic geometry (with basic materails), lights, etc..
@@ -203,7 +208,7 @@ class SceneGraph(object):
     def _repr(self, node, level):
        """ This function will print the scene entirely
        """
-       zeros = " " * (level * 3)
+       zeros = " " * (level * 6)
        result = "---------------------------------------------------------------------\n"
        result += zeros + " {} ( name:{}, id:{} )\n".format(node.type,
                                                         node.name, node.id)

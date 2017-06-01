@@ -9,8 +9,61 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from e3dpy.core import Base, CoreEngine, SceneGraph, ThreadBase, CatalogueManager
+from e3dpy.model import Camera
+from e3dpy.components import InputComponent
 from e3dpy.core.utils import get_cmd_parameters
 from e3dpy.controllers import Display
+
+
+def create_scene():
+    """ Create initial scene
+    """
+    # Create the main roor for all the sub-entities
+    root = SceneGraph.create_empty("Root",position=[0.0,0.0,0.0])
+    
+    # Create the default camera
+    camera_entity = SceneGraph.create_camera("Camera", 
+                                            position=[0.0,0.0,-3.0],
+                                            camera=Camera())
+    # Add an input to the camera for the viewport
+    camera_entity[None] = InputComponent("camera_input",
+                                        input=SceneGraph.DEFAULT_INPUT)
+                                            
+    # Create a default Geometrty with components 
+    geometry_entity = SceneGraph.create_geometry("Geometry", 
+                                                position=[0.0,0.0,0.0],
+                                                geometry=SceneGraph.DEFAULT_GEOMETRY,
+                                                material=SceneGraph.DEFAULT_MATERIAL)
+    # Create a default lighting
+    light_entity = SceneGraph.create_light(name="Light",
+                                            position=[0.0,1.0,0.0])
+    
+     # Create a default Geometrty with components 
+    geometry_entity2 = SceneGraph.create_geometry("Geometry2", 
+                                                position=[1.0,0.1,0.0],
+                                                geometry=SceneGraph.DEFAULT_GEOMETRY,
+                                                material=SceneGraph.DEFAULT_MATERIAL)
+
+    # Create a default Geometrty with components 
+    geometry_entity3 = SceneGraph.create_geometry("Geometry3", 
+                                                position=[-1.0,0.1,0.0],
+                                                geometry=SceneGraph.DEFAULT_GEOMETRY,
+                                                material=SceneGraph.DEFAULT_MATERIAL)
+
+    # Add an input to the geometry for the movement of the actor
+    geometry_entity3[None] = InputComponent("camera_input2",
+                                        input=SceneGraph.DEFAULT_INPUT)
+    
+    # Add a hierarchy
+    geometry_entity.add(children=[geometry_entity2,geometry_entity3])
+
+
+    # Add entitys to the root object
+    root.add(children=[camera_entity, geometry_entity, light_entity])
+
+    # Finally return the childs
+    return root
+
 
 if __name__ == '__main__':  
     # Program Start
@@ -30,12 +83,12 @@ if __name__ == '__main__':
     # For testing pourposes create simple uid
     Base.DEFAULT_UUID = Base.COUNTER
     # Create the main Scene graph and initialize
-    scene = SceneGraph().init()
+    scene = SceneGraph(create_scene()).init()
 
     ###################################################
-    print(scene)
+    #print(scene)
     print(CatalogueManager.instance())
-    print(repr(CatalogueManager.instance().head()))
+    # print(repr(CatalogueManager.instance().head()))
     ###################################################
 
     # Start the Engine in Mult-thread Mode
