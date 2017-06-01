@@ -13,19 +13,9 @@ class CoreEngine(ThreadBase):
 
     @property
     def display(self):
+        """ Get current Scene Graph
+        """
         return self._display
-
-    @property
-    def width(self):
-        return self._width
-
-    @property
-    def height(self):
-        return self._height
-
-    @property
-    def fps(self):
-        return self._fps
 
     @property
     def scene(self):
@@ -39,7 +29,7 @@ class CoreEngine(ThreadBase):
         """
         self._scene = value
      
-    def __init__(self, width=800, height=600, fps=60, scene=None):
+    def __init__(self, display, fps=60, scene=None):
         """ Contructor for the class
 
         This class is the main loop for the Engine. In this class all the 
@@ -54,38 +44,16 @@ class CoreEngine(ThreadBase):
         """
         super(CoreEngine,self).__init__()
         # Initilaize parameters
-        self._width = width
-        self._height = height
+        self._display = display
         self._fps = fps
         # Set the Scene Graph
         self._scene = scene
-        # Initialize display
-        self._display = None
 
     def __del__(self):
         """ Clean up the memory
         """
         # Call threadBase __del__
-        super(Engine,self).__del__()
-        # Dipose and close the display
-        self._dispose_display()
-
-    def _close_display(self):
-        """ Close and dipose the diplay
-        """
-        # Be sure to close and dipose previous display
-        if self.display:
-            self.display.close()
-            self._display.dispose()
-            self._display = None
-
-    def _create_display(self, name="Main Window"):
-        """ Function that create the main display
-        """
-        # Be sure to close and dipose previous display
-        self._close_display()
-        # Create the new display
-        self._display = Display(name, self.width, self.height)
+        super(CoreEngine,self).__del__()
 
     # Override
     def _process(self):
@@ -93,20 +61,19 @@ class CoreEngine(ThreadBase):
            
         """
         # Display must be created in the same context (thread) as OpenGL
-        self._create_display()
+        self._display.init()
        
         # Start the Main loop for the program
-        while not self.display.isClosed and self._running:     
+        while not self._display.isClosed and self._running:     
 
             # Input
             # Update
 
-            # Clear the display
-            self.display.clear()
             # Render all the elements that share the same shader.
             # Render()
+
             # Update the display
-            self.display.update()
+            self._display.update()
 
         # Set running to false
         self._running = False
@@ -115,9 +82,6 @@ class CoreEngine(ThreadBase):
         """This method force to Stops the engine and close the window
         """
         super(CoreEngine,self).stop()
-        # Check if the user want to close the window
-        if close:
-            # close and dipose the display
-            self._close_display()
+
   
  

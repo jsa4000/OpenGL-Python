@@ -1,4 +1,3 @@
-import OpenGL.GL as GL
 import pygame
 
 class DisplayMode:
@@ -24,9 +23,6 @@ class Display:
     # Open GL and Double Buffer are neccesary to display OpenGL
     defaultmode = DisplayMode.opengl|DisplayMode.doublebuf
 
-    # Default Background Color
-    defaulBGColor = [0.0, 0.0, 0.0, 1.0]
-
     def __init__(self, title, width=800, height=600, bpp=16, displaymode = DisplayMode.resizable):
         # Initialize all the variables
         self.title = title
@@ -34,29 +30,15 @@ class Display:
         self.height = height
         self.bpp = bpp # RGBA 8*8*8*8 = 32 bits per pixel
         self.displaymode = displaymode
-        # Initiali<e variables and Window
-        self._initialize()
 
-    def __enter__(self):
-        # Enter will always return the object itself. Use with With expressons
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        # Clean all the variables and Memory
-        self._dispose()
-
-    def _dispose(self):
+    def __del__(self):
         try:
             #Finalize pygame
             pygame.quit()
-            # SEt is closed to true
-            self.isClosed = True
         except:
             print("ERROR: Error disposing the display.")
 
-    def _initialize(self):
-        # dispose and close all the windows prior to initialize
-        self._dispose()
+    def init(self):
         # Initialize and open the display window
         try:
             # Initialize pygame
@@ -67,32 +49,29 @@ class Display:
             screen = pygame.display.set_mode((self.width, self.height), 
                                         Display.defaultmode|self.displaymode,
                                         self.bpp)
-            # Enable Depth test to avoid overlaped areas
-            #GL.glEnable(GL.GL_DEPTH_TEST)
-            # Clear the image
-            self.clear()
             # Set isclosed to false
             self.isClosed = False
         except:
             print("ERROR: Error creating the display.")
    
-    def close(self):
-        # Set close to true
-        self.isClosed = True
-
-    def dispose(self):
-        """ Stop the current task and close the window
-        """
-        self._dispose()
-
-    def clear(self, color = defaulBGColor):
-        # Clear will clean the windows color.
-        GL.glClearColor(*color)
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-
     def update(self):
         # With depth buffer flip is the way to update screen
         pygame.display.flip()
         # Check to close the window after update the window
         if self.isClosed:
             self._dispose()
+
+    def close(self, dispose=False):
+        """ This function will set close to true. However, this function
+        also allows to terminate and close the display manually to
+        safety close other processes that can be interacting with it 
+        """
+        self.isClosed = True
+        # Check if the windo must be also diposed
+        if dispose:
+            self.__del__()
+
+    def dispose(self):
+        """ Stop the current task and close the window
+        """
+        self.__del__()

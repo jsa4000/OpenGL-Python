@@ -10,6 +10,7 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from e3dpy.core import Base, CoreEngine, SceneManager, ThreadBase, CatalogueManager
 from e3dpy.core.utils import get_cmd_parameters
+from e3dpy.controllers import Display
 
 if __name__ == '__main__':  
     # Program Start
@@ -26,22 +27,26 @@ if __name__ == '__main__':
     # Read the parameters 
     parameters = get_cmd_parameters(sys.argv, parameters)
 
-
+    # For testing pourposes create simple uid
     Base.DEFAULT_UUID = Base.COUNTER
     # Create the main Scene graph and initialize
-    manager = SceneManager()
-    manager.init()
+    scene = SceneManager()
+    scene.init()
 
-    print(manager)
-    # print(repr(scene_graph.root))
-
+    ###################################################
+    print(scene)
     print(CatalogueManager.instance())
     print(repr(CatalogueManager.instance().head()))
+    ###################################################
 
     # Start the Engine in Mult-thread Mode
     ThreadBase.MULTI_THREAD = False
-    engine = CoreEngine(parameters.width, parameters.height, parameters.fps, manager)
-    #engine.start()
+    # Create the display
+    display = Display("e3dpy render engine", parameters.width, parameters.height)    
+    # Create the engine and set the display used
+    engine = CoreEngine(display, parameters.fps)
+    engine.scene = scene
+    engine.start()
 
     # Running in the main Thread
     while engine.running:
@@ -50,6 +55,7 @@ if __name__ == '__main__':
 
     # End the engine and dispose the memory
     engine.stop(True)
+    display.dispose()
 
     # Program Ends   
     print('##############################') 
