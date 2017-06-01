@@ -1,16 +1,16 @@
-from ..core import Worker
+from ..core import Worker 
 
-class SceneWorker(Worker):
+class PhysicsManager(Worker):
     """ Input Worker Class
     """
 
     def __init__(self):
-        """ Initialization of the Worker
+        """ Initialization of the Manager
         """
         pass
 
     def __del__(self):
-        """ Dispose and close the worker.
+        """ Dispose and close the manager.
         """
         pass
 
@@ -20,7 +20,6 @@ class SceneWorker(Worker):
         return self
 
     def run(self):
-        """ Start the worker process
+        """ Start the manager process
         """
-        print("Scene Working")
         return self

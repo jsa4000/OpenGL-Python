@@ -3,9 +3,9 @@ from .transform import Transform
 from ..components import *
 from ..model import (Settings, Geometry, Camera, Material, Input)
 
-__all__ = ['SceneManager']
+__all__ = ['SceneGraph']
 
-class SceneManager(object):
+class SceneGraph(object):
     """ SceneManager Base class
 
     This class will containt all the entities and componets.
@@ -109,23 +109,23 @@ class SceneManager(object):
 
     def _create_default_scene(self):
         # Create the main roor for all the sub-entities
-        root = SceneManager.create_empty("Root",position=[0.0,0.0,0.0])
+        root = SceneGraph.create_empty("Root",position=[0.0,0.0,0.0])
        
         # Create the default camera
-        camera_entity = SceneManager.create_camera("Camera", 
+        camera_entity = SceneGraph.create_camera("Camera", 
                                                 position=[0.0,0.0,-3.0],
                                                 camera=Camera())
         # Add an input to the camera for the viewport
         camera_entity[None] = InputComponent("camera_input",
-                                            input=SceneManager.DEFAULT_INPUT)
+                                            input=SceneGraph.DEFAULT_INPUT)
                                                 
         # Create a default Geometrty with components 
-        geometry_entity = SceneManager.create_geometry("Geometry", 
+        geometry_entity = SceneGraph.create_geometry("Geometry", 
                                                     position=[0.0,0.0,0.0],
-                                                    geometry=SceneManager.DEFAULT_GEOMETRY,
-                                                    material=SceneManager.DEFAULT_MATERIAL)
+                                                    geometry=SceneGraph.DEFAULT_GEOMETRY,
+                                                    material=SceneGraph.DEFAULT_MATERIAL)
         # Create a default lighting
-        light_entity = SceneManager.create_light(name="Light",
+        light_entity = SceneGraph.create_light(name="Light",
                                                position=[0.0,1.0,0.0])
       
         # Add entitys to the root object

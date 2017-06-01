@@ -1219,7 +1219,35 @@ if __name__ == "__main__":
                     camera.position.x += 0.1
                 if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
                     camera.position.x -= 0.1
-                        
+
+            """
+            Get the Key-codes used in pygame
+            events = [  "QUIT",
+                        "ACTIVEEVENT",
+                        "KEYDOWN",
+                        "KEYUP",
+                        "MOUSEMOTION",
+                        "MOUSEBUTTONUP",
+                        "MOUSEBUTTONDOWN",
+                        "JOYAXISMOTION",
+                        "JOYBALLMOTION",
+                        "JOYHATMOTION",
+                        "JOYBUTTONUP",
+                        "JOYBUTTONDOWN",
+                        "USEREVENT"]
+
+            with open("keycodes.txt", mode="w") as file:
+                for item in sorted(pygame.__dir__()):
+                    if str(item).startswith("K"):
+                        line = "{} = {}\n".format( str(item),getattr(pygame,item))
+                        file.write(line)
+                for item in events:
+                    line = "{} = {}\n".format( str(item),getattr(pygame,item))
+                    file.write(line)
+
+            """
+
+                    
             # Clear the display
             display.clear()
             

@@ -1,7 +1,7 @@
 from ..core import Worker 
 
-class RenderWorker(Worker):
-    """ Render Worker Class
+class RenderManager(Worker):
+    """ Render Manager Class
     
     This class will be the core for rendering the scene. This
     will take the scene and render all the renderable elements elements

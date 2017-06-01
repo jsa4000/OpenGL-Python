@@ -1,6 +1,6 @@
-from ..core import Worker 
+from ..core import Worker
 
-class PhysicsWorker(Worker):
+class SolversManager(Worker):
     """ Input Worker Class
     """
 
@@ -22,4 +22,5 @@ class PhysicsWorker(Worker):
     def run(self):
         """ Start the worker process
         """
+        print("Solvers Working")
         return self

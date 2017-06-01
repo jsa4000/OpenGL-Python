@@ -1,6 +1,6 @@
 from ..core import Worker 
 
-class InputsWorker(Worker):
+class InputsManager(Worker):
     """ Input Worker Class
 
     This class will manage all the events sent by the user.
@@ -14,8 +14,7 @@ class InputsWorker(Worker):
     def __init__(self):
         """ Initialization of the Worker
         """
-        # initialize the default values
-        self._last_mouse_position = [None, None]
+        pass
 
 
     def __del__(self):

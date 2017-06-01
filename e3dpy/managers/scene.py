@@ -1,6 +1,6 @@
 from ..core import Worker
 
-class SolversWorker(Worker):
+class SceneManager(Worker):
     """ Input Worker Class
     """
 
@@ -22,5 +22,5 @@ class SolversWorker(Worker):
     def run(self):
         """ Start the worker process
         """
-        print("Solvers Working")
+        print("Scene Working")
         return self

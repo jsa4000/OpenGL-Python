@@ -8,7 +8,7 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from e3dpy.core import Base, CoreEngine, SceneManager, ThreadBase, CatalogueManager
+from e3dpy.core import Base, CoreEngine, SceneGraph, ThreadBase, CatalogueManager
 from e3dpy.core.utils import get_cmd_parameters
 from e3dpy.controllers import Display
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # For testing pourposes create simple uid
     Base.DEFAULT_UUID = Base.COUNTER
     # Create the main Scene graph and initialize
-    scene = SceneManager().init()
+    scene = SceneGraph().init()
 
     ###################################################
     print(scene)

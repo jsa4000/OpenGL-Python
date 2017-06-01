@@ -1,6 +1,6 @@
 from .base import ThreadBase 
 from ..model import Window
-from ..workers import InputsWorker, SceneWorker, RenderWorker
+from ..managers import InputsManager, SceneManager, RenderManager
 
 __all__ = ['CoreEngine']
 
@@ -50,25 +50,23 @@ class CoreEngine(ThreadBase):
         # Set the Scene Graph
         self._scene = scene
         # Initialize the variables for the Workers
-        self._input_worker = None
-        self._scene_worker = None
-        self._render_worker = None
+        self._input_manager = None
+        self._scene_manager = None
+        self._render_manager = None
 
     def __del__(self):
         """ Clean up the memory
         """
         # Call threadBase __del__
         super(CoreEngine,self).__del__()
-
     
     def init(self):
         """ Initialize all the Workers at start
         """
-        self._input_worker = InputsWorker().init()
-        self._scene_worker = SceneWorker().init()
-        self._render_worker = RenderWorker().init()
+        self._input_manager = InputsManager().init()
+        self._scene_manager = SceneManager().init()
+        self._render_manager = RenderManager().init()
         return self
-
 
     # Override
     def _process(self):
@@ -82,14 +80,14 @@ class CoreEngine(ThreadBase):
         while not self._display.isClosed and self._running:     
 
             # Process Inputs from the user
-            self._input_worker.run()
+            self._input_manager.run()
 
             # Update Scene, Physics, Logic and solvers
             # Update depend on time, inputs, collisions, logic, etc..
-            self._scene_worker.run()
+            self._scene_manager.run()
 
             # Finally render the scene
-            self._render_worker.run()
+            self._render_manager.run()
 
             # Update the display
             self._display.update()
