@@ -1,4 +1,4 @@
-from .object import Entity, Component
+from .objects import Entity, Component
 from .transform import Transform
 from ..components import *
 from ..model import (Settings, Geometry, Camera, Material, Input)

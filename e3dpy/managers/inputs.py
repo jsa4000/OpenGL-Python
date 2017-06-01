@@ -1,5 +1,8 @@
+import numpy as np
 from ..core import Worker 
+from ..components import InputComponent
 from ..controllers import Device
+from ..core import CatalogueManager
 from ..model import Input, Preset, Mouse, Keys, EventType
 
 class InputsManager(Worker):
@@ -35,12 +38,26 @@ class InputsManager(Worker):
     def run(self):
         """ Start the worker process
         """
-        
-        # Some test
-        events = self._device.get_events()
-        for event in events:
-            if event.type == EventType.QUIT:
-                print("QUIT!")
-        print(events)
+        # To improve performances this can be done during the initializetion
+        # This is only when it's in game mode and not in develop mode
+
+        # Get the current Catalog
+        df = CatalogueManager.instance().dataframe
+        col_input = InputComponent.DEFAULT_TYPE
+        # Get the current input actors
+        components = df[col_input].dropna(axis=0)
+
+        # Get the relationship betwen entities and components
+        for component in components.index:
+            # entity : component (input)
+            # print("{}:{}".format(component, components[component]))
+            pass
+
+        # For each component get the 
+        # events = self._device.get_events()
+        # for event in events:
+        #     if event.type == EventType.QUIT:
+        #         print("QUIT!")
+        # print(events)
 
         return self
