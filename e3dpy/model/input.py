@@ -1,8 +1,7 @@
 from ..core.utils import *
 
-
-class Controller:
-    """ Controller Class Definition
+class Input:
+    """ Input Class Definition
     """
 
     def __init__(self):

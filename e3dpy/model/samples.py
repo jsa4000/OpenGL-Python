@@ -1,19 +1,22 @@
 import numpy as np
 from .geometry import Geometry
-from ..core.utils import *
+from .material import Material
 
-def Triangle():
-     #Create default vertices 4f
+def basic_material():
+        return Material("./assets/images/texture.png")
+
+def triangle():
+    #Create default vertices 4f
     vertices = [ -0.5, -0.5, 0.0,
-                  0.0,  0.5, 0.0,
-                  0.5, -0.5, 0.0]
+                0.0,  0.5, 0.0,
+                0.5, -0.5, 0.0]
     indices = [ 0, 1, 2 ]
     colors = [ 1.0, 0.0, 0.0, 1.0,
-              0.0, 1.0, 0.0, 1.0,
-              0.0, 0.0, 1.0, 1.0]
+            0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 1.0]
     textcoords = [0.0, 0.0,
-           0.5, 1.0,
-           1.0, 0.0 ]
+        0.5, 1.0,
+        1.0, 0.0 ]
 
     return Geometry(vertices=vertices, 
                     indices=indices, 
@@ -21,20 +24,20 @@ def Triangle():
                     textcoords=textcoords, 
                     size=[3,3,None,4,2])
 
-def Rectangle3D():
+def rectangle():
     vertices = [
         -0.5, -0.5, 0.0, 1.0,
-         0.5, -0.5, 0.0, 1.0,
-         0.5,  0.5, 0.0, 1.0,
+        0.5, -0.5, 0.0, 1.0,
+        0.5,  0.5, 0.0, 1.0,
         -0.5,  0.5, 0.0, 1.0
-           ]
+        ]
     indices = [
         0, 1, 2, 
         2, 3, 0
     ]
     return (np.asarray(vertices, dtype=np.float32),np.asarray(indices, dtype=np.uint32))
 
-def cube3D(origin = [0.0,0.0,0.0], transform = None):
+def cube(origin = [0.0,0.0,0.0], transform = None):
     """
         This function will return a cube using normalized units in
         worl space. You can transform the oject by performing a
@@ -64,13 +67,13 @@ def cube3D(origin = [0.0,0.0,0.0], transform = None):
     vertices = [
         # First we represent the vertices on the bottom y = -1
         -0.5, -0.5, 0.5, 1.0, # right, bottom, back vertex. (0)
-         0.5, -0.5, 0.5, 1.0, # left, bottom, back vertex. (1)
-         0.5,  0.5, 0.5, 1.0, # left, bottom, ack vertex. (2)
+        0.5, -0.5, 0.5, 1.0, # left, bottom, back vertex. (1)
+        0.5,  0.5, 0.5, 1.0, # left, bottom, ack vertex. (2)
         -0.5,  0.5, 0.5, 1.0, # right, bottom, back vertex. (3)   
         # The same vertex positions but on the top of the cube Y= 1
         -0.5, -0.5, -0.5, 1.0, # left, bottom, front vertex. (4)
-         0.5, -0.5, -0.5, 1.0, # right, bottom, front vertex. (5)
-         0.5,  0.5, -0.5, 1.0, # right, bottom, front vertex. (6)
+        0.5, -0.5, -0.5, 1.0, # right, bottom, front vertex. (5)
+        0.5,  0.5, -0.5, 1.0, # right, bottom, front vertex. (6)
         -0.5,  0.5, -0.5, 1.0 # left, bottom, front vertex. (7)
     ]
     #Conver the array into a numpy array (copy vs reference)
@@ -91,7 +94,7 @@ def cube3D(origin = [0.0,0.0,0.0], transform = None):
         6, 7, 3, 3, 2, 6, # back face
         5, 6, 2, 2, 1, 5, # Right Side
         7, 4, 0, 0, 3, 7 # Top face
-     ]
+    ]
     #Conver the array into a numpy array (copy vs reference)
     nindices = np.asarray(indices, dtype=np.uint32)
     # The vertices are not repeated. You can have the vertices repeated if

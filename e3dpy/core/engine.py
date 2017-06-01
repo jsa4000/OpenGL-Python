@@ -1,5 +1,5 @@
 from .base import ThreadBase 
-from ..drivers import Display 
+from ..controller import Display 
 
 __all__ = ['CoreEngine']
 

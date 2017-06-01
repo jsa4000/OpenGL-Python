@@ -1,7 +1,7 @@
 from .object import Entity, Component
+from .transform import Transform
 from ..components import *
-from ..geometry import ( Triangle, Geometry, Transform, 
-                         Camera, Material, Controller)
+from ..model import (Settings, Geometry, Camera, Material, Input)
 
 __all__ = ['SceneManager']
 
@@ -66,9 +66,9 @@ class SceneManager(object):
     """
 
     # Set the dafult geometry in scene manger to add
-    DEFAULT_GEOMETRY = Triangle()
-    DEFAULT_MATERIAL = Material("./assets/images/texture.png")
-    DEFAULT_INPUT = Controller()
+    DEFAULT_GEOMETRY = Settings.default_geometry
+    DEFAULT_MATERIAL = Settings.default_material
+    DEFAULT_INPUT = Settings.default_input
 
     @property
     def root(self):
