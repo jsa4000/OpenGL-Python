@@ -1,7 +1,7 @@
 from collections import OrderedDict as dict
 from ..core import Component
 
-class Transform(Component):
+class TransformComponent(Component):
     """ Transform Component class
     """
 
@@ -10,7 +10,7 @@ class Transform(Component):
     def __init__(self, *args, **kwargs):
         """ Transform initialization
         """
-        super(Transform,self).__init__(*args, **kwargs)
+        super(TransformComponent,self).__init__(*args, **kwargs)
         
 
 

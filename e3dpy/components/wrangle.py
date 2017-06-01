@@ -1,7 +1,7 @@
 from collections import OrderedDict as dict
 from ..core import Component
 
-class Wrangle(Component):
+class WrangleComponent(Component):
     """ Wrangle Component class
     """
 
@@ -10,7 +10,7 @@ class Wrangle(Component):
     def __init__(self, *args, **kwargs):
         """ Wrangle initialization
         """
-        super(Wrangle,self).__init__(*args, **kwargs)
+        super(WrangleComponent,self).__init__(*args, **kwargs)
         
 
 

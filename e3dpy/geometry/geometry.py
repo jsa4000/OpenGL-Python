@@ -2,7 +2,7 @@ import numpy as np
 from ..core import DataBase
 from ..core.utils import *
 
-class GeometryDB(DataBase):
+class Geometry(DataBase):
     """ Geometry Class 
     
     This class will create and store all the geometry needed
@@ -32,83 +32,83 @@ class GeometryDB(DataBase):
 
     #Defaule type that will be used for indexing using OpenGL elements array buffer
     index_type = np.uint32
-
-    #  Geometry types supported.
+    
+    #  Geometry types supported => Mapping name
     geometry_types = ParseDict({"points":"points",
                                 "vertices":"verts",
                                 "primitives":"prims"})
 
-    # Some standard attributes to use manipulating geometry
-    points_attributes = ParseDict({"position":"P",
-                                    "normal":"N",
-                                    "textcoords":"UV",
-                                    "color":"Cd",
-                                    "scale":"pscale",
-                                    "velocity":"V",
-                                    "life":"life",
-                                    "acceleration":"accel"})
-
-    # Usually for vertices apply the same attrbiutes since conceptually are very similar
-    vertices_attributes = points_attributes
+    # Some standard attributes to use for manipulating geometry
+    point = ParseDict({"position":"P",
+                        "normal":"N",
+                        "textcoords":"UV",
+                        "color":"Cd",
+                        "scale":"pscale",
+                        "velocity":"V",
+                        "life":"life",
+                        "acceleration":"accel"})
 
     # prims attributes
-    prims_attributes = ParseDict({"indexes":"Id",
-                                 "normal":"N",
-                                 "color":"Cd",
-                                 "material":"M" })
+    primitive = ParseDict({"indexes":"Id",
+                           "normal":"N",
+                           "color":"Cd",
+                           "material":"M" })
 
     # When a group is created it use a prefix to differenciate between normal attribs
     group_preffix = "group_"
 
+    @property
+    def indexed(self):
+        """ Property to return if the geometry has vertex indexing (faces)
+        """
+        if self.primitive.indexes in self.attributes[self._prims_index]:
+            return True
+        return False
+  
     def __init__(self,*args, **kwargs):
         """This is the main contructor of the class.
 
         """
-        super(GeometryDB,self).__init__(*args,**kwargs)
+        super(Geometry,self).__init__(*args,**kwargs)
         # Get the indexed in the create (simplify the code) 
-        self._iprims = self.geometry_types.primitives
-        self._ipoints = self.geometry_types.points
+        self._prims_index = self.geometry_types.primitives
+        self._points_index = self.geometry_types.points
    
-    def has_indices(self):
-        if self.prims_attributes.indexes in self.attributes[self._iprims]:
-            return True
-        return False
-  
-    def getPrimsAttrib(self, name):
-        return self.data[self._iprims][self.attributes[self._iprims][name]]
+    def get_prim_attrib(self, name):
+         return self.get(self._prims_index,name)
 
-    def delPrimsAttrib(self, name):
-        self.data[self._iprims].drop(self.attributes[self._iprims][name], axis=1, inplace=True)
+    def remove_prim_attrib(self, name):
+        self.remove(self._prims_index,name)
         return self
 
-    def addPrimsAttrib(self, name, values=None, size=3, default=None, dtype=None):
+    def add_prim_attrib(self, name, values=None, size=3, default=None, dtype=None):
         # Get the new attribute and dataframe
-        self.addAttrib(self._iprims, name, values, size, default, dtype)
+        self.add(self._prims_index, name, values, size, default, dtype)
         return self
 
-    def addIndices(self, values, size=3, dtype=np.uint32):
+    def add_indices(self, values, size=3, dtype=np.uint32):
         #Add prims Attributes Elements
-        self.addPrimsAttrib(self.prims_attributes.indexes, values, size, dtype=dtype)
+        self.add_prim_attrib(self.primitive.indexes, values, size, dtype=dtype)
         return self
    
-    def getPointAttrib(self, name):
-        return self.data[self._ipoints][self.attributes[self._ipoints][name]]
+    def get_point_attrib(self, name):
+        return self.get(self._points_index,name)
 
-    def delPointAttrib(self, name):
-        self.data[self._ipoints].drop(self.attributes[self._ipoints][name], axis=1, inplace=True)
+    def remove_point_attrib(self, name):
+        self.remove(self._points_index,name)
         return self
 
-    def addPointAttrib(self, name, values=None, size=3,  default=None, dtype=None):
+    def add_point_attrib(self, name, values=None, size=3,  default=None, dtype=None):
          # Get the new attribute and dataframe
-        self.addAttrib(self._ipoints, name, values, size, default, dtype)
+        self.add(self._points_index, name, values, size, default, dtype)
         return self
 
-    def addPoints(self, values, size=3, dtype=np.float32):
+    def add_vertices(self, values, size=3, dtype=np.float32):
         #Add point Attributes Position
-        self.addPointAttrib(self.points_attributes.position, values, size, dtype)
+        self.add_point_attrib(self.point.position, values, size, dtype)
         return self
 
-    def addNormals(self, values, size=3, dtype=np.float32):
+    def add_normals(self, values, size=3, dtype=np.float32):
         #Add point Attributes Normals
-        self.addPointAttrib(self.points_attributes.normal, values, size, dtype)
+        self.add_point_attrib(self.point.normal, values, size, dtype)
         return self

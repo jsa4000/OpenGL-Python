@@ -1,6 +1,6 @@
 from .objects import Entity, Component
-from ..components import Camera, Geometry, Material, Render, Transform, Light
-from ..geometry import Triangle, GeometryDB
+from ..components import *
+from ..geometry import Triangle, Geometry
 
 __all__ = ['SceneGraph']
 
@@ -90,40 +90,40 @@ class SceneGraph(object):
 
     def _create_default_scene(self):
         # Create the main roor for all the sub-entities
-        root = Entity("root", catalogue = Transform("transform_component"))
+        root = Entity("root", catalogue = TransformComponent("transform_component"))
        
         # Create the default camera
         camera_entity = Entity("Camera")
         # Create Transform component
-        transform_component = Transform("transform_component")
+        transform_component = TransformComponent("transform_component")
         # Create Camera Component
-        camera_component = Camera("camera_component")
+        camera_component = CameraComponent("camera_component")
         #Add components to the camera entity
         camera_entity[None] = [transform_component, camera_component]
         
         # Create Geometry component
-        geometry_component = Geometry("geometry_component")
+        geometry_component = GeometryComponent("geometry_component")
         
         
         triangle = Triangle()
-        geometry = GeometryDB()
-        geometry.addPoints(triangle[0], 4)
-        geometry.addIndices(triangle[1])
-        geometry.addPointAttrib("Cd",triangle[2], 4)
-        geometry.addPointAttrib("UV",triangle[3], 2)
+        geometry = Geometry()
+        geometry.add_vertices(triangle[0], 4)
+        geometry.add_indices(triangle[1])
+        geometry.add_point_attrib(geometry.point.color,triangle[2], 4)
+        geometry.add_point_attrib(geometry.point.textcoords,triangle[3], 2)
 
         print(str(geometry))
 
 
 
         # Create Transform component
-        transform_component = Transform("transform_component")
+        transform_component = TransformComponent("transform_component")
         # Create a default Material (key name material > 1)
-        material_component_1 = Material("mat1_component", key="name")
+        material_component_1 = MaterialComponent("mat1_component", key="name")
         # Create a default Material (key name material > 1)
-        material_component_2 = Material("mat2_component", key="name")
+        material_component_2 = MaterialComponent("mat2_component", key="name")
         # Create a render component
-        render_component = Render("render_component")
+        render_component = RenderComponent("render_component")
         # Create components array
         components = [geometry_component,transform_component, material_component_1, 
                       material_component_2, render_component]
@@ -133,9 +133,9 @@ class SceneGraph(object):
         # Create a default lighting
         light_entity = Entity("AmbientLight")
         # Create Transform component
-        transform_component = Transform("transform_component")
+        transform_component = TransformComponent("transform_component")
         # Create Transform component
-        light_component = Light("light_component")
+        light_component = LightComponent("light_component")
         # Add components lo light entity
         light_entity[None] = [transform_component, light_component ]
 

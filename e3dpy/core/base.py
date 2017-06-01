@@ -362,7 +362,7 @@ class DataBase(DefaultBase):
                   store a data frame with the attributes.
                   data.keys() = ["People","Product"]
 
-            attributes: Attrbiutes will be stored per data index.
+            attributes: Attributes will be stored per data index.
                  In previous example we will have different attributes
                  for "Person" and different attribs for "Product". 
                  In case "Person" has an attribute with posistion ("P") 
@@ -401,7 +401,7 @@ class DataBase(DefaultBase):
         # Dispose all the objects and memory allocated
         pass
     
-    def _createAttribute(self, df, name, size=3, values=None, default=None, dtype=None):
+    def _create_attribute(self, df, name, size=3, values=None, default=None, dtype=None):
         """ This will create a n Attribute inside the current df.
         
         Parameters:
@@ -449,32 +449,32 @@ class DataBase(DefaultBase):
             # create an array with the same number of rows as the current
             values = np.tile(default,(len(df.index)))
         # Reshape the values [ Maybe should be normalized and flatten]
-        values = np.array(np.reshape(values, (-1, size)) ,dtype=dtype)
+        values = np.array(np.reshape(values,(-1, size)),dtype=dtype)
         # Check if the DataFrame is empty
         if df is None or df.empty:
             # Add the current data into the attributes frame
-            df = pd.DataFrame(values, columns=columns)
+            df = pd.DataFrame(values,columns=columns)
         else:
             # Add the current data into the attributes frame
-            dfvalues = pd.DataFrame(values, columns=columns)
+            dfvalues = pd.DataFrame(values,columns=columns)
             # Append both dataframes
-            df = pd.merge(df, dfvalues, how='inner', left_index=True, right_index=True)
+            df = pd.merge(df, dfvalues,how='inner',left_index=True,right_index=True)
         # Set the columns into the the current Point attribute
         return (df, columns)
 
-    def getAttrib(self, index, name):
+    def get(self, index, name):
             return self.data[index][self.attributes[index][name]]
 
-    def delAttrib(self, index, name):
-        self.data[index].drop( self.attributes[index][name], axis=1, inplace=True)
+    def remove(self, index, name):
+        self.data[index].drop(self.attributes[index][name],axis=1,inplace=True)
 
-    def addAttrib(self, index, name, values=None, size=3, default=None, dtype=None):
+    def add(self, index, name, values=None, size=3, default=None, dtype=None):
         # Check if current data frame is not create
         if (index not in self.data):
             self.data[index] = pd.DataFrame()
             self.attributes[index] = dict()
         # Get the new attribute and dataframe
-        result = self._createAttribute(self.data[index],name,size,values,default,dtype)
+        result = self._create_attribute(self.data[index],name,size,values,default,dtype)
         if not empty(result):
             # Set the returned dataframe with the new attribute
             self.data[index] = result[0]

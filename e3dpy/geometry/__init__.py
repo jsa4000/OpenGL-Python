@@ -2,4 +2,4 @@
 from __future__ import absolute_import, division, print_function
 
 from .create import Triangle
-from .geometry import GeometryDB
+from .geometry import Geometry

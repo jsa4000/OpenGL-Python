@@ -1,7 +1,7 @@
 from collections import OrderedDict as dict
 from ..core import Component
 
-class Material(Component):
+class MaterialComponent(Component):
     """ Material Component class
     """
 
@@ -10,7 +10,7 @@ class Material(Component):
     def __init__(self, *args, **kwargs):
         """ Material initialization
         """
-        super(Material,self).__init__(*args, **kwargs)
+        super(MaterialComponent,self).__init__(*args, **kwargs)
         
 
 

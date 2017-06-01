@@ -1,7 +1,7 @@
 from collections import OrderedDict as dict
 from ..core import Component
 
-class Camera(Component):
+class CameraComponent(Component):
     """ Camera Component class
     """
 
@@ -10,7 +10,7 @@ class Camera(Component):
     def __init__(self, *args, **kwargs):
         """ Camera initialization
         """
-        super(Camera,self).__init__(*args, **kwargs)
+        super(CameraComponent,self).__init__(*args, **kwargs)
         
 
 

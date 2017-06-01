@@ -1,19 +1,16 @@
 from collections import OrderedDict as dict
 from ..core import Component
-from ..drivers.geometry import DrawMode, UsageMode
 
-class Geometry(Component):
+class GeometryComponent(Component):
     """ Geometry Component class
     """
 
-    defaults = dict({"geometry": None,
-                     "mode" : DrawMode.triangles, 
-                     "usage": UsageMode.static_draw})
+    defaults = dict({"geometry": None})
 
     def __init__(self, *args, **kwargs):
         """ Geometry initialization
         """
-        super(Geometry,self).__init__(*args, **kwargs)
+        super(GeometryComponent,self).__init__(*args, **kwargs)
         
     
 
