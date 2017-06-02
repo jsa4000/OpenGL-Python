@@ -1,6 +1,6 @@
 import pygame
 from ..core.utils import *
-from ..model.input import EventType
+from ..model.actions import EventType
 
 class Device:
     """  Device Class
@@ -59,6 +59,26 @@ class Device:
             display.close()
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             display.close()
+
+        Event Type	    Parameters
+        -------------------------------------
+        QUIT	        None
+        ACTIVEEVENT	    gain, state
+        KEYDOWN	        unicode, key, mod
+        KEYUP	        key, mod
+        MOUSEMOTION	    pos, rel, buttons
+        MOUSEBUTTONUP	pos, button
+        MOUSEBUTTONDOWN	pos, button
+        JOYAXISMOTION	joy, axis, value
+        JOYBALLMOTION	joy, ball, rel
+        JOYHATMOTION	joy, hat, value
+        JOYBUTTONUP	    joy, button
+        JOYBUTTONDOWN	joy, button
+        VIDEORESIZE	    size, w, h
+        VIDEOEXPOSE	    None
+        USEREVENT	    Code
+        -----------------------------------
+        KEYSPRESSED     Keys
         """
         events = pygame.event.get()
         if empty(events):

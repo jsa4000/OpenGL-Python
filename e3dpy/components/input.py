@@ -8,7 +8,7 @@ class InputComponent(Component):
     # Defaut type/name the component will have
     DEFAULT_TYPE = "input"
 
-    defaults = dict( {"input": None} )
+    defaults = dict( {"actions": None} )
 
     def __init__(self, *args, **kwargs):
         """ Input initialization

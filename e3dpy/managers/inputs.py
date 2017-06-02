@@ -2,8 +2,8 @@ import numpy as np
 from ..core import Worker 
 from ..components import InputComponent
 from ..controllers import Device
-from ..core import CatalogueManager
-from ..model import Input, Preset, Mouse, Keys, EventType
+from ..core import CatalogueManager, Globals
+from ..model import Actions, Action, Mouse, Keys, EventType
 
 class InputsManager(Worker):
     """ Input Worker Class
@@ -47,23 +47,38 @@ class InputsManager(Worker):
         # Get the current input actors
         components = df[col_input].dropna(axis=0)
 
+        # Get all the events in the current frame
+        events = self._device.get_events()
+
         # Get the relationship betwen entities and components
         for component in components.index:
             # entity : component (input)
             # print("{}:{}".format(component, components[component]))
-            pass
+            self._process_component_events(components[component],events)
 
-        # Get all the events in the current frame
-        for event in self._device.get_events():
-            if event.type == EventType.QUIT:
-                print("quit")
-            if event.type == EventType.KEYUP:
-                print("Key Up".format(event.key))
-            if event.type == EventType.KEYDOWN:
-                print("Key Down".format(event.key))
-            if event.type == EventType.MOUSEMOTION:
-                pass
-            if event.type == EventType.KEYSPRESSED:
-                print("Keys Pressed".format(event.keys))
-
+        # Get all the events in the current frame for globals¡ events
+        for event in events:
+            if event.type == EventType.QUIT or \
+              (event.type == EventType.KEYUP and event.key == Keys.K_ESCAPE):
+                Globals.display.close()
+                break
+        # End the worker run process
         return self
+
+    def _process_component_events(self, component, events):
+        """ Function to process all the events for the current component
+        """
+        #Get the inputs/actions from the current component
+        component =  CatalogueManager.instance().get(component)
+        actions = component.actions
+        actions = [ {"name": "Camera Orbit",
+                    "type":"EventType.MOUSEMOTION",
+                     "parameters":["Mouse.LEFTBUTTON"],
+                     "action":"entity.camera.orbit(event.rel[0],event.rel[1])"},
+                    {"name": "Camera Pan",
+                     "type":"EventType.MOUSEMOTION",
+                     "parameters":"[Mouse.MIDDLEBUTTON]",
+                     "action":"entity.camera.pan(event.rel[0],event.rel[1])"}]
+        actions = Actions(actions)
+        print(inputs)
+                       

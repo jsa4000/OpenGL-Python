@@ -6,8 +6,8 @@ class Settings:
     """
 
     @property
-    def default_input():
-        return Input()
+    def default_actions():
+        return None
 
     @property
     def default_material():

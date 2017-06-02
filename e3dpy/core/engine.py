@@ -1,6 +1,7 @@
 import time
 from .base import ThreadBase 
 from ..model import Window
+from .globals import Globals
 from ..managers import InputsManager, SceneManager, RenderManager
 
 __all__ = ['CoreEngine']
@@ -10,7 +11,6 @@ class CoreEngine(ThreadBase):
 
         This class is the main loop of the process that will manage all
         the scene like inputs, updates, rendering, physics, etc..
-
     """
 
     @property
@@ -67,6 +67,11 @@ class CoreEngine(ThreadBase):
         self._input_manager = InputsManager().init()
         self._scene_manager = SceneManager().init()
         self._render_manager = RenderManager().init()
+        # Set the globals
+        Globals.engine = self
+        Globals.scene = self.scene
+        Globals.display = self.display
+        # Return itself for Cascade
         return self
 
     # Override
@@ -75,10 +80,10 @@ class CoreEngine(ThreadBase):
         Basically the overal loop will be: Input, Update and Render           
         """
         # Display must be created in the same context (thread) as OpenGL
-        self._display.init()
+        self.display.init()
        
         # Start the Main loop for the program
-        while not self._display.isClosed and self._running:     
+        while not self.display.isClosed and self.running:     
 
             # Process Inputs from the user
             self._input_manager.run()
@@ -93,7 +98,7 @@ class CoreEngine(ThreadBase):
             time.sleep(1/60)
 
             # Update the display
-            self._display.update()
+            self.display.update()
 
         # Set running to false
         self._running = False

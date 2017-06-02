@@ -1,10 +1,10 @@
 from ..core.utils import *
 
-class Input:
-    """ Input Class Definition
+class Actions(object):
+    """ Actions Class Definition
 
     This class will map the inputs from devices such as
-    key board, clicks, etc.. to apply a creatain action.
+    key board, clicks, etc.. to apply a certaion action.
 
     The idea is to have mapped all the possible inputs from
     the keyboard into actions. Actions could be from simple
@@ -15,17 +15,30 @@ class Input:
     structutre like dictionary
     """
 
-    def __init__(self):
+    def __init__(self, actions):
         # List that will store all the input-action for this instance
-        self._presets = []
-    
+        self._items = []
+        for action in actions:
+            action = ParseDict(action)
+            self._presets.append(Action(action.name, action.type,
+                                        action.parameters, action.action))
 
-class Preset(object):
-    """ Class to represent the input action behaviour
+class Action(object):
+    """ Class to represent the input/action behaviour
     """
-    def __init__(self, input, action):
-        self.input = input
+    def __init__(self, name, type, parameters, action):
+        self.name = name
+        self.type = eval(type)
+        self.parameters = [eval(parameter) for parameter in parameters]
         self.action = action
+
+    def execute(self, event):
+        """ Execute the current actuin
+        """
+        print(execstr)
+        execstr = eval(self.action)
+        print(execstr)
+
 
 class EventType:
     """ Enumeration with all events typesupported 

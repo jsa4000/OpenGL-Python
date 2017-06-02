@@ -1,7 +1,7 @@
 from .objects import Entity, Component
 from .transform import Transform
 from ..components import *
-from ..model import (Settings, Geometry, Camera, Material, Input)
+from ..model import (Settings, Geometry, Camera, Material, Actions)
 
 __all__ = ['SceneGraph']
 
@@ -68,7 +68,7 @@ class SceneGraph(object):
     # Set the dafult geometry in scene manger to add
     DEFAULT_GEOMETRY = Settings.default_geometry
     DEFAULT_MATERIAL = Settings.default_material
-    DEFAULT_INPUT = Settings.default_input
+    DEFAULT_INPUT = Settings.default_actions
 
     @property
     def root(self):
