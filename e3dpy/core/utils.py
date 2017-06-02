@@ -101,11 +101,14 @@ def nparray(value, dtype=np.float32):
 class ParseDict(object):
     """ Parse a dictionary a convert it into a class
     """
-    def __init__(self, dictionary):
+    def __init__(self, args=None, **kwargs):
         """Constructor
         """
-        for key in dictionary:
-            setattr(self, key, dictionary[key])
+        if args:
+            for key in args:
+                setattr(self, key, args[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
     def __repr__(self):
         """"""
         return "<ParseDict: {}>".format(self.__dict__)

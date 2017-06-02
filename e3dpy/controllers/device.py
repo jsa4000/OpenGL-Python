@@ -1,4 +1,6 @@
 import pygame
+from ..core.utils import *
+from ..model.input import EventType
 
 class Device:
     """  Device Class
@@ -9,7 +11,6 @@ class Device:
     display.
 
     """
- 
     def __init__(self):
         """This class won't do anything.
         It's supposed to be alreaddy initialized pygame.
@@ -45,8 +46,9 @@ class Device:
         """
         return pygame.mouse.get_pos()
   
+   
     def get_events(self):
-        """ This functiin will return an array of (type, key)
+        """ This function will return an array of (type, key)
         elements with the inpus received.
 
         To take into consideration if a key is currently being pressed
@@ -58,9 +60,17 @@ class Device:
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             display.close()
         """
-        return pygame.event.get()
+        events = pygame.event.get()
+        if empty(events):
+            # Check whether buttons or keys are pressed
+            keys = self.get_keys_pressed()
+            if not empty(keys):
+                events.append(ParseDict(type=EventType.KEYSPRESSED, keys=keys))
+        #Returne the capture events
+        return events
 
-    def get_mouse_pressed(self):
+
+    def get_buttons_pressed(self):
         """ Function to get the buttons currently pressed
         The function will return an array with the mouse 
         buttons pressed. [0,1,0]
@@ -69,20 +79,35 @@ class Device:
             if mouse[LEFTBUTTON]:
                 pass
         """
-        return pygame.mouse.get_pos()
+        return pygame.mouse.get_pressed()
 
-    def get_key_pressed(self):
+    def get_keys_pressed(self):
         """ This will return a mask with the keys pressed.
         To check the keys that are currently pressed use the 
         following code:
 
+        (0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+         0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+         0, 0, 0, 0, 0, .. , 0, 0)
+
+        1 in Position 8 => K_BACKSPACE = 8
+        1 in postion 13 => K_RETURN	=	13
+
+        The returned array for this function will be:
+        [8, 13]
+
+        # In pygame we do the following, because the position will
+        give us if that key has been pressed or not
         keys = get_keyboard_input()
         if keys[pygame.K_LEFT] and keys[pygame.K_LSHIFT]:
             pass
 
         NOTE: To check the specific event that has been triggered
         (KEYUP, KEYDOWN ), use isntead get_events()
+        When you keep pressed a button there is no event assigned,
+        so we need to check it after.
         """  
         # Force to update the current events and retrieve the current
         pygame.event.pump()
-        return pygame.key.get_pressed() 
+        # Search for all the postion equal to 1
+        return [i for i,value in enumerate(pygame.key.get_pressed()) if value]

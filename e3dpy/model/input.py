@@ -43,6 +43,8 @@ class EventType:
     JOYBUTTONUP = 11
     JOYBUTTONDOWN = 10
     USEREVENT = 24
+    # New event added with the keys pressed
+    KEYSPRESSED = 20
 
 class Mouse:
     """ Mouse button types

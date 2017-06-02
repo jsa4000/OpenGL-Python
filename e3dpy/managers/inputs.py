@@ -53,11 +53,17 @@ class InputsManager(Worker):
             # print("{}:{}".format(component, components[component]))
             pass
 
-        # For each component get the 
-        # events = self._device.get_events()
-        # for event in events:
-        #     if event.type == EventType.QUIT:
-        #         print("QUIT!")
-        # print(events)
+        # Get all the events in the current frame
+        for event in self._device.get_events():
+            if event.type == EventType.QUIT:
+                print("quit")
+            if event.type == EventType.KEYUP:
+                print("Key Up".format(event.key))
+            if event.type == EventType.KEYDOWN:
+                print("Key Down".format(event.key))
+            if event.type == EventType.MOUSEMOTION:
+                pass
+            if event.type == EventType.KEYSPRESSED:
+                print("Keys Pressed".format(event.keys))
 
         return self
