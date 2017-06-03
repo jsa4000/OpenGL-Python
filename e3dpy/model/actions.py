@@ -1,5 +1,5 @@
 from ..core.utils import *
-from .inputs import MouseButton, Key, EventType
+from ..model.events import Event, EventType, Key, KeyModifier, MouseButton
 
 class Actions(list):
     """ Actions Class Definition

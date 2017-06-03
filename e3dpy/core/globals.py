@@ -7,6 +7,9 @@ class Globals:
     # Active diplay used in the engine
     display = None
 
+    # Active device used in the engine
+    devices = None
+
     # Current Scene set into the engine
     scene = None
 

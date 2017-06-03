@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 
-from .device import Device
+from .devices import Devices
 from .display import Display
 from .buffer import Buffer, UsageMode
 from .render import Render, DrawMode

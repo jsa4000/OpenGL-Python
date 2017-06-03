@@ -3,6 +3,9 @@ from ..core import Component
 
 class InputComponent(Component):
     """ Input Component class
+
+    Attaching this component to an Entitiy will enable the functionality
+    so perform actions by inputs from the user.
     """
 
     # Defaut type/name the component will have

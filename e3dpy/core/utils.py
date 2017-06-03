@@ -1,4 +1,5 @@
 from collections import OrderedDict as dict
+from enum import Enum
 import os
 import numpy as np
 from PIL import Image
@@ -14,7 +15,8 @@ __all__ = ['file_exists',
            'nparray', 
            'ParseDict', 
            'get_cmd_parameters',
-           'BasicCounter']
+           'BasicCounter',
+           'EnumBase']
 
 def file_exists(filename):
     """
@@ -151,3 +153,9 @@ class BasicCounter(object):
     def __call__(self):
         self._counter += 1
         return self._counter
+
+class EnumBase(Enum):
+    def __eq__(self, item):
+        if isinstance(item, (Enum)):
+            return self.value == item.value
+        return self.value == item

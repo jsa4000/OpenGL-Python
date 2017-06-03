@@ -15,9 +15,15 @@ class CoreEngine(ThreadBase):
 
     @property
     def display(self):
-        """ Get current Scene Graph
+        """ Get Display controller
         """
         return self._display
+
+    @property
+    def devices(self):
+        """ Getcurrent device controller
+        """
+        return self._devices
 
     @property
     def scene(self):
@@ -31,7 +37,7 @@ class CoreEngine(ThreadBase):
         """
         self._scene = value
      
-    def __init__(self, display, fps=60, scene=None):
+    def __init__(self, display, devices, fps=60, scene=None):
         """ Contructor for the class
 
         This class is the main loop for the Engine. In this class all the 
@@ -47,6 +53,7 @@ class CoreEngine(ThreadBase):
         super(CoreEngine,self).__init__()
         # Initilaize parameters
         self._display = display
+        self._devices = devices
         self._fps = fps
         # Set the Scene Graph
         self._scene = scene
@@ -64,7 +71,7 @@ class CoreEngine(ThreadBase):
     def init(self):
         """ Initialize all the Workers at start
         """
-        self._input_manager = InputsManager().init()
+        self._input_manager = InputsManager(self._devices).init()
         self._scene_manager = SceneManager().init()
         self._render_manager = RenderManager().init()
         # Set the globals

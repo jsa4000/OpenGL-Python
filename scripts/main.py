@@ -12,7 +12,7 @@ from e3dpy.core import Base, CoreEngine, SceneGraph, ThreadBase, CatalogueManage
 from e3dpy.model import Camera
 from e3dpy.components import InputComponent
 from e3dpy.core.utils import get_cmd_parameters
-from e3dpy.controllers import Display
+from e3dpy.drivers import Display, Devices
 
 
 def create_scene():
@@ -94,9 +94,11 @@ if __name__ == '__main__':
     # Start the Engine in Mult-thread Mode
     ThreadBase.MULTI_THREAD = False
     # Create the display
-    display = Display("e3dpy render engine", parameters.width, parameters.height)    
+    display = Display("e3dpy render engine", parameters.width, parameters.height)   
+    # Create the devices
+    devices = Devices() 
     # Create the engine and set the display used
-    engine = CoreEngine(display,fps=parameters.fps,scene=scene).init().start()
+    engine = CoreEngine(display, devices, fps=parameters.fps,scene=scene).init().start()
 
     # Running in the main Thread
     while engine.running:

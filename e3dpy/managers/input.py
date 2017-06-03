@@ -1,11 +1,9 @@
 import numpy as np
-from ..core import WorkerBase
+from ..core import WorkerBase, CatalogueManager, Globals
 from ..components import InputComponent
-from ..controllers import Device
-from ..core import CatalogueManager, Globals
 from ..model import Actions, Action, MouseButton, Key, EventType
 
-class InputsManager(WorkerBase):
+class InputManager(WorkerBase):
     """ Input Worker Class
 
     This class will manage all the events sent by the user.
@@ -14,7 +12,7 @@ class InputsManager(WorkerBase):
     updated correctly.
 
     """
-    def __init__(self):
+    def __init__(self, devices):
         """ Initialization of the Worker
 
         Initialize variables to use as cache or storing last
@@ -22,7 +20,7 @@ class InputsManager(WorkerBase):
         make use of the device
         """
         # Create a device controller to get the current inputs
-        self._device = Device()
+        self._devices = devices
 
     def __del__(self):
         """ Dispose and close the worker.
@@ -32,7 +30,7 @@ class InputsManager(WorkerBase):
     def init(self):
         """ Initialize objects and controllers
         """
-        self._device.init()
+        self._devices.init()
         return self
 
     def run(self):
@@ -48,7 +46,7 @@ class InputsManager(WorkerBase):
         components = df[col_input].dropna(axis=0)
 
         # Get all the events in the current frame
-        events = self._device.get_events()
+        events = self._devices.get_events()
 
         # Get the relationship betwen entities and components
         for component in components.index:

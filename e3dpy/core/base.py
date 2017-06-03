@@ -1,5 +1,4 @@
 from collections import OrderedDict as dict
-from enum import Enum
 import threading
 import numpy as np
 import pandas as pd
@@ -612,8 +611,3 @@ class WorkerBase(object):
         """
         return self
 
-class EnumBase(Enum):
-    def __eq__(self, item):
-        if isinstance(item, (Enum)):
-            return self.value == item.value
-        return self.value == item
