@@ -1,6 +1,6 @@
-from ..core import Worker
+from ..core import WorkerBase
 
-class SolversManager(Worker):
+class SolversManager(WorkerBase):
     """ Input Worker Class
     """
 

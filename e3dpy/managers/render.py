@@ -1,6 +1,6 @@
-from ..core import Worker 
+from ..core import WorkerBase 
 
-class RenderManager(Worker):
+class RenderManager(WorkerBase):
     """ Render Manager Class
     
     This class will be the core for rendering the scene. This

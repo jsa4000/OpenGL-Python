@@ -2,9 +2,6 @@ import numpy as np
 from .geometry import Geometry
 from .material import Material
 
-def basic_material():
-        return Material("./assets/images/texture.png")
-
 def triangle():
     #Create default vertices 4f
     vertices = [ -0.5, -0.5, 0.0,
@@ -108,3 +105,19 @@ def cube(origin = [0.0,0.0,0.0], transform = None):
     #return (nvertices,nindices)
     return (vertices,indices)
 
+def default_actions():
+    actions = [ {"name": "Camera Orbit",
+                "type":"EventType.MOUSEMOTION",
+                    "parameters":["MouseButton.LEFT"],
+                    "action":"entity.camera.orbit(event.rel[0],event.rel[1])"},
+                {"name": "Camera Pan",
+                    "type":"EventType.MOUSEMOTION",
+                    "parameters":["MouseButton.MIDDLE"],
+                    "action":"entity.camera.pan(event.rel[0],event.rel[1])"}]
+    return actions 
+
+def default_material():
+        return Material("./assets/images/texture.png")
+
+def default_geometry():
+        return triangle()

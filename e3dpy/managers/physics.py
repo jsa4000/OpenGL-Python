@@ -1,6 +1,6 @@
-from ..core import Worker 
+from ..core import WorkerBase 
 
-class PhysicsManager(Worker):
+class PhysicsManager(WorkerBase):
     """ Input Worker Class
     """
 

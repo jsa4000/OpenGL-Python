@@ -117,7 +117,7 @@ class SceneGraph(object):
                                                 camera=Camera())
         # Add an input to the camera for the viewport
         camera_entity[None] = InputComponent("camera_input",
-                                            input=SceneGraph.DEFAULT_INPUT)
+                                            actions=SceneGraph.DEFAULT_INPUT)
                                                 
         # Create a default Geometrty with components 
         geometry_entity = SceneGraph.create_geometry("Geometry", 

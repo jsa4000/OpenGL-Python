@@ -86,6 +86,10 @@ class Device:
             keys = self.get_keys_pressed()
             if not empty(keys):
                 events.append(ParseDict(type=EventType.KEYSPRESSED, keys=keys))
+        else:
+             for event in events:
+                if event.type  == EventType.MOUSEMOTION:
+                    event.buttons = self.get_buttons_pressed()
         #Returne the capture events
         return events
 
@@ -93,13 +97,18 @@ class Device:
     def get_buttons_pressed(self):
         """ Function to get the buttons currently pressed
         The function will return an array with the mouse 
-        buttons pressed. [0,1,0]
+        buttons pressed. 
         
+        For example if the original array is [0,1,0],
+        This will return [1] wher the pressed button is the
+        index = 1
+
         Example:
             if mouse[LEFTBUTTON]:
                 pass
         """
-        return pygame.mouse.get_pressed()
+        #return pygame.mouse.get_pressed()
+        return [i for i,value in enumerate(pygame.mouse.get_pressed()) if value]
 
     def get_keys_pressed(self):
         """ This will return a mask with the keys pressed.

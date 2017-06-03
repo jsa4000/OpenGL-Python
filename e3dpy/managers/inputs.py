@@ -1,11 +1,11 @@
 import numpy as np
-from ..core import Worker 
+from ..core import WorkerBase
 from ..components import InputComponent
 from ..controllers import Device
 from ..core import CatalogueManager, Globals
-from ..model import Actions, Action, Mouse, Keys, EventType
+from ..model import Actions, Action, MouseButton, Key, EventType
 
-class InputsManager(Worker):
+class InputsManager(WorkerBase):
     """ Input Worker Class
 
     This class will manage all the events sent by the user.
@@ -59,7 +59,7 @@ class InputsManager(Worker):
         # Get all the events in the current frame for globals¡ events
         for event in events:
             if event.type == EventType.QUIT or \
-              (event.type == EventType.KEYUP and event.key == Keys.K_ESCAPE):
+              (event.type == EventType.KEYUP and event.key == Key.K_ESCAPE):
                 Globals.display.close()
                 break
         # End the worker run process
@@ -70,15 +70,23 @@ class InputsManager(Worker):
         """
         #Get the inputs/actions from the current component
         component =  CatalogueManager.instance().get(component)
-        actions = component.actions
-        actions = [ {"name": "Camera Orbit",
-                    "type":"EventType.MOUSEMOTION",
-                     "parameters":["Mouse.LEFTBUTTON"],
-                     "action":"entity.camera.orbit(event.rel[0],event.rel[1])"},
-                    {"name": "Camera Pan",
-                     "type":"EventType.MOUSEMOTION",
-                     "parameters":"[Mouse.MIDDLEBUTTON]",
-                     "action":"entity.camera.pan(event.rel[0],event.rel[1])"}]
-        actions = Actions(actions)
-        print(inputs)
-                       
+        actions = Actions(component.actions)
+        packed = {}
+        for event in events:
+            packed[event.type] = []
+        for event in events:
+            if event.type in [EventType.KEYDOWN, EventType.KEYUP]:
+                packed[event.type].append(event.key)
+            elif event.type in [EventType.KEYSPRESSED]:
+                packed[event.type].extend(event.keys)
+            elif event.type in [EventType.MOUSEBUTTONUP, EventType.MOUSEBUTTONDOWN]:
+                packed[event.type].append(event.button)
+            elif event.type in [EventType.MOUSEMOTION]:
+                packed[event.type].extend(event.buttons)
+        #print("My actions: ")
+        for action in actions:
+            #print("type = {self.type}, parameters = {self.parameters}".format(self=action))  
+            if action.type.value in packed:
+                if packed[action.type.value] == action.parameters:
+                    print("This is OK")
+      

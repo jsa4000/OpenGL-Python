@@ -1,23 +1,15 @@
 from ..core.utils import *
-from .samples import *
+from .defaults import *
 
 class Settings:
     """ Material Class Definition
     """
 
-    @property
-    def default_actions():
-        return None
+    default_actions = default_actions()
+    default_material = default_material()
+    default_geometry = default_geometry()
 
-    @property
-    def default_material():
-        return samples.basic_material()
-
-    @property
-    def default_geometry():
-        return samples.basic_material()
-
-    def __init__(self, texture):
+    def __init__(self):
         pass
     
 

@@ -1,6 +1,6 @@
-from ..core import Worker
+from ..core import WorkerBase
 
-class SceneManager(Worker):
+class SceneManager(WorkerBase):
     """ Input Worker Class
     """
 

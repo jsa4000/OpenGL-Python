@@ -1,4 +1,5 @@
 from collections import OrderedDict as dict
+from enum import Enum
 import threading
 import numpy as np
 import pandas as pd
@@ -10,7 +11,8 @@ __all__ = ['Base',
            'DataBase',
            'DefaultBase',
            'ThreadBase',
-           'Worker']
+           'WorkerBase',
+           'EnumBase']
 
 class Base(object):
     """ This is the default Base Object.
@@ -587,7 +589,7 @@ class ThreadBase(object):
         return self
         
 
-class Worker(object):
+class WorkerBase(object):
     """ Abstract Worker Class
     """
     def __init__(self):
@@ -609,3 +611,9 @@ class Worker(object):
         """ Start the worker process
         """
         return self
+
+class EnumBase(Enum):
+    def __eq__(self, item):
+        if isinstance(item, (Enum)):
+            return self.value == item.value
+        return self.value == item

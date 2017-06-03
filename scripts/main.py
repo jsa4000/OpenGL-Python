@@ -27,7 +27,7 @@ def create_scene():
                                             camera=Camera())
     # Add an input to the camera for the viewport
     camera_entity[None] = InputComponent("camera_input",
-                                        input=SceneGraph.DEFAULT_INPUT)
+                                        actions=SceneGraph.DEFAULT_INPUT)
                                             
     # Create a default Geometrty with components 
     geometry_entity = SceneGraph.create_geometry("Geometry", 
@@ -52,7 +52,7 @@ def create_scene():
 
     # Add an input to the geometry for the movement of the actor
     geometry_entity3[None] = InputComponent("camera_input2",
-                                        input=SceneGraph.DEFAULT_INPUT)
+                                        actions=SceneGraph.DEFAULT_INPUT)
     
     # Add a hierarchy
     geometry_entity.add(children=[geometry_entity2,geometry_entity3])
