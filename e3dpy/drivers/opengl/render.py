@@ -1,15 +1,17 @@
 import OpenGL.GL as GL
+from .core import DrawMode
 
-class DrawMode:
-    triangles    = GL.GL_TRIANGLES	
-    points       = GL.GL_POINTS
-    lines        = GL.GL_LINES 
-    quads        = GL.GL_QUADS
-    tfan         = GL.GL_TRIANGLE_FAN
-    lstrip       = GL.GL_LINE_STRIP
-    tstrip       = GL.GL_TRIANGLE_STRIP
+opengl_drawmode_wrapper = {
+    triangles    = GL.GL_TRIANGLES,
+    points       = GL.GL_POINTS,
+    lines        = GL.GL_LINES, 
+    quads        = GL.GL_QUADS,
+    tfan         = GL.GL_TRIANGLE_FAN,
+    lstrip       = GL.GL_LINE_STRIP,
+    tstrip       = GL.GL_TRIANGLE_STRIP,
+}
 
-class Render(object):
+class OpenGLRender(Render):
     """
         This Class will render the Buffers stored in GPU
         openGL. It will use OpenGL and a double buffer so

@@ -2,7 +2,7 @@ import OpenGL.GL as GL
 from ..core.utils import *
 from .utils import *
 
-class Texture:
+class OpenGLTexture:
     """
         This class will create and store all the elements needed
         to create the texture.

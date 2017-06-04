@@ -7,11 +7,9 @@ from .utils import *
 
 __all__ = ['Base', 
            'Defaults',
-           'DataBase',
-           'DefaultBase',
-           'ThreadBase',
-           'WorkerBase',
-           'EnumBase']
+           'DBase',
+           'Datasheet',
+           'Thread']
 
 class Base(object):
     """ This is the default Base Object.
@@ -283,8 +281,8 @@ class Defaults(object):
         return "{}({})".format(self.__class__.__name__,parameters)
 
 
-class DefaultBase(Base, Defaults):
-    """ DefaultBase Class
+class DBase(Base, Defaults):
+    """ DBase Class
 
         This class is a subclass of Base and Defaults. This provide
         multi-inheritance functionality to allow to set more attributes
@@ -292,7 +290,7 @@ class DefaultBase(Base, Defaults):
 
         Example
 
-            class Flexible(DefaultBase):
+            class Flexible(DBase):
                 defaults = dict( {"nick":None})
 
                 def __init__(self, *args, **kwargs):
@@ -300,7 +298,7 @@ class DefaultBase(Base, Defaults):
                     super.__init__(*args, **kwargs)
 
             (Or simply)
-            class Flexible(DefaultBase):
+            class Flexible(DBase):
                  defaults = dict( {"nick": "Awesome"})
 
             flexible = Flexible()
@@ -349,7 +347,7 @@ class DefaultBase(Base, Defaults):
                                         Base.__repr__(self),Defaults.__repr__(self))
 
 
-class DataBase(DefaultBase):
+class Datasheet(DBase):
     """ Data Base Class
 
         This element will create and store all the elements in
@@ -394,7 +392,7 @@ class DataBase(DefaultBase):
         """This is the main contructor of the class.
 
         """
-        super(DataBase,self).__init__(*args,**kwargs)
+        super(Datasheet,self).__init__(*args,**kwargs)
         # Initialize data variable where dataframe will be stored
         self.data = dict()
         # Initialize groups for attribute in Data frames
@@ -506,17 +504,17 @@ class DataBase(DefaultBase):
     def __repr__(self):
         """Returns the string representation of this instance
         """
-        return super(DataBase, self).__repr__()
+        return super(Datasheet, self).__repr__()
 
 
-class ThreadBase(object):
-    """ ThreadBase Engine Class
+class Thread(object):
+    """ Thread Engine Class
 
         This class is the main loop of the process that will manage 
         the threads in the engine. If threads are not supported
         set global variable MULTI_THREAD to false at start
 
-        ThreadBase.MULTI_THREAD = False
+        Thread.MULTI_THREAD = False
 
     """
 
@@ -587,27 +585,4 @@ class ThreadBase(object):
         self._thread_stop()
         return self
         
-
-class WorkerBase(object):
-    """ Abstract Worker Class
-    """
-    def __init__(self):
-        """ Initialization of the Worker
-        """
-        pass
-
-    def __del__(self):
-        """ Dispose and close the worker.
-        """
-        pass
-
-    def init(self):
-        """ Initialize the worker
-        """
-        return self
-
-    def run(self):
-        """ Start the worker process
-        """
-        return self
 

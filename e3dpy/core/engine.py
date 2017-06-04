@@ -1,12 +1,12 @@
 import time
-from .base import ThreadBase 
+from .base import Thread
 from ..model import Window
 from .globals import Globals
 from ..managers import InputsManager, SceneManager, RenderManager
 
 __all__ = ['CoreEngine']
 
-class CoreEngine(ThreadBase):
+class CoreEngine(Thread):
     """ Core Engine Class
 
         This class is the main loop of the process that will manage all

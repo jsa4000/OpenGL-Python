@@ -27,7 +27,7 @@ GeometryAttributeTypes = {
     "COLOR"                 : { "name":"v_color",     "size":4, "dtype":np.float32 }
     }
 
-class Shader:
+class OpenGLShader:
     """
         This element will create and store all the elements needed
         to create a shader.

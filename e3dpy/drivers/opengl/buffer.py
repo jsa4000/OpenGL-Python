@@ -3,18 +3,18 @@ import numpy as np
 import OpenGL.GL as GL
 from ..core.utils import *
 
-class UsageMode:
-    stream_draw  = GL.GL_STREAM_DRAW
-    stream_read  = GL.GL_STREAM_READ
-    stream_copy  = GL.GL_STREAM_COPY
-    static_draw  = GL.GL_STATIC_DRAW
-    static_read  = GL.GL_STATIC_READ
-    static_copy  = GL.GL_STATIC_COPY
-    dynamic_draw = GL.GL_DYNAMIC_DRAW
-    dynamic_read = GL.GL_DYNAMIC_READ
-    dynamic_copy = GL.GL_DYNAMIC_COPY 
+# class UsageMode:
+#     stream_draw  = GL.GL_STREAM_DRAW
+#     stream_read  = GL.GL_STREAM_READ
+#     stream_copy  = GL.GL_STREAM_COPY
+#     static_draw  = GL.GL_STATIC_DRAW
+#     static_read  = GL.GL_STATIC_READ
+#     static_copy  = GL.GL_STATIC_COPY
+#     dynamic_draw = GL.GL_DYNAMIC_DRAW
+#     dynamic_read = GL.GL_DYNAMIC_READ
+#     dynamic_copy = GL.GL_DYNAMIC_COPY 
 
-class Buffer(object):
+class OpenGLBuffer(object):
     """
         This element will create and store all the elements needed
         to Render a Geometrt
