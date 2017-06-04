@@ -63,7 +63,7 @@ class Base(object):
 
                     class Custom(Base, Defaults):
         
-                        defaults = dict( {"job":"driver"})
+                        defaults = dict( [("job","driver")]
 
                         def __init__(self, *args, **kwargs):
                             # Create default Database object
@@ -123,7 +123,6 @@ class Base(object):
     UUID1 = uuid.uuid1 # make a UUID based on the host ID and current time
     UUID4 = uuid.uuid4 # make a random UUID
     COUNTER = BasicCounter(1)
-
 
     # Default UUID
     DEFAULT_UUID = UUID4
@@ -197,8 +196,8 @@ class Defaults(object):
     Example:
 
         class Custom(Defaults):
-            defaults = dict({"name":"Michael Jordan",
-                             "age": 20})
+            defaults = dict([("name","Michael Jordan"),
+                             ("age", 20)])
             def __init__(self, *args, **kwargs):
                 # Create default Database object
                 super(Custom, self).__init__(*args, **kwargs)
@@ -222,7 +221,7 @@ class Defaults(object):
 
         class Flexible(Base, Defaults):
             
-            defaults = dict( {"my_name":None})
+            defaults = dict( ["my_name",None])
 
             def __init__(self, *args, **kwargs):
                 # Create default objects in order
@@ -246,6 +245,8 @@ class Defaults(object):
     """
 
     # Default dinctionary with properties
+    # Orderect dict is created by [("key1",value2),("key2",value2)]
+    #    =>  This won't considered ordered: {"key1":value1","key2":value2}
     defaults = dict()
 
     def __init__(self,  *args, **kwargs):
@@ -299,7 +300,7 @@ class DBase(Base, Defaults):
 
             (Or simply)
             class Flexible(DBase):
-                 defaults = dict( {"nick": "Awesome"})
+                 defaults = dict( [("nick","Awesome")])
 
             flexible = Flexible()
             flexible = Flexible("Javier", 12)
@@ -567,7 +568,7 @@ class Thread(object):
     def start(self):
         """This method Starts the thread.
         """
-        if ThreadBase.MULTI_THREAD:
+        if Thread.MULTI_THREAD:
             # Start the engine process (new thread)
             self._thread_start(self._process)
         else:

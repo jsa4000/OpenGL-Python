@@ -1,8 +1,9 @@
 from __future__ import absolute_import, division, print_function
 
-from .core import ( Base, Defaults, DefaultBase, DataBase, ThreadBase,
+from .core import ( Base, Defaults, DBase, Datasheet, Thread,
                     CatalogueManager, Catalogue, BaseDictionay, 
                     Component, Entity, CatalogueBase, CatalogueTree,
-                    CoreEngine, SceneGraph )
+                    CoreEngine, SceneGraph,
+                    DeviceManager, DisplayManager)
                     
-from .drivers import Display, Devices
+from .controllers import PygameDevice, PygameDisplay

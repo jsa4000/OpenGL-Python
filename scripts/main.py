@@ -8,12 +8,12 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from e3dpy.core import Base, CoreEngine, SceneGraph, ThreadBase, CatalogueManager
 from e3dpy.model import Camera
 from e3dpy.components import InputComponent
+from e3dpy.core import Base, CoreEngine, SceneGraph, Thread, CatalogueManager
+from e3dpy.core.controllers import DeviceManager, DisplayManager
 from e3dpy.core.utils import get_cmd_parameters
-from e3dpy.drivers import Display, Devices
-
+from e3dpy.controllers import PygameDevice, PygameDisplay
 
 def create_scene():
     """ Create initial scene
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     # For testing pourposes create simple uid
     Base.DEFAULT_UUID = Base.COUNTER
     # Create the main Scene graph and initialize
-    scene = SceneGraph(create_scene()).init()
+    scene_grapgh = SceneGraph(create_scene()).init()
 
     ###################################################
     #print(scene)
@@ -92,22 +92,22 @@ if __name__ == '__main__':
     ###################################################
 
     # Start the Engine in Mult-thread Mode
-    ThreadBase.MULTI_THREAD = False
-    # Create the display
-    display = Display("e3dpy render engine", parameters.width, parameters.height)   
+    Thread.MULTI_THREAD = False
+    # Create the display (main)
+    display_manager = DisplayManager(PygameDisplay("e3dpy render engine", parameters.width, parameters.height))
     # Create the devices
-    devices = Devices() 
-    # Create the engine and set the display used
-    engine = CoreEngine(display, devices, fps=parameters.fps,scene=scene).init().start()
+    device_manager = DeviceManager(PygameDevice())
+    # Create the engine and set the display and Devices used
+    engine = CoreEngine(display_manager, device_manager, scene_grapgh, fps=parameters.fps, ).init().start()
 
-    # Running in the main Thread
-    while engine.running:
-        time.sleep(1/60)
-        print("Waiting for Implementation..")
+    # # Running in the main Thread
+    # while engine.running:
+    #     time.sleep(1/60)
+    #     print("Waiting for Implementation..")
 
-    # End the engine and dispose the memory
-    engine.stop(True)
-    display.dispose()
+    # # End the engine and dispose the memory
+    # engine.stop(True)
+    # display.dispose()
 
     # Program Ends   
     print('##############################') 

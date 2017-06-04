@@ -107,11 +107,11 @@ def cube(origin = [0.0,0.0,0.0], transform = None):
 
 def default_actions():
     actions = [ {"name": "Camera Orbit",
-                "type":"EventType.MOUSEMOTION",
+                "type":"DeviceEvent.MOUSEMOTION",
                     "parameters":["MouseButton.LEFT"],
                     "action":"entity.camera.orbit(event.rel[0],event.rel[1])"},
                 {"name": "Camera Pan",
-                    "type":"EventType.MOUSEMOTION",
+                    "type":"DeviceEvent.MOUSEMOTION",
                     "parameters":["MouseButton.MIDDLE"],
                     "action":"entity.camera.pan(event.rel[0],event.rel[1])"}]
     return actions 

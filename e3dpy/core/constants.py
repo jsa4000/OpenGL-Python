@@ -2,6 +2,7 @@ from ..core.utils import *
 
 __all__ = ['DisplayMode',
            'DrawMode',
+           'UsageMode',
            'DeviceEvent',
            'MouseButton',
            'KeyModifier',
@@ -28,32 +29,53 @@ class DrawMode:
     lstrip       = 5
     tstrip       = 6
 
+class UsageMode:
+    """ Modes available for render Buffers
+    """
+    stream_draw  = 0
+    stream_read  = 1
+    stream_copy  = 2
+    static_draw  = 3
+    static_read  = 4
+    static_copy  = 5
+    dynamic_draw = 6
+    dynamic_read = 7
+    dynamic_copy = 8
+
 class DeviceEvent:
     """ Enumeration with all events types supported 
+    by the engine
     """
-    QUIT = 12
+    # System Device Event
+    QUIT        = 0
     ACTIVEEVENT = 1
-    KEYDOWN = 2
-    KEYUP = 3
-    MOUSEMOTION = 4
-    MOUSEBUTTONUP = 6
-    MOUSEBUTTONDOWN = 5
-    JOYAXISMOTION = 7
-    JOYBALLMOTION = 8
-    JOYHATMOTION = 9
-    JOYBUTTONUP = 11
-    JOYBUTTONDOWN = 10
-    VIDEORESIZE = 16
-    VIDEOEXPOSE = 17
-    USEREVENT = 24
-    KEYSPRESSED = 20
+    VIDEORESIZE = 2
+    VIDEOEXPOSE = 3
+    USEREVENT   = 4
+
+    # Keyboard Device Events
+    KEYDOWN     = 101
+    KEYUP       = 102
+    KEYSPRESSED = 103
+
+    # Mouse Device Events
+    MOUSEMOTION      = 201
+    MOUSEBUTTONUP    = 202
+    MOUSEBUTTONDOWN  = 203
+
+    # Joy Device Events
+    JOYAXISMOTION = 301
+    JOYBALLMOTION = 302
+    JOYHATMOTION  = 303
+    JOYBUTTONUP   = 304
+    JOYBUTTONDOWN = 305
 
 class MouseButton:
     """ Mouse button types
     """
-    LEFT = 0
-    MIDDLE =1
-    RIGHT = 2
+    LEFT   = 0
+    MIDDLE = 1
+    RIGHT  = 2
 
 class KeyModifier:
     """ Enumeration with Key modifiers code Types

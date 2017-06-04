@@ -1,6 +1,5 @@
 from ..core.utils import *
-from ..core import EnumBase
-from ..model.events import Event, EventType, Key, KeyModifier, MouseButton
+from ..core.constants import DeviceEvent, Key, KeyModifier, MouseButton
 
 class DeviceManager:
     """  Devices Class

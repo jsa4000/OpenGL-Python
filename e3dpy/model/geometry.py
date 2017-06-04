@@ -1,8 +1,8 @@
 import numpy as np
-from ..core import DataBase
+from ..core import Datasheet
 from ..core.utils import *
 
-class Geometry(DataBase):
+class Geometry(Datasheet):
     """ Geometry Class 
     
     This class will create and store all the geometry needed

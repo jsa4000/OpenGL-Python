@@ -1,9 +1,10 @@
 import numpy as np
-from ..core import WorkerBase, CatalogueManager, Globals
+from ..core import CatalogueManager
+from ..core.controllers import DeviceEvent, Key
 from ..components import InputComponent
-from ..model import Actions, Action, MouseButton, Key, EventType
+from ..model import Actions
 
-class InputManager(WorkerBase):
+class InputManager(object):
     """ Input Worker Class
 
     This class will manage all the events sent by the user.
@@ -12,15 +13,16 @@ class InputManager(WorkerBase):
     updated correctly.
 
     """
-    def __init__(self, devices):
-        """ Initialization of the Worker
+    def __init__(self, engine):
+        """ Initialization of the Manager
 
         Initialize variables to use as cache or storing last
         states for the inptus events, etc.. The manager also
         make use of the device
         """
         # Create a device controller to get the current inputs
-        self._devices = devices
+        self._engine = engine
+        self._device = engine.device 
 
     def __del__(self):
         """ Dispose and close the worker.
@@ -30,7 +32,7 @@ class InputManager(WorkerBase):
     def init(self):
         """ Initialize objects and controllers
         """
-        self._devices.init()
+        self._device.init()
         return self
 
     def run(self):
@@ -46,7 +48,7 @@ class InputManager(WorkerBase):
         components = df[col_input].dropna(axis=0)
 
         # Get all the events in the current frame
-        events = self._devices.get_events()
+        events = self._device.get_events()
 
         # Get the relationship betwen entities and components
         for component in components.index:
@@ -56,9 +58,9 @@ class InputManager(WorkerBase):
 
         # Get all the events in the current frame for globals¡ events
         for event in events:
-            if event.type == EventType.QUIT or \
-              (event.type == EventType.KEYUP and event.key == Key.K_ESCAPE):
-                Globals.display.close()
+            if event.type == DeviceEvent.QUIT or \
+              (event.type == DeviceEvent.KEYUP and event.key == Key.K_ESCAPE):
+                self._engine.stop()
                 break
         # End the worker run process
         return self
@@ -73,18 +75,18 @@ class InputManager(WorkerBase):
         for event in events:
             packed[event.type] = []
         for event in events:
-            if event.type in [EventType.KEYDOWN, EventType.KEYUP]:
+            if event.type in [DeviceEvent.KEYDOWN, DeviceEvent.KEYUP]:
                 packed[event.type].append(event.key)
-            elif event.type in [EventType.KEYSPRESSED]:
+            elif event.type in [DeviceEvent.KEYSPRESSED]:
                 packed[event.type].extend(event.keys)
-            elif event.type in [EventType.MOUSEBUTTONUP, EventType.MOUSEBUTTONDOWN]:
+            elif event.type in [DeviceEvent.MOUSEBUTTONUP, DeviceEvent.MOUSEBUTTONDOWN]:
                 packed[event.type].append(event.button)
-            elif event.type in [EventType.MOUSEMOTION]:
+            elif event.type in [DeviceEvent.MOUSEMOTION]:
                 packed[event.type].extend(event.buttons)
         #print("My actions: ")
         for action in actions:
             #print("type = {self.type}, parameters = {self.parameters}".format(self=action))  
-            if action.type.value in packed:
-                if packed[action.type.value] == action.parameters:
+            if action.type in packed:
+                if packed[action.type] == action.parameters:
                     print("This is OK")
       

@@ -1,8 +1,7 @@
 import time
 from .base import Thread
-from ..model import Window
-from .globals import Globals
-from ..managers import InputsManager, SceneManager, RenderManager
+from .controllers import DisplayManager, DeviceManager
+from ..managers import InputManager, SceneManager, RenderManager
 
 __all__ = ['CoreEngine']
 
@@ -15,15 +14,15 @@ class CoreEngine(Thread):
 
     @property
     def display(self):
-        """ Get Display controller
+        """ Return display manager 
         """
         return self._display
 
     @property
-    def devices(self):
-        """ Getcurrent device controller
+    def device(self):
+        """ Return device manager
         """
-        return self._devices
+        return self._device
 
     @property
     def scene(self):
@@ -37,7 +36,7 @@ class CoreEngine(Thread):
         """
         self._scene = value
      
-    def __init__(self, display, devices, fps=60, scene=None):
+    def __init__(self, display, device, scene, fps=60):
         """ Contructor for the class
 
         This class is the main loop for the Engine. In this class all the 
@@ -53,11 +52,10 @@ class CoreEngine(Thread):
         super(CoreEngine,self).__init__()
         # Initilaize parameters
         self._display = display
-        self._devices = devices
-        self._fps = fps
-        # Set the Scene Graph
+        self._device = device
         self._scene = scene
-        # Initialize the variables for the Workers
+        self._fps = fps
+        # Initialize the variables for the Managers
         self._input_manager = None
         self._scene_manager = None
         self._render_manager = None
@@ -69,28 +67,25 @@ class CoreEngine(Thread):
         super(CoreEngine,self).__del__()
     
     def init(self):
-        """ Initialize all the Workers at start
+        """ Initialize all the Managers at start
         """
-        self._input_manager = InputsManager(self._devices).init()
-        self._scene_manager = SceneManager().init()
-        self._render_manager = RenderManager().init()
-        # Set the globals
-        Globals.engine = self
-        Globals.scene = self.scene
-        Globals.display = self.display
+        self._input_manager = InputManager(self).init()
+        self._scene_manager = SceneManager(self).init()
+        self._render_manager = RenderManager(self).init()
         # Return itself for Cascade
         return self
 
     # Override
     def _process(self):
-        """Main process running the engine
+        """ Main process running the engine
+
         Basically the overal loop will be: Input, Update and Render           
         """
         # Display must be created in the same context (thread) as OpenGL
         self.display.init()
        
         # Start the Main loop for the program
-        while not self.display.isClosed and self.running:     
+        while self.running:     
 
             # Process Inputs from the user
             self._input_manager.run()
@@ -114,4 +109,6 @@ class CoreEngine(Thread):
         """This method force to Stops the engine and close the window
         """
         super(CoreEngine,self).stop()
+        # Close All the windows and dipose
+        self.display.close(True)
 

@@ -1,6 +1,6 @@
-from ..core import WorkerBase 
 
-class RenderManager(WorkerBase):
+
+class RenderManager(object):
     """ Render Manager Class
     
     This class will be the core for rendering the scene. This
@@ -43,7 +43,7 @@ class RenderManager(WorkerBase):
     
     """
 
-    def __init__(self):
+    def __init__(self, engine):
         """ Initialization of the Worker
         """
         pass

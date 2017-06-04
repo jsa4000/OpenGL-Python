@@ -1,10 +1,10 @@
-from ..core import WorkerBase
 
-class SceneManager(WorkerBase):
+
+class SceneManager(object):
     """ Input Worker Class
     """
 
-    def __init__(self):
+    def __init__(self, engine):
         """ Initialization of the Worker
         """
         pass

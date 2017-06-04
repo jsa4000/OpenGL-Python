@@ -212,7 +212,6 @@ class Catalogue(object):
     entity03  Transform03        NaN    NaN  Position03
     entity05          NaN        NaN    NaN         NaN
 
-
     """
     @property
     def dataframe(self):

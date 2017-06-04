@@ -15,20 +15,11 @@ class CatalogueBase(Base):
 
     Example:
 
-        class Category1(CatalogueBase):
-            pass
-
-        class Category2(CatalogueBase):
-            pass
-
-        class Category3(CatalogueBase):
-            pass
-
-        class Category4(CatalogueBase):
-            pass
-
-        class Category5(CatalogueBase):
-            pass
+        class Category1(CatalogueBase): pass
+        class Category2(CatalogueBase): pass
+        class Category3(CatalogueBase): pass
+        class Category4(CatalogueBase): pass
+        class Category5(CatalogueBase): pass
 
         # Change current index for the Catalog Manager
         Base.DEFAULT_UUID = Base.UUID1

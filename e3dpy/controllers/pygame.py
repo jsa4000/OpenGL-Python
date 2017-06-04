@@ -1,17 +1,23 @@
 import pygame
-from ..core import Window, WindowMode
-from ..core import KeyboardDevice, MouseDevice, UIDevice, EventType, MouseButton,Key, ModifierKey
+from ..core.utils import *
+from ..model import Event
+from ..core.constants import DisplayMode, DeviceEvent
+from ..core.controllers import (Display, Device, KeyboardDevice, 
+                              MouseDevice, SystemDevice, JoyDevice)
+
+__all__ = ['PygameDisplay',
+           'PygameDevice']
 
 pygame_displaymode_wrapper = {
-    WindowMode.fullscreen  : pygame.FULLSCREEN,	# window is fullscreen
-    WindowMode.resizable   : pygame.RESIZABLE,  # window is resizeable
-    WindowMode.noframe     : pygame.NOFRAME,	# window has no border or controls
-    WindowMode.doublebuf   : pygame.DOUBLEBUF,	# use double buffer - recommended for HWSURFACE or OPENGL
-    WindowMode.hwaccel     : pygame.HWSURFACE, # window is hardware accelerated, only possible in combination with FULLSCREEN
-    WindowMode.opengl      : pygame.OPENGL,     # window is renderable by OpenGL
+    DisplayMode.fullscreen  : pygame.FULLSCREEN,	# window is fullscreen
+    DisplayMode.resizable   : pygame.RESIZABLE,  # window is resizeable
+    DisplayMode.noframe     : pygame.NOFRAME,	# window has no border or controls
+    DisplayMode.doublebuf   : pygame.DOUBLEBUF,	# use double buffer - recommended for HWSURFACE or OPENGL
+    DisplayMode.hwaccel     : pygame.HWSURFACE, # window is hardware accelerated, only possible in combination with FULLSCREEN
+    DisplayMode.opengl      : pygame.OPENGL,     # window is renderable by OpenGL
 }
 
-class PygameDisplay(Window):
+class PygameDisplay(Display):
     """
         This Class will manager the Display to interact with
         openGL. It will use OpenGL and a double buffer so
@@ -22,13 +28,24 @@ class PygameDisplay(Window):
         keypress done.
     """
 
-    def __init__(self, title, width=800, height=600, bpp=16, displaymode = DisplayMode.resizable):
-        # Initialize all the variables
-        self.title = title
-        self.width = width
-        self.height = height
-        self.bpp = bpp # RGBA 8*8*8*8 = 32 bits per pixel
-        self.displaymode = displaymode
+    def __init__(self, *args, **kwargs ):
+        """ Initialize the Class the class
+        """
+        super().__init__(*args, **kwargs)
+
+    def _get_pygame_mode(self):
+        """ Return a valid pygame mode that represent all the modes
+            modes = modes1|mode2|mode3 
+        """
+        modes = list(Display.defaultmode)
+        modes.append(self.mode)
+        result = None
+        for mode in modes:
+            if result:
+                result |= pygame_displaymode_wrapper[mode]
+            else:
+                result = pygame_displaymode_wrapper[mode]
+        return result
 
     def __del__(self):
         try:
@@ -45,9 +62,8 @@ class PygameDisplay(Window):
             # Set title bar caption
             pygame.display.set_caption(self.title)
             # Initialize the display
-            screen = pygame.display.set_mode((self.width, self.height), 
-                                        Display.defaultmode|self.displaymode,
-                                        self.bpp)
+            screen = pygame.display.set_mode((self.width,self.height), 
+                                        self._get_pygame_mode(),self.bpp)
             # Set isclosed to false
             self.isClosed = False
         except:
@@ -76,45 +92,49 @@ class PygameDisplay(Window):
         self.__del__()
 
 
-class PygameDevice(KeyboardDevice, MouseDevice, UIDevice):
+pygame_events_wrapper = {
+    pygame.QUIT: 
+        lambda event, self: Event(type=DeviceEvent.QUIT),
+    pygame.ACTIVEEVENT: 
+        lambda event, self: Event(type=DeviceEvent.ACTIVEEVENT,gain=event.gain,state=event.state),
+    pygame.KEYDOWN: 
+        lambda event, self: Event(type=DeviceEvent.KEYDOWN,key=event.key,mod=event.mod),
+    pygame.KEYUP: 
+        lambda event, self: Event(type=DeviceEvent.KEYUP,key=event.key,mod=event.mod),
+    pygame.MOUSEMOTION: 
+        lambda event, self: Event(type=DeviceEvent.MOUSEMOTION,pos=event.pos,rel=event.rel,buttons=self.get_buttons_pressed()),
+    pygame.MOUSEBUTTONUP: 
+        lambda event, self: Event(type=DeviceEvent.MOUSEBUTTONUP,pos=event.pos,button=event.button),
+    pygame.MOUSEBUTTONDOWN: 
+        lambda event, self: Event(type=DeviceEvent.MOUSEBUTTONDOWN,pos=event.pos,button=event.button),
+    pygame.JOYAXISMOTION: 
+        lambda event, self: Event(type=DeviceEvent.JOYAXISMOTION,joy=event.joy,axis=event.axis,value=event.value),
+    pygame.JOYBALLMOTION: 
+        lambda event, self: Event(type=DeviceEvent.JOYBALLMOTION,joy=event.joy,ball=event.ball,rel=event.rel),
+    pygame.JOYHATMOTION: 
+        lambda event, self: Event(type=DeviceEvent.JOYHATMOTION,joy=event.joy,hat=event.hat,value=event.value),
+    pygame.JOYBUTTONUP: 
+        lambda event, self: Event(type=DeviceEvent.JOYBUTTONUP,joy=event.joy,button=event.button),
+    pygame.JOYBUTTONDOWN: 
+        lambda event, self: Event(type=DeviceEvent.JOYBUTTONDOWN,joy=event.joy,button=event.button),
+    pygame.VIDEORESIZE: 
+        lambda event, self: Event(type=DeviceEvent.VIDEORESIZE,size=event.size,w=event.w,h=event.h),
+    pygame.VIDEOEXPOSE: 
+        lambda event, self: Event(type=DeviceEvent.VIDEOEXPOSE),
+    pygame.USEREVENT: 
+        lambda event, self: Event(type=DeviceEvent.USEREVENT,Code=event.Code),
+}
+
+class PygameDevice(KeyboardDevice, MouseDevice, JoyDevice, SystemDevice):
     """ Pygame Class interface
     """
-          
-    events= {
-        pygame.QUIT: 
-            lambda event: Event(type=EvenType.QUIT),
-        pygame.ACTIVEEVENT: 
-            lambda event: Event(type=EvenType.ACTIVEEVENT,gain=event.gain,state=event.state),
-        pygame.KEYDOWN: 
-            lambda event: Event(type=EvenType.KEYDOWN,key=event.key,mod=event.mod),
-        pygame.KEYUP: 
-            lambda event: Event(type=EvenType.KEYUP,key=event.key,mod=event.mod),
-        pygame.MOUSEMOTION: 
-            lambda event: Event(type=EvenType.MOUSEMOTION,pos=event.pos,rel=event.rel,buttons=self.get_buttons_pressed()),
-        pygame.MOUSEBUTTONUP: 
-            lambda event: Event(type=EvenType.MOUSEBUTTONUP,pos=event.pos,button=event.button),
-        pygame.MOUSEBUTTONDOWN: 
-            lambda event: Event(type=EvenType.MOUSEBUTTONDOWN,pos=event.pos,button=event.button),
-        pygame.JOYAXISMOTION: 
-            lambda event: Event(type=EvenType.JOYAXISMOTION,joy=event.joy,axis=event.axis,value=event.value),
-        pygame.JOYBALLMOTION: 
-            lambda event: Event(type=EvenType.JOYBALLMOTION,joy=event.joy,ball=event.ball,rel=event.rel),
-        pygame.JOYHATMOTION: 
-            lambda event: Event(type=EvenType.JOYHATMOTION,joy=event.joy,hat=event.hat,value=event.value),
-        pygame.JOYBUTTONUP: 
-            lambda event: Event(type=EvenType.JOYBUTTONUP,joy=event.joy,button=event.button),
-        pygame.JOYBUTTONDOWN: 
-            lambda event: Event(type=EvenType.JOYBUTTONDOWN,joy=event.joy,button=event.button),
-        pygame.VIDEORESIZE: 
-            lambda event: Event(type=EvenType.VIDEORESIZE,size=event.size,w=event.w,h=event.h),
-        pygame.VIDEOEXPOSE: 
-            lambda event: Event(type=EvenType.VIDEOEXPOSE),
-        pygame.USEREVENT: 
-            lambda event: Event(type=EvenType.USEREVENT,Code=event.Code),
-    }
 
-    def __init__(self):
-        pass
+
+ 
+    def __init__(self, *args, **kwargs):
+        """ Initialize the Class
+        """
+        super().__init__(*args, **kwargs)
 
     def init(self):
         """ Initialize the device
@@ -148,7 +168,7 @@ class PygameDevice(KeyboardDevice, MouseDevice, UIDevice):
         """
         return pygame.mouse.get_pos()
 
-     def get_buttons_pressed(self):
+    def get_buttons_pressed(self):
         """ Function to get the buttons currently pressed
         The function will return an array with the mouse 
         buttons pressed. 
@@ -229,7 +249,8 @@ class PygameDevice(KeyboardDevice, MouseDevice, UIDevice):
         -----------------------------------
         KEYSPRESSED     Keys
         """
-        events = [PygameWrapper.pygame_events[event.type] for event in pygame.event.get()]
+        pygame_events = pygame.event.get()
+        events = [pygame_events_wrapper[event.type](event,self) for event in pygame_events]
         if empty(events):
              # Check whether buttons or keys are pressed
             keys = self.get_keys_pressed()
