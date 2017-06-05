@@ -19,6 +19,114 @@ class Event(object):
         """"""
         return "<Event: {}>".format(self.__dict__)
 
+class Action(dict):
+    """ Action Class
+
+    Following are the possible scenarios in order to create Action:
+
+        "orbit" :
+            { "event": [ 
+                  {"type" : "DeviceEvent.MOUSEMOTION", 
+                   "buttons": ["MouseButton.MIDDLE","MouseButton.LEFT"]},
+                  {"type" : "DeviceEvent.KEYSPRESSED","keys": "Key.K_SPACE" }],
+              "script": "print('Acabas de pulsar la combinación')"
+            },
+        "pan" :  
+            { "event": { "type":"DeviceEvent.KEYUP","key":["Key.K_a"]},
+              "script": "print('Acabas de pulsar la A')"
+            },
+        "write" :  
+            { "condition": "event.type==DeviceEvent.KEYUP and  \
+                            event.key==Key.K_a",
+              "script": "print('Acabas de pulsar la A')"
+            },
+        "quit" :  
+            { "event_1": { "type":"DeviceEvent.QUIT"},
+              "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_ESCAPE"},
+              "script": "self._engine.stop()"
+            }
+
+    """
+
+    def _eval(self, value):
+        """
+        """
+        try:
+            value = eval(value)    
+        except:
+            pass
+        return value
+
+    def _get_event(self, event):
+        """ Parse the event passed by parameters
+        """
+        result = dict()
+        for parameter in event:
+            if parameter == "type":
+                # Extract the type
+                result[parameter] = self._eval(event[parameter])
+            else:
+                if not isinstance(event[parameter], (list)):
+                    result[parameter] = self._eval(event[parameter])
+                elif len(event[parameter]) == 1:
+                    result[parameter] = self._eval(event[parameter][0])
+                else:
+                    result[parameter] = list()
+                    for value in event[parameter]:
+                        result[parameter].append(self._eval(value))
+        return result
+
+    def __init__(self, action):
+        """ Constructor for Action Class
+
+        [actions: action1 {  [ event ]     [ event ]  [ script ] }
+                  action2 {  [ event ]                [ script ] }
+                  action3 {  [ condition ]            [ script ] } ]
+                  action4 {  [ condition ] [ event ]  [ script ] } ]
+
+        """
+        for element in action:
+            # Search for events, conditions and script
+            if element == "script" or element == "condition":
+                self[element] = action[element]
+            else:
+                # Create current element
+                event = action[element]
+                if not isinstance(event, (list)):
+                    # Current element it's a collection     
+                    self[element] = self._get_event(action[element])
+                else:
+                    self[element]=list()
+                    for subevent in event:
+                        # Check whether it's a multiple condition or not
+                        self[element].append(self._get_event(subevent))
+                   
+
+    def isin(self, events):
+        """ Check if the action is present in the events
+
+        An action could be represented as a sequence of action. However
+        we will only consider the events that belong to the same frame.
+        """
+        action_events = self[action]["events"]
+        coincidences = [0] * len(action_events)
+        for index, action_event in enumerate(action_events):
+            # Check if the action-events are currently in the events
+            for event in events:
+                # Check the current event
+                for item in action_event:
+                    try:
+                        if action_event[item] != getattr(event,item):
+                            break
+                    except:
+                        pass
+                else:
+                    # If elements are not different the continue
+                    coincidences[index] = 1
+        # Returnall actions have been found
+        return all(coincidences)
+
+
 class Actions(dict):
     """ Actions Class Definition
 
@@ -55,87 +163,25 @@ class Actions(dict):
         -----------------------------------
         KEYSPRESSED     Keys
 
-    Example: 
-
-        actions = { 
-            "orbit" : { "events": [ 
-                                { "type" : "DeviceEvent.MOUSEMOTION", 
-                                    "parameters": [ "MouseButton.LEFT", 
-                                                    "MouseButton.LEFT" ]},
-                                { "type" : "DeviceEvent.MOUSEMOTION", 
-                                    "parameters": [ "MouseButton.RIGHT" ] }
-                                ],
-                        "script": "entity.camera.orbit(event.rel[0],event.rel[1])"
-                    },
-            "pan" :   { "events": { "type":"DeviceEvent.KEYUP", 
-                                    "buttons": ["Key.K_a"]},
-                        "script": "entity.camera.pan(event.rel[0],event.rel[1])"}}
-
     """
 
     def __init__(self, actions):
         """ Initialize the class
 
-        This functiona will parse the actions
+        This functiona will parse the actions.
+        As comented in previouse examples the action could be composed on:
+
+        [actions: action1 {  [ event ]     [ event ]  [ script ] }
+                  action2 {  [ event ]                [ script ] }
+                  action3 {  [ condition ]            [ script ] } ]
 
         """
         # List that will store all the input-action for this instance
         for action in actions:
-            # Create the key, value for the current action
-            self[action] = dict()
-            # Loop over the elements events
-            events = actions[action]["events"] 
-            if not is_collection(events):
-                events = [actions[action]["events"]]
-            self[action]["events"] = list()
-            for event in events:
-                # Eval the event paramters if possible
-                event_eval = dict()
-                for parameter in event:
-                    if parameter == "type":
-                        # Extract the type
-                        event_eval["type"] = eval(event["type"])
-                    else:
-                        #Extract the parameters
-                        if not is_collection(event[parameter]):
-                            #event[parameter] = [event[parameter]]
-                            try:
-                                event[parameter] = eval(event[parameter])
-                            except:
-                                event[parameter] = event[parameter]
-                        elif len(event[parameter]) == 1:
-                            event[parameter] = eval(event[parameter][0])
-                        else:
-                            event_eval[parameter] = list()
-                            for value in event[parameter]:
-                                event_eval[parameter].append(eval(value))
-                #Finally attach current evaluated item to the list
-                self[action]["events"].append(event_eval)
-            # Store the script
-            self[action]["script"] = actions[action]["script"] 
+            # Create the key, value for the current action to Parse
+            self[action] = Action(actions[action])
+            print(self[action])
+             
+        print(self)
 
-    def check(self, action, events):
-        """ Check if the action is present in the events
-
-        An action could be represented as a sequence of action. However
-        we will only consider the events that belong to the same frame.
-        """
-        action_events = self[action]["events"]
-        coincidences = [0] * len(action_events)
-        for index, action_event in enumerate(action_events):
-            # Check if the action-events are currently in the events
-            for event in events:
-                # Check the current event
-                for item in action_event:
-                    try:
-                        if action_event[item] != getattr(event,item):
-                            break
-                    except:
-                        pass
-                else:
-                    # If elements are not different the continue
-                    coincidences[index] = 1
-        # Return if all actions have been found
-        if all(coincidences):
-            eval(self[action]["script"])
-        return all(coincidences)
+    

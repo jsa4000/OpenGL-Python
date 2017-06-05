@@ -548,6 +548,9 @@ class Thread(object):
         if self._thread:
             self._thread.join()
             self._thread = None
+        else:
+            # Wait until end the current loop
+            while self.running: pass
 
     def _thread_start(self, process):
         """ This function will start the thread

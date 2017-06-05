@@ -108,19 +108,25 @@ def cube(origin = [0.0,0.0,0.0], transform = None):
 def default_actions():
     actions = {
             "orbit" :
-                { "events": [ 
+                { "event": [ 
                     { "type" : "DeviceEvent.MOUSEMOTION", 
-                        "buttons": [ "MouseButton.MIDDLE", 
-                                    "MouseButton.LEFT" ]},
-                    { "type" : "DeviceEvent.KEYSPRESSED", 
-                        "keys":  "Key.K_SPACE"  }
-                    ],
-                "script": "print('Aabas de pulsar la combinación')"
+                      "buttons": ["MouseButton.MIDDLE","MouseButton.LEFT"]},
+                    { "type" : "DeviceEvent.KEYSPRESSED","keys": "Key.K_SPACE" }],
+                  "script": "print('Acabas de pulsar la combinación')"
                 },
             "pan" :  
-                { "events": { "type":"DeviceEvent.KEYUP", 
-                                "key": ["Key.K_a"]},
-                "script": "print('Acabas de pulsar la A')"
+                { "event": { "type":"DeviceEvent.KEYUP","key":["Key.K_a"]},
+                  "script": "print('Acabas de pulsar la A')"
+                },
+            "write" :  
+                { "condition": "event.type==DeviceEvent.KEYUP and  \
+                                event.key==Key.K_a",
+                  "script": "print('Acabas de pulsar la A')"
+                },
+            "quit" :  
+                { "event_1": { "type":"DeviceEvent.QUIT"},
+                  "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_ESCAPE"},
+                  "script": "self._engine.stop()"
                 }
             }
     return actions 
