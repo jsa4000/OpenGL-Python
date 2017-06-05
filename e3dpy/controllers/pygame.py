@@ -255,7 +255,7 @@ class PygameDevice(KeyboardDevice, MouseDevice, JoyDevice, SystemDevice):
              # Check whether buttons or keys are pressed
             keys = self.get_keys_pressed()
             if not empty(keys):
-                events.append(ParseDict(type=EventType.KEYSPRESSED, keys=keys))
+                events.append(ParseDict(type=DeviceEvent.KEYSPRESSED, keys=keys))
  
         #Returne the capture events
         return events

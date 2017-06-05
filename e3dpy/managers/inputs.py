@@ -72,9 +72,14 @@ class InputManager(object):
         component =  CatalogueManager.instance().get(component)
         actions = Actions(component.actions)
 
+        fine = False
         for action in actions:
             if actions.check(action, events):
                 print ("Eahh")
-        
-        print("END")
+                fine = True
+
+        if fine:
+            print ("END")
+      
+
       

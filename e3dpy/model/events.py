@@ -98,10 +98,17 @@ class Actions(dict):
                     else:
                         #Extract the parameters
                         if not is_collection(event[parameter]):
-                            event[parameter] = [event[parameter]]
-                        event_eval[parameter] = list()
-                        for value in event[parameter]:
-                            event_eval[parameter].append(eval(value))
+                            #event[parameter] = [event[parameter]]
+                            try:
+                                event[parameter] = eval(event[parameter])
+                            except:
+                                event[parameter] = event[parameter]
+                        elif len(event[parameter]) == 1:
+                            event[parameter] = eval(event[parameter][0])
+                        else:
+                            event_eval[parameter] = list()
+                            for value in event[parameter]:
+                                event_eval[parameter].append(eval(value))
                 #Finally attach current evaluated item to the list
                 self[action]["events"].append(event_eval)
             # Store the script
@@ -117,17 +124,16 @@ class Actions(dict):
         coincidences = [0] * len(action_events)
         for index, action_event in enumerate(action_events):
             # Check if the action-events are currently in the events
-            print(action_event)
             for event in events:
                 # Check the current event
                 for item in action_event:
                     try:
-                        if (action_event[item]) != event[item]:
+                        if action_event[item] != getattr(event,item):
                             break
                     except:
-                        print("No current value")
+                        pass
                 else:
                     # If elements are not different the continue
                     coincidences[index] = 1
-        
-        print("ENd")
+        # Return if all actions have been found
+        return all(coincidences)
