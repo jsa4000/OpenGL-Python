@@ -136,4 +136,6 @@ class Actions(dict):
                     # If elements are not different the continue
                     coincidences[index] = 1
         # Return if all actions have been found
+        if all(coincidences):
+            eval(self[action]["script"])
         return all(coincidences)
