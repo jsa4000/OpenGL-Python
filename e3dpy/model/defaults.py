@@ -106,19 +106,22 @@ def cube(origin = [0.0,0.0,0.0], transform = None):
     return (vertices,indices)
 
 def default_actions():
-    actions = { "orbit" : { "events": [ 
-                                        { "type" : "DeviceEvent.MOUSEMOTION", 
-                                          "buttons": [ "MouseButton.MIDDLE", 
-                                                       "MouseButton.LEFT" ]},
-                                        { "type" : "DeviceEvent.KEYSPRESSED", 
-                                          "keys": [ "Key.K_SPACE" ] }
-                                        ],
-                            "script": "print('Aabas de pulsar la combinación')"
-                          },
-                "pan" :   { "events": { "type":"DeviceEvent.KEYUP", 
-                                        "key": ["Key.K_a"]},
-                            "script": "print('Acabas de pulsar la A')"
-                          }
+    actions = {
+                "orbit" :
+                    { "events": [ 
+                            { "type" : "DeviceEvent.MOUSEMOTION", 
+                                "buttons": [ "MouseButton.MIDDLE", 
+                                            "MouseButton.LEFT" ]},
+                            { "type" : "DeviceEvent.KEYSPRESSED", 
+                                "keys":  "Key.K_SPACE"  }
+                            ],
+                    "script": "print('Aabas de pulsar la combinación')"
+                    },
+            "pan" :  
+                    { "events": { "type":"DeviceEvent.KEYUP", 
+                                    "key": ["Key.K_a"]},
+                    "script": "print('Acabas de pulsar la A')"
+                    }
               }
     return actions 
 
