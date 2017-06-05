@@ -108,6 +108,26 @@ class Actions(dict):
             self[action]["script"] = actions[action]["script"] 
 
     def check(self, action, events):
-        """ Check if the action is present in the event event
+        """ Check if the action is present in the events
+
+        An action could be represented as a sequence of action. However
+        we will only consider the events that belong to the same frame.
         """
-        print("Check")
+        action_events = self[action]["events"]
+        coincidences = [0] * len(action_events)
+        for index, action_event in enumerate(action_events):
+            # Check if the action-events are currently in the events
+            print(action_event)
+            for event in events:
+                # Check the current event
+                for item in action_event:
+                    try:
+                        if (action_event[item]) != event[item]:
+                            break
+                    except:
+                        print("No current value")
+                else:
+                    # If elements are not different the continue
+                    coincidences[index] = 1
+        
+        print("ENd")
