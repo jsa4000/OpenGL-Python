@@ -106,14 +106,20 @@ def cube(origin = [0.0,0.0,0.0], transform = None):
     return (vertices,indices)
 
 def default_actions():
-    actions = [ {"name": "Camera Orbit",
-                "type":"DeviceEvent.MOUSEMOTION",
-                    "parameters":["MouseButton.LEFT"],
-                    "action":"entity.camera.orbit(event.rel[0],event.rel[1])"},
-                {"name": "Camera Pan",
-                    "type":"DeviceEvent.MOUSEMOTION",
-                    "parameters":["MouseButton.MIDDLE"],
-                    "action":"entity.camera.pan(event.rel[0],event.rel[1])"}]
+    actions = { "orbit" : { "events": [ 
+                                        { "type" : "DeviceEvent.MOUSEMOTION", 
+                                          "buttons": [ "MouseButton.MIDDLE", 
+                                                       "MouseButton.LEFT" ]},
+                                        { "type" : "DeviceEvent.KEYSPRESSED", 
+                                          "keys": [ "Key.K_SPACE" ] }
+                                        ],
+                            "script": "print('Aabas de pulsar la combinación')"
+                          },
+                "pan" :   { "events": { "type":"DeviceEvent.KEYUP", 
+                                        "key": ["Key.K_a"]},
+                            "script": "print('Acabas de pulsar la A')"
+                          }
+              }
     return actions 
 
 def default_material():

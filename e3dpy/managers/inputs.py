@@ -71,22 +71,10 @@ class InputManager(object):
         #Get the inputs/actions from the current component
         component =  CatalogueManager.instance().get(component)
         actions = Actions(component.actions)
-        packed = {}
-        for event in events:
-            packed[event.type] = []
-        for event in events:
-            if event.type in [DeviceEvent.KEYDOWN, DeviceEvent.KEYUP]:
-                packed[event.type].append(event.key)
-            elif event.type in [DeviceEvent.KEYSPRESSED]:
-                packed[event.type].extend(event.keys)
-            elif event.type in [DeviceEvent.MOUSEBUTTONUP, DeviceEvent.MOUSEBUTTONDOWN]:
-                packed[event.type].append(event.button)
-            elif event.type in [DeviceEvent.MOUSEMOTION]:
-                packed[event.type].extend(event.buttons)
-        #print("My actions: ")
+
         for action in actions:
-            #print("type = {self.type}, parameters = {self.parameters}".format(self=action))  
-            if action.type in packed:
-                if packed[action.type] == action.parameters:
-                    print("This is OK")
+            if actions.check(action, events):
+                print ("Eahh")
+        
+        print("END")
       
