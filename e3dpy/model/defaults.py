@@ -115,18 +115,20 @@ def default_actions():
                   "script": "print('Acabas de pulsar la combinación')"
                 },
             "pan" :  
-                { "event": { "type":"DeviceEvent.KEYUP","key":["Key.K_a"]},
-                  "script": "print('Acabas de pulsar la A')"
+                { "event_1": { "type":"DeviceEvent.KEYUP","key":"Key.K_a"},
+                  "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_s"},
+                  "event_3": { "type":"DeviceEvent.KEYUP","key":"Key.K_d"},
+                  "event_4": { "type":"DeviceEvent.KEYUP","key":"Key.K_f"},
+                  "script": "print('Acabas de pulsar una tecla')"
                 },
             "write" :  
-                { "condition": "event.type==DeviceEvent.KEYUP and  \
-                                event.key==Key.K_a",
+                { "condition": "event.type==DeviceEvent.KEYUP and event.key==Key.K_a",
                   "script": "print('Acabas de pulsar la A')"
                 },
             "quit" :  
                 { "event_1": { "type":"DeviceEvent.QUIT"},
                   "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_ESCAPE"},
-                  "script": "self._engine.stop()"
+                  "script": "engine.stop()"
                 }
             }
     return actions 

@@ -68,9 +68,9 @@ class InputManager(object):
 
         # Check if any action satisfy any event
         for action in actions:
-            if actions.check(action, events):
-                #eval(actions[action]["script"])
-                pass
+            if actions[action].isin(events):
+                actions[action].execute(component=component,engine=self._engine)
+                
                 
 
       

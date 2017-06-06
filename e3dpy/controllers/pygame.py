@@ -214,8 +214,7 @@ class PygameDevice(KeyboardDevice, MouseDevice, JoyDevice, SystemDevice):
         pygame.event.pump()
         # Search for all the postion equal to 1
         return [i for i,value in enumerate(pygame.key.get_pressed()) if value]
-
-
+       
     def get_events(self):
         """ This function will return an array of (type, key)
         elements with the inpus received.
@@ -251,11 +250,13 @@ class PygameDevice(KeyboardDevice, MouseDevice, JoyDevice, SystemDevice):
         """
         pygame_events = pygame.event.get()
         events = [pygame_events_wrapper[event.type](event,self) for event in pygame_events]
-        if empty(events):
+        # If no KEYDOWN or KEYUP events check if any already pressed
+        if pygame.KEYDOWN not in pygame_events and pygame.KEYUP not in pygame_events:
              # Check whether buttons or keys are pressed
             keys = self.get_keys_pressed()
             if not empty(keys):
-                events.append(ParseDict(type=DeviceEvent.KEYSPRESSED, keys=keys))
+                # Create new Event for key pressed
+                events.append(Event(type=DeviceEvent.KEYSPRESSED, keys=keys))
  
         #Returne the capture events
         return events
