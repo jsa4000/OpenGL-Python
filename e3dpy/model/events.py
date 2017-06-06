@@ -258,16 +258,15 @@ class Action(dict):
         result = ["<{}: {}>".format(element, self[element]) for element in self]
         return "\n".join(result)
 
-    def evaluate(self, event):
+    def evaluate(self, events):
         """ Check if condition in action to evaulate it
         """
         if not self.condition: return False
-
-        try:
-            exec(self[Action.CONDITION_LABEL])
-        except:
-            return False
-        return True
+        # Evalueta the condition over all the events
+        for event in events:
+            if eval(self[Action.CONDITION_LABEL]):
+                return True
+        return False
 
     def execute(self, **kwargs):
         """ Execute the current script associated with the current action.

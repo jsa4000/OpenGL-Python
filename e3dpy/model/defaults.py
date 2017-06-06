@@ -122,8 +122,9 @@ def default_actions():
                   "script": "print('Acabas de pulsar una tecla')"
                 },
             "write" :  
-                { "condition": "event.type==DeviceEvent.KEYUP and event.key==Key.K_a",
-                  "script": "print('Acabas de pulsar la A')"
+                { "condition": "event.type==DeviceEvent.KEYUP and \
+                                event.key==Key.K_c",
+                  "script": "print('Acabas de pulsar la Condition')"
                 },
             "quit" :  
                 { "event_1": { "type":"DeviceEvent.QUIT"},
