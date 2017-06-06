@@ -135,7 +135,7 @@ def default_actions():
             "quit" :  
                 { "event_1": { "type":"DeviceEvent.QUIT"},
                   "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_ESCAPE"},
-                  "script": "engine.stop()"
+                  "script": "engine.running = False"
                 }
             }
     return Actions(actions) 

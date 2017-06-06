@@ -526,6 +526,10 @@ class Thread(object):
     def running(self):
         return self._running
 
+    @running.setter
+    def running(self, value):
+        self._running = value
+
     def __init__(self):
         """ Contructor for the class
         """

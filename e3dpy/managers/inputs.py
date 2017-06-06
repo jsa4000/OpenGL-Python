@@ -1,5 +1,6 @@
 import numpy as np
 from ..core import CatalogueManager
+from ..core.utils import *
 from ..core.controllers import DeviceEvent, Key
 from ..components import InputComponent
 from ..model import Actions
@@ -56,9 +57,6 @@ class InputManager(object):
             # print("{}:{}".format(component, components[component]))
             self._process_component_events(components[component],events)
 
-        # End the worker run process
-        return self
-
     def _process_component_events(self, component, events):
         """ Function to process all the events for the current component
         """
@@ -69,6 +67,7 @@ class InputManager(object):
         # Check if any action satisfy any event
         for action in actions:
             if actions[action].isin(events) and actions[action].evaluate(events):
+                # If events and condition then execute the action
                 actions[action].execute(component=component,engine=self._engine)
                 
                 
