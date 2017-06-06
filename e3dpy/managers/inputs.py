@@ -64,12 +64,11 @@ class InputManager(object):
         """
         #Get the inputs/actions from the current component
         component =  CatalogueManager.instance().get(component)
-        actions = Actions(component.actions)
+        actions = component.actions
 
         # Check if any action satisfy any event
         for action in actions:
-            #if actions[action].isin(events) or actions[action].evaluate(events):
-            if actions[action].evaluate(events):
+            if actions[action].isin(events) and actions[action].evaluate(events):
                 actions[action].execute(component=component,engine=self._engine)
                 
                 

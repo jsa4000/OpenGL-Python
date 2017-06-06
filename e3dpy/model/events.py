@@ -3,6 +3,8 @@ from ..core.constants import DeviceEvent, MouseButton, Key, KeyModifier
 
 class Event(object):
     """ Generic Event class definition. 
+
+    This class will be used to create new events
     """
     def __init__(self, *args, **kwargs):
         """Constructor
@@ -30,28 +32,33 @@ class Action(dict):
     """ Action Class
 
     Following are the possible scenarios in order to create Action:
-
+    
+    actions = {
         "orbit" :
             { "event": [ 
-                  {"type" : "DeviceEvent.MOUSEMOTION", 
-                   "buttons": ["MouseButton.MIDDLE","MouseButton.LEFT"]},
-                  {"type" : "DeviceEvent.KEYSPRESSED","keys": "Key.K_SPACE" }],
-              "script": "print('Acabas de pulsar la combinación')"
+                { "type" : "DeviceEvent.MOUSEMOTION", 
+                    "buttons": ["MouseButton.MIDDLE","MouseButton.LEFT"]},
+                { "type" : "DeviceEvent.KEYSPRESSED","keys": "Key.K_SPACE" }],
+                "script": "print('Acabas de pulsar la combinación')"
             },
         "pan" :  
-            { "event": { "type":"DeviceEvent.KEYUP","key":["Key.K_a"]},
-              "script": "print('Acabas de pulsar la A')"
+            { "event_1": { "type":"DeviceEvent.KEYUP","key":"Key.K_a"},
+                "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_s"},
+                "event_3": { "type":"DeviceEvent.KEYUP","key":"Key.K_d"},
+                "event_4": { "type":"DeviceEvent.KEYUP","key":"Key.K_f"},
+                "script": "print('Acabas de pulsar una tecla')"
             },
         "write" :  
-            { "condition": "event.type==DeviceEvent.KEYUP and  \
-                            event.key==Key.K_a",
-              "script": "print('Acabas de pulsar la A')"
+            { "condition": "event.type==DeviceEvent.KEYUP and \
+                            event.key==Key.K_c",
+                "script": "print('Acabas de pulsar la Condition')"
             },
         "quit" :  
             { "event_1": { "type":"DeviceEvent.QUIT"},
-              "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_ESCAPE"},
-              "script": "self._engine.stop()"
+                "event_2": { "type":"DeviceEvent.KEYUP","key":"Key.K_ESCAPE"},
+                "script": "engine.stop()"
             }
+        }
 
     """
 
@@ -190,7 +197,8 @@ class Action(dict):
         """
         # Get the current events from the action to check
         action_events = self.events
-        if empty(action_events): return False
+        # Check if no events. This means it have a only condition instead
+        if empty(action_events): return True
         # Look through all the events-action and current events.
         for action_event in action_events:
             #Check if the condition is aggrefation
@@ -261,7 +269,7 @@ class Action(dict):
     def evaluate(self, events):
         """ Check if condition in action to evaulate it
         """
-        if not self.condition: return False
+        if not self.condition: return True
         # Evalueta the condition over all the events
         for event in events:
             if eval(self[Action.CONDITION_LABEL]):

@@ -1,10 +1,13 @@
 from collections import OrderedDict as dict
 from enum import Enum
 import os
+import json
 import numpy as np
 from PIL import Image
 
+
 __all__ = ['file_exists', 
+           'read_json',
            'read_file',
            'load_image', 
            'is_collection',
@@ -25,6 +28,14 @@ def file_exists(filename):
     if os.path.isfile(filename):
         return True
     return False
+
+def read_json(filename, strict=False):
+    """ Loads a JSON file
+    """
+    data = []
+    with open(filename,'r') as file:
+        data = json.load(file,strict=False)
+    return data
 
 def read_file(filename):
     """

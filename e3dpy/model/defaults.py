@@ -1,4 +1,6 @@
 import numpy as np
+from ..core.utils import read_json
+from .events import Actions
 from .geometry import Geometry
 from .material import Material
 
@@ -105,6 +107,10 @@ def cube(origin = [0.0,0.0,0.0], transform = None):
     #return (nvertices,nindices)
     return (vertices,indices)
 
+def default_actions_from_file():
+    actions = read_json('scripts\settings.json')
+    return Actions(actions)
+
 def default_actions():
     actions = {
             "orbit" :
@@ -132,7 +138,7 @@ def default_actions():
                   "script": "engine.stop()"
                 }
             }
-    return actions 
+    return Actions(actions) 
 
 def default_material():
         return Material("./assets/images/texture.png")
