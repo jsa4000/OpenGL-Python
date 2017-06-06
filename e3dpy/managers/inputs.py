@@ -5,6 +5,8 @@ from ..core.controllers import DeviceEvent, Key
 from ..components import InputComponent
 from ..model import Actions
 import threading
+from multiprocessing import Pool
+from functools import partial
 
 class InputManager(object):
     """ Input Worker Class
@@ -54,10 +56,10 @@ class InputManager(object):
         events = self._device.get_events()
 
         # Get the relationship betwen entities and components
-        for component in components.index:
-            # entity : component (input)
-            # print("{}:{}".format(component, components[component]))
-            self._process_component_events(components[component],events)
+        # for component in components.index:
+        #     # entity : component (input)
+        #     # print("{}:{}".format(component, components[component]))
+        #     self._process_component_events(components[component],events)
 
         # threads = []
         #  # Get the relationship betwen entities and components
@@ -70,6 +72,10 @@ class InputManager(object):
         #     threads.append(thread)
         # for thread in threads:
         #     thread.join()
+
+        # http://blog.wisatbff.com/2016/03/22/python-multiprocessing.html
+        pool = Pool(4)
+        pool.map(partial(self._process_component_events, param1=events), components.index)
    
 
     def _process_component_events(self, component, events):
