@@ -1,12 +1,8 @@
 import numpy as np
-from ..core import CatalogueManager
-from ..core.utils import *
-from ..core.controllers import DeviceEvent, Key
-from ..components import InputComponent
-from ..model import Actions
 import threading
-from multiprocessing import Pool
-from functools import partial
+from ..core import CatalogueManager, Actions
+from ..core.utils import *
+from ..components import InputComponent
 
 class InputManager(object):
     """ Input Worker Class
@@ -39,8 +35,7 @@ class InputManager(object):
         self._device.init()
         return self
 
-    @timeit
-    def run(self):
+    def run(self, multithread=False):
         """ Start the worker process
         """
         # To improve performances this can be done during the initializetion
@@ -55,42 +50,38 @@ class InputManager(object):
         # Get all the events in the current frame
         events = self._device.get_events()
 
-        # Get the relationship betwen entities and components
-        # for component in components.index:
-        #     # entity : component (input)
-        #     # print("{}:{}".format(component, components[component]))
-        #     self._process_component_events(components[component],events)
+        # Check whether is going to be multithread
+        if multithread:
+            threads = []
+            # Get the relationship betwen entities and components
+            for entity in components.index:
+                thread = threading.Thread(target=self._process_component_events, 
+                                          args=(entity,components[entity],events))
+                thread.start()
+                threads.append(thread)
+                # Wain unitl all the component ahave finished
+            for thread in threads:
+                thread.join()
+        else:
+            # Get the relationship betwen entities and components
+            for entity in components.index:
+                # entity : component (input)
+                # print("{}:{}".format(entity, components[entity]))
+                self._process_component_events(entity, components[entity], events)
 
-        # threads = []
-        #  # Get the relationship betwen entities and components
-        # for component in components.index:
-        #     # entity : component (input)
-        #     # print("{}:{}".format(component, components[component]))
-        #     #self._process_component_events(components[component],events)
-        #     thread = threading.Thread(target=self._process_component_events, args = (components[component],events))
-        #     thread.start()
-        #     threads.append(thread)
-        # for thread in threads:
-        #     thread.join()
-
-        # http://blog.wisatbff.com/2016/03/22/python-multiprocessing.html
-        pool = Pool(4)
-        pool.map(partial(self._process_component_events, param1=events), components.index)
-   
-
-    def _process_component_events(self, component, events):
+      
+    def _process_component_events(self, entity, component, events):
         """ Function to process all the events for the current component
         """
         #Get the inputs/actions from the current component
         component =  CatalogueManager.instance().get(component)
+        entity = CatalogueManager.instance().get(entity)
         actions = component.actions
 
         # Check if any action satisfy any event
         for action in actions:
             if actions[action].isin(events) and actions[action].evaluate(events):
                 # If events and condition then execute the action
-                actions[action].execute(component=component,engine=self._engine)
-                
-        return "Pepe"        
-
+                actions[action].execute(entity=entity,component=component,engine=self._engine)
+ 
       

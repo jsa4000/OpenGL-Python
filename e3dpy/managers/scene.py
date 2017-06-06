@@ -22,5 +22,4 @@ class SceneManager(object):
     def run(self):
         """ Start the worker process
         """
-        print("Scene Working")
-        return self
+        pass

@@ -1,4 +1,9 @@
-
+import numpy as np
+import threading
+from ..core import CatalogueManager
+from ..core.utils import *
+from ..components import ( RenderComponent, MaterialComponent, GeometryComponent,
+                           LightComponent, CameraComponent, TransformComponent )
 
 class RenderManager(object):
     """ Render Manager Class
@@ -46,7 +51,9 @@ class RenderManager(object):
     def __init__(self, engine):
         """ Initialization of the Worker
         """
-        pass
+        # Create a device controller to get the current inputs
+        self._engine = engine
+        self._render = engine.render
 
     def __del__(self):
         """ Dispose and close the worker.
@@ -60,9 +67,16 @@ class RenderManager(object):
 
     def run(self):
         """ Start the worker process
+
+        This will manage all the rendering process that
+        deal with extracting the component and entities that
+        will be render into the scene. 
+
+        Also, it will take another components such as lights,
+        materials, textures, etc that will be on scene
         """
-        print("Render Working")
-        return self
+        
+        
 
 
 

@@ -3,7 +3,8 @@ from ..core.utils import *
 from .base import Defaults, DBase
 from .constants import *
 
-__all__ = ['DisplayManager',
+__all__ = ['RenderManager',
+           'DisplayManager',
            'DeviceManager',
            'Device',
            'KeyboardDevice',
@@ -13,6 +14,34 @@ __all__ = ['DisplayManager',
            'Display',
            'Render',
            'Manager']
+
+class RenderManager(object):
+    """ Render Manager Class
+
+    """
+
+    def __init__(self, render):
+        """ Initialize the constructor
+        """
+        self._render = render
+
+    def init(self):
+        """ Initialize the creation of the render engine
+        """
+        self._render.init()
+        return self 
+
+    def update(self):
+        """ Update the render
+        """
+        self._render.update() 
+        return self  
+   
+    def dispose(self):
+        """ Dispose manually the window
+        """
+        self._render.dispose()
+        return self 
 
 class Device(object):
     """ Abstract interface for the devices
@@ -120,8 +149,7 @@ class DisplayManager(list):
         for display in self:
             display.dispose()
         return self
-        
-    
+            
 class DeviceManager(dict):
     """ Device Manager Class
     
@@ -347,9 +375,6 @@ class JoyDevice(Device):
         """
         #Returne the capture events
         raise NotImplementedError
-
-class Render(object):
-    pass
 
 class Manager(object):
     """ Abstract Worker Class

@@ -11,9 +11,9 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 from e3dpy.model import Camera
 from e3dpy.components import InputComponent
 from e3dpy.core import Base, CoreEngine, SceneGraph, Thread, CatalogueManager
-from e3dpy.core.controllers import DeviceManager, DisplayManager
+from e3dpy.core.controllers import DeviceManager, DisplayManager, RenderManager
 from e3dpy.core.utils import get_cmd_parameters
-from e3dpy.controllers import PygameDevice, PygameDisplay
+from e3dpy.controllers import PygameDevice, PygameDisplay, OpenGLRender
 
 def create_scene():
     """ Create initial scene
@@ -82,6 +82,7 @@ if __name__ == '__main__':
 
     # For testing pourposes create simple uid
     Base.DEFAULT_UUID = Base.COUNTER
+    
     # Create the main Scene graph and initialize
     scene_grapgh = SceneGraph(create_scene()).init()
 
@@ -94,11 +95,15 @@ if __name__ == '__main__':
     # Start the Engine in Mult-thread Mode
     Thread.MULTI_THREAD = False
     # Create the display (main)
-    display_manager = DisplayManager(PygameDisplay("e3dpy render engine", parameters.width, parameters.height))
+    display_manager = DisplayManager(PygameDisplay("e3dpy render engine", 
+                                        parameters.width, parameters.height))
     # Create the devices
     device_manager = DeviceManager(PygameDevice())
+    # Create the main Render
+    render_manager = RenderManager(OpenGLRender())
     # Create the engine and set the display and Devices used
-    engine = CoreEngine(display_manager, device_manager, scene_grapgh, fps=parameters.fps, ).init().start()
+    engine = CoreEngine(display_manager, device_manager, render_manager, 
+                        scene_grapgh, fps=parameters.fps, ).init().start()
 
     # # Running in the main Thread
     # while engine.running:
@@ -106,8 +111,10 @@ if __name__ == '__main__':
     #     print("Waiting for Implementation..")
 
     # # End the engine and dispose the memory
-    # engine.stop(True)
-    # display.dispose()
+    engine.stop(True)
+    display_manager.dispose()
+    device_manager.dispose()
+    render_manager.dispose()
 
     # Program Ends   
     print('##############################') 

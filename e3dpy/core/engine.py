@@ -25,6 +25,12 @@ class CoreEngine(Thread):
         return self._device
 
     @property
+    def render(self):
+        """ Return render manager 
+        """
+        return self._render
+
+    @property
     def scene(self):
         """ Get current Scene Graph
         """
@@ -36,7 +42,7 @@ class CoreEngine(Thread):
         """
         self._scene = value
      
-    def __init__(self, display, device, scene, fps=60):
+    def __init__(self, display, device, render, scene, fps=60):
         """ Contructor for the class
 
         This class is the main loop for the Engine. In this class all the 
@@ -53,6 +59,7 @@ class CoreEngine(Thread):
         # Initilaize parameters
         self._display = display
         self._device = device
+        self._render = render
         self._scene = scene
         self._fps = fps
         # Initialize the variables for the Managers
@@ -88,14 +95,13 @@ class CoreEngine(Thread):
         while self.running:     
 
             # Process Inputs from the user
-            self._input_manager.run()
+            self._input_manager.run(False)
 
             # Update Scene, Physics, Logic and solvers
-            # Update depend on time, inputs, collisions, logic, etc..
-            #  self._scene_manager.run()
+            self._scene_manager.run()
 
             # Finally render the scene
-            # self._render_manager.run()
+            self._render_manager.run()
 
             time.sleep(1/60)
 

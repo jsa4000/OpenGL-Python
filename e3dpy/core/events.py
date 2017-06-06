@@ -1,5 +1,9 @@
-from ..core.utils import *
-from ..core.constants import DeviceEvent, MouseButton, Key, KeyModifier
+from .utils import *
+from .constants import DeviceEvent, MouseButton, Key, KeyModifier
+
+__all__ = ['Event', 
+           'Action',
+           'Actions']
 
 class Event(object):
     """ Generic Event class definition. 

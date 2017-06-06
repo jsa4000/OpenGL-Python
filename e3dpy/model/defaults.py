@@ -1,6 +1,6 @@
 import numpy as np
 from ..core.utils import read_json
-from .events import Actions
+from ..core import Actions
 from .geometry import Geometry
 from .material import Material
 
