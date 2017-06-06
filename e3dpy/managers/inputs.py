@@ -4,6 +4,7 @@ from ..core.utils import *
 from ..core.controllers import DeviceEvent, Key
 from ..components import InputComponent
 from ..model import Actions
+import threading
 
 class InputManager(object):
     """ Input Worker Class
@@ -36,6 +37,7 @@ class InputManager(object):
         self._device.init()
         return self
 
+    @timeit
     def run(self):
         """ Start the worker process
         """
@@ -57,6 +59,19 @@ class InputManager(object):
             # print("{}:{}".format(component, components[component]))
             self._process_component_events(components[component],events)
 
+        # threads = []
+        #  # Get the relationship betwen entities and components
+        # for component in components.index:
+        #     # entity : component (input)
+        #     # print("{}:{}".format(component, components[component]))
+        #     #self._process_component_events(components[component],events)
+        #     thread = threading.Thread(target=self._process_component_events, args = (components[component],events))
+        #     thread.start()
+        #     threads.append(thread)
+        # for thread in threads:
+        #     thread.join()
+   
+
     def _process_component_events(self, component, events):
         """ Function to process all the events for the current component
         """
@@ -70,6 +85,6 @@ class InputManager(object):
                 # If events and condition then execute the action
                 actions[action].execute(component=component,engine=self._engine)
                 
-                
+        return "Pepe"        
 
       
