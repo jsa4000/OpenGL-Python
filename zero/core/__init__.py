@@ -9,25 +9,21 @@ from .base import ( Base, Defaults, DBase, Datasheet, Thread,
 
 #Catalogue Package
 from .catalogue import ( CatalogueManager, Catalogue, BaseDictionay,
-                        CatalogueBase, CatalogueTree)
+                         CatalogueBase, CatalogueTree)
 # Geometry Package
 from .geometry import ( Camera,ProjectionType, 
-                        Geometry,
-                        Material, 
-                        Transform )
+                        Geometry, Material, Transform )
 
 from .geometry.create import *
 
-# Controllers Pacakge
-from .controllers import ( Device, DeviceManager,
-                           Display, DisplayManager,
+# Controllers Package
+from .controllers import ( Device, DeviceController, Display, DisplayController,
                            KeyboardDevice, MouseDevice, SystemDevice, JoyDevice, 
-                           DisplayMode, 
-                           DrawMode,UsageMode, 
-                           DeviceEvent, 
-                           RenderManager,
-                           MouseButton,KeyModifier,Key)
+                           DisplayMode, DrawMode,UsageMode, 
+                           DeviceEvent, MouseButton, KeyModifier, Key,
+                           RenderController )
 
+# Main classes Engine and Scene Graph
 from .engine import CoreEngine
 from .scene import SceneGraph
 

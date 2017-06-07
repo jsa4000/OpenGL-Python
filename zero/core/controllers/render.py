@@ -2,8 +2,8 @@
 
 
 
-class RenderManager(list):
-    """ Render Manager Class
+class RenderController(list):
+    """ Render Controller Class
 
     This class will store all the displays created. Also it will
     manage the creation of the window, shutdown, etc..

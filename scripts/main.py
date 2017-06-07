@@ -10,9 +10,10 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from zero.components import InputComponent
 from zero.core import (Base, CoreEngine, SceneGraph, Thread, CatalogueManager,
-                      DeviceManager, DisplayManager, RenderManager, Camera)
+                      DeviceController, DisplayController, RenderController)
+from zero.core.geometry import Camera, Material, Geometry                 
 from zero.core.base.utils import get_cmd_parameters
-from zero.controllers import PygameDevice, PygameDisplay, OpenGLRender
+from zero.drivers import PygameDevice, PygameDisplay, OpenGLRender
 
 def create_scene():
     """ Create initial scene
@@ -94,15 +95,15 @@ if __name__ == '__main__':
     # Start the Engine in Mult-thread Mode
     Thread.MULTI_THREAD = False
     # Create the display (main)
-    display_manager = DisplayManager(PygameDisplay("Zero Rendering Engine", 
-                                        parameters.width, parameters.height))
+    display_controller = DisplayController(PygameDisplay("Zero Rendering Engine", 
+                                           parameters.width, parameters.height))
     # Create the devices
-    device_manager = DeviceManager(PygameDevice())
+    device_controller = DeviceController(PygameDevice())
 
     # Create the main Render
-    render_manager = RenderManager(OpenGLRender())
+    render_controller = RenderController(OpenGLRender())
     # Create the engine and set the display and Devices used
-    engine = CoreEngine(display_manager, device_manager, render_manager, 
+    engine = CoreEngine(display_controller, device_controller, render_controller, 
                         scene_grapgh, fps=parameters.fps, ).init().start()
 
     # # Running in the main Thread
@@ -112,9 +113,9 @@ if __name__ == '__main__':
 
     # # End the engine and dispose the memory
     engine.stop(True)
-    display_manager.dispose()
-    device_manager.dispose()
-    render_manager.dispose()
+    display_controller.dispose()
+    device_controller.dispose()
+    render_controller.dispose()
 
     # Program Ends   
     print('##############################') 

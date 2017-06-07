@@ -3,15 +3,15 @@ from ..base.utils import *
 from ..base import Defaults, DBase
 from .constants import *
 
-__all__ = ['DeviceManager',
+__all__ = ['DeviceController',
            'Device',
            'KeyboardDevice',
            'MouseDevice',
            'SystemDevice',
            'JoyDevice']
 
-class DeviceManager(dict):
-    """ Device Manager Class
+class DeviceController(dict):
+    """ Device Controller Class
     
     This class will store all the devices created. Also it will
     manage the creation of the window, shutdown, etc..

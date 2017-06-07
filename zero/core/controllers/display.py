@@ -3,11 +3,11 @@ from ..base.utils import *
 from ..base import Defaults, DBase
 from .constants import *
 
-__all__ = ['DisplayManager',
+__all__ = ['DisplayController',
            'Display']
 
-class DisplayManager(list):
-    """ Display Manager Class
+class DisplayController(list):
+    """ Display Controller Class
 
     This class will store all the displays created. Also it will
     manage the creation of the window, shutdown, etc..

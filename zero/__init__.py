@@ -4,6 +4,6 @@ from .core import ( Base, Defaults, DBase, Datasheet, Thread,
                     CatalogueManager, Catalogue, BaseDictionay, 
                     Component, Entity, CatalogueBase, CatalogueTree,
                     CoreEngine, SceneGraph,
-                    DeviceManager, DisplayManager, RenderManager)
+                    DeviceController, DisplayController, RenderController)
                     
-from .controllers import PygameDevice, PygameDisplay, OpenGLRender
+from .drivers import PygameDevice, PygameDisplay, OpenGLRender

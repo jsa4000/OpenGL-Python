@@ -1,7 +1,7 @@
 import time
 from .base import Thread
-from .controllers import DisplayManager, DeviceManager
-from ..managers import InputManager, SceneManager, RenderManager
+from .controllers import DisplayController, DeviceController
+from ..system import InputManager, SceneManager, RenderManager
 
 __all__ = ['CoreEngine']
 
