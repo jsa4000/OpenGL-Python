@@ -14,19 +14,19 @@ class CoreEngine(Thread):
 
     @property
     def display(self):
-        """ Return display manager 
+        """ Return display controller 
         """
         return self._display
 
     @property
     def device(self):
-        """ Return device manager
+        """ Return device controller
         """
         return self._device
 
     @property
     def render(self):
-        """ Return render manager 
+        """ Return render controller 
         """
         return self._render
 
@@ -48,13 +48,13 @@ class CoreEngine(Thread):
         This class is the main loop for the Engine. In this class all the 
         Managers and workers will be created.
 
-        Devices or managers will be used in for the engine. They will 
-        take the Scene Graph and perform the work that corresponf 
+        Devices or controllers that will be used in for the engine. They 
+        will take the Scene Graph and perform the work that corresponds 
         i.e. input, update, physics, render etc.
 
-        Managers will be used for the cases where more devices can be used,
-        for example in cases of diplays or devices, where it can be used more
-        than one device at the same time. Also it can be used for rendering
+        Controllers are used for the cases where more devices or drivers are
+        used, for example in cases of diplays or devices, where it can be used 
+        more than one device at the same time. Also it can be used for rendering
         where depending on the type of rendering it could be used one or more
         rendering types, like opengl, directx, ray casting, etc..
 
@@ -63,15 +63,23 @@ class CoreEngine(Thread):
 
         Parameters:
 
-        display: manager or device that will be used to display- The admited 
-        classes will be :DisplayManager or Display
+        display: controller that will be used to display- The admited 
+        classes will be :DisplayController or Display
 
-        device: manager or device that will be used to interact with the user 
-        by Human User Devices(HUD). The admited classes will be :
-        DeviceManager or any of the devices associated with it that allows
-        get_events operation.
+        device: controller or device that will be used to interact with the 
+        user by the Human User Devices(HUD). The admited classes are :
+        DeviceController or any of the devices associated with it that allows
+        get_events operation, like KeyboardDevice, MouseDevice, etc..
+    
+        render: controller that will be used for the engine. The rende controller
+        will manage all the interface between the engine and the drivers being
+        used.
+
+        scene: This object will contain the whole scene with all the entities
+        and componentes. The catalogueManager.Instance() is storing all this
+        information in the creation and bindings between entities and components.
         
-        render:
+        fps: frames-per-second the engine will use.
 
         """
         super(CoreEngine,self).__init__()

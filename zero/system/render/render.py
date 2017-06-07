@@ -49,7 +49,7 @@ class RenderManager(object):
     """
 
     def __init__(self, engine):
-        """ Initialization of the Worker
+        """ Initialization of the Manager
         """
         # Create a device controller to get the current inputs
         self._engine = engine
@@ -65,6 +65,27 @@ class RenderManager(object):
         """
         return self
 
+    def search(self, component_types):
+        """ This function will search for the component types
+        specified
+        """
+         # Get the current Catalog Manager
+        df = CatalogueManager.instance().dataframe
+
+        # Search for the items active in the scene
+        column = component_types
+        # Get the current entity-components
+        entity_component = df[column].dropna(axis=0)
+        result = []
+        # Search for the current active ones
+        for index in entity_component.index:
+            # Get the entity to get if it's the active one
+            entity = CatalogueManager.instance().get(index) 
+            if entity.active:
+                result.append(CatalogueManager.instance().get(entity_component[index]))
+        # Finally return the results founded
+        return result
+
     def run(self):
         """ Start the worker process
 
@@ -75,9 +96,22 @@ class RenderManager(object):
         Also, it will take another components such as lights,
         materials, textures, etc that will be on scene
         """
-        
-        
+       
+        # Search for the active camera to render
+        cameras = self.search(CameraComponent.DEFAULT_TYPE)
+       
+        # Search for all the lights in the scene
+        lights = self.search(LightComponent.DEFAULT_TYPE)
 
+        # Search for all the geometry with transforms, render and
+        # geometry components. If no shader or material information, 
+        # defaults will be provided
+        #geometry = self._get_current_lights()
+
+        # In this case I have to go through all the components first
+        #That satisfy those conditions
+
+        print("END")
 
 
     

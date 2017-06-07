@@ -43,9 +43,9 @@ class InputManager(object):
 
         # Get the current Catalog
         df = CatalogueManager.instance().dataframe
-        col_input = InputComponent.DEFAULT_TYPE
+        column = InputComponent.DEFAULT_TYPE
         # Get the current input actors
-        components = df[col_input].dropna(axis=0)
+        entity_component = df[column].dropna(axis=0)
 
         # Get all the events in the current frame
         events = self._device.get_events()
@@ -54,9 +54,9 @@ class InputManager(object):
         if multithread:
             threads = []
             # Get the relationship betwen entities and components
-            for entity in components.index:
+            for entityid in entity_component.index:
                 thread = threading.Thread(target=self._process_component_events, 
-                                          args=(entity,components[entity],events))
+                                          args=(entityid,entity_component[entityid],events))
                 thread.start()
                 threads.append(thread)
                 # Wain unitl all the component ahave finished
@@ -64,10 +64,10 @@ class InputManager(object):
                 thread.join()
         else:
             # Get the relationship betwen entities and components
-            for entity in components.index:
+            for entityid in entity_component.index:
                 # entity : component (input)
-                # print("{}:{}".format(entity, components[entity]))
-                self._process_component_events(entity, components[entity], events)
+                # print("{}:{}".format(entity, entity_component[entity]))
+                self._process_component_events(entityid, entity_component[entityid], events)
 
       
     def _process_component_events(self, entity, component, events):
