@@ -56,7 +56,7 @@ class InputManager(object):
             # Get the relationship betwen entities and components
             for entityid in entity_component.index:
                 thread = threading.Thread(target=self._process_component_events, 
-                                          args=(entityid,entity_component[entityid],events))
+                                          args=(entityid, events))
                 thread.start()
                 threads.append(thread)
                 # Wain unitl all the component ahave finished
@@ -67,21 +67,20 @@ class InputManager(object):
             for entityid in entity_component.index:
                 # entity : component (input)
                 # print("{}:{}".format(entity, entity_component[entity]))
-                self._process_component_events(entityid, entity_component[entityid], events)
+                self._process_component_events(entityid, events)
 
       
-    def _process_component_events(self, entity, component, events):
+    def _process_component_events(self, entity, events):
         """ Function to process all the events for the current component
         """
         #Get the inputs/actions from the current component
-        component =  CatalogueManager.instance().get(component)
         entity = CatalogueManager.instance().get(entity)
-        actions = component.actions
+        actions = entity[InputComponent.DEFAULT_TYPE].actions
 
         # Check if any action satisfy any event
         for action in actions:
             if actions[action].isin(events) and actions[action].evaluate(events):
                 # If events and condition then execute the action
-                actions[action].execute(entity=entity,component=component,engine=self._engine)
+                actions[action].execute(entity=entity,engine=self._engine)
  
       

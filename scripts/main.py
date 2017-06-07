@@ -88,8 +88,8 @@ if __name__ == '__main__':
 
     ###################################################
     #print(scene)
-    print(CatalogueManager.instance())
-    # print(repr(CatalogueManager.instance().head()))
+    #print(CatalogueManager.instance())
+    print(repr(CatalogueManager.instance().head(20)))
     ###################################################
 
     # Start the Engine in Mult-thread Mode

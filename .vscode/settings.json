@@ -3,7 +3,9 @@
     // Disable the linting feature int pylint
     "python.linting.enabled": false,
     "files.exclude": {
-        "**/__pycache__": true
-    },
+            "**/__pycache__": true,
+            ".git*": true,
+            "*.bat":true
+            },
     "python.promptToInstallJupyter": false
 }

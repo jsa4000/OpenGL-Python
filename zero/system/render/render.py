@@ -72,17 +72,15 @@ class RenderManager(object):
          # Get the current Catalog Manager
         df = CatalogueManager.instance().dataframe
 
-        # Search for the items active in the scene
-        column = component_types
         # Get the current entity-components
-        entity_component = df[column].dropna(axis=0)
+        entity_component = df.loc[:,component_types].dropna(axis=0)
         result = []
         # Search for the current active ones
         for index in entity_component.index:
             # Get the entity to get if it's the active one
             entity = CatalogueManager.instance().get(index) 
             if entity.active:
-                result.append(CatalogueManager.instance().get(entity_component[index]))
+                result.append(entity)
         # Finally return the results founded
         return result
 
@@ -96,7 +94,7 @@ class RenderManager(object):
         Also, it will take another components such as lights,
         materials, textures, etc that will be on scene
         """
-       
+     
         # Search for the active camera to render
         cameras = self.search(CameraComponent.DEFAULT_TYPE)
        
@@ -106,12 +104,22 @@ class RenderManager(object):
         # Search for all the geometry with transforms, render and
         # geometry components. If no shader or material information, 
         # defaults will be provided
-        #geometry = self._get_current_lights()
+        objects = self.search([GeometryComponent.DEFAULT_TYPE,RenderComponent.DEFAULT_TYPE])
+        for obj in objects:
+            # Get the transformation
+            transform = obj[TransformComponent.DEFAULT_TYPE].transform
+            # Get the geometry
+            geometry = obj[GeometryComponent.DEFAULT_TYPE].geometry
+            # Get the material
+            material = obj[MaterialComponent.DEFAULT_TYPE].material
+            # Bind the things
+            print("OK")
+
 
         # In this case I have to go through all the components first
         #That satisfy those conditions
 
-        print("END")
+       
 
 
     
