@@ -1,6 +1,7 @@
 import numpy as np
 import OpenGL.GL as GL
 from ...core import UsageMode, DrawMode
+from ...core.base.utils import *
 
 opengl_usagemode_wrapper = {
     UsageMode.stream_draw  : GL.GL_STREAM_DRAW,

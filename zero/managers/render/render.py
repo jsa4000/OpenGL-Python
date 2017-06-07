@@ -1,7 +1,7 @@
 import numpy as np
 import threading
 from ...core import CatalogueManager
-from ...core.utils import *
+from ...core.base.utils import *
 from ...components import ( RenderComponent, MaterialComponent, GeometryComponent,
                            LightComponent, CameraComponent, TransformComponent )
 

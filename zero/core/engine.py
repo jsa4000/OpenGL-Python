@@ -46,14 +46,33 @@ class CoreEngine(Thread):
         """ Contructor for the class
 
         This class is the main loop for the Engine. In this class all the 
-        Managers will be created.
+        Managers and workers will be created.
 
-        System, or managers, will take the Scene Graph and perfor
-        the work that corresponf, i.e. input, update, physics, render etc
+        Devices or managers will be used in for the engine. They will 
+        take the Scene Graph and perform the work that corresponf 
+        i.e. input, update, physics, render etc.
+
+        Managers will be used for the cases where more devices can be used,
+        for example in cases of diplays or devices, where it can be used more
+        than one device at the same time. Also it can be used for rendering
+        where depending on the type of rendering it could be used one or more
+        rendering types, like opengl, directx, ray casting, etc..
 
         Also the engine will initialize the Display and do the calls to
         the display driver so the Scene could be rendered properly.
+
+        Parameters:
+
+        display: manager or device that will be used to display- The admited 
+        classes will be :DisplayManager or Display
+
+        device: manager or device that will be used to interact with the user 
+        by Human User Devices(HUD). The admited classes will be :
+        DeviceManager or any of the devices associated with it that allows
+        get_events operation.
         
+        render:
+
         """
         super(CoreEngine,self).__init__()
         # Initilaize parameters

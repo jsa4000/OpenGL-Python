@@ -5,6 +5,8 @@ from .devices import (Device, DeviceManager,
 
 from .display import DisplayManager, Display
 
+from .render import RenderManager
+
 from .constants import (DisplayMode, 
                         DrawMode, UsageMode, 
                         DeviceEvent, 

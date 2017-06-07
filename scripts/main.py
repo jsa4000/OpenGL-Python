@@ -8,11 +8,10 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from zero.model import Camera
 from zero.components import InputComponent
-from zero.core import Base, CoreEngine, SceneGraph, Thread, CatalogueManager
-from zero.core.controllers import DeviceManager, DisplayManager, RenderManager
-from zero.core.utils import get_cmd_parameters
+from zero.core import (Base, CoreEngine, SceneGraph, Thread, CatalogueManager,
+                      DeviceManager, DisplayManager, RenderManager, Camera)
+from zero.core.base.utils import get_cmd_parameters
 from zero.controllers import PygameDevice, PygameDisplay, OpenGLRender
 
 def create_scene():
@@ -99,6 +98,7 @@ if __name__ == '__main__':
                                         parameters.width, parameters.height))
     # Create the devices
     device_manager = DeviceManager(PygameDevice())
+
     # Create the main Render
     render_manager = RenderManager(OpenGLRender())
     # Create the engine and set the display and Devices used

@@ -1,7 +1,7 @@
 import ctypes
 import numpy as np
 import OpenGL.GL as GL
-from ...core.utils import *
+from ...core.base.utils import *
 from .wrapper import UsageMode
 
 

@@ -15,6 +15,11 @@ class DeviceManager(dict):
     
     This class will store all the devices created. Also it will
     manage the creation of the window, shutdown, etc..
+
+    This class will be a dictionary since all the devices will
+    be splitted depending on its inherited class: KeyboardDevice,
+    MouseDevice, etc..
+
     """
 
     def __init__(self, devices):

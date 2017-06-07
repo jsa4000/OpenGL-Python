@@ -1,6 +1,7 @@
 import ctypes
 import numpy as np
 import OpenGL.GL as GL
+from ...core.base.utils import *
 
 class OpenGLTexture:
     """

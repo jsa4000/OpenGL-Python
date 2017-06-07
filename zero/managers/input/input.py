@@ -1,7 +1,7 @@
 import numpy as np
 import threading
 from ...core import CatalogueManager, Actions
-from ...core.utils import *
+from ...core.base.utils import *
 from ...components import InputComponent
 
 class InputManager(object):

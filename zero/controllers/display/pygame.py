@@ -1,5 +1,5 @@
 import pygame
-from ...core.utils import *
+from ...core.base.utils import *
 from ...core import DisplayMode, Display
 
 pygame_displaymode_wrapper = {

@@ -1,6 +1,6 @@
-from .base import Entity, Component
+from .base import Entity, Component, Settings
 from ..components import *
-from .geometry import Settings, Geometry, Camera, Material, Transform
+from .geometry import Geometry, Camera, Material, Transform
 
 __all__ = ['SceneGraph']
 

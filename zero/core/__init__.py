@@ -25,7 +25,8 @@ from .controllers import ( Device, DeviceManager,
                            DisplayMode, 
                            DrawMode,UsageMode, 
                            DeviceEvent, 
-                           MouseButton,KeyModifier,Key )
+                           RenderManager,
+                           MouseButton,KeyModifier,Key)
 
 from .engine import CoreEngine
 from .scene import SceneGraph

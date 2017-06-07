@@ -1,5 +1,5 @@
 from collections import OrderedDict as dict
-from ..core import Component
+from ...core import Component
 
 class MaterialComponent(Component):
     """ Material Component class
