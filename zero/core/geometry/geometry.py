@@ -1,6 +1,6 @@
 import numpy as np
-from ..core import Datasheet
-from ..core.utils import *
+from ..base import Datasheet
+from ..base.utils import *
 
 class Geometry(Datasheet):
     """ Geometry Class 

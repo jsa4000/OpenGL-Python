@@ -1,5 +1,5 @@
 from .utils import *
-from .constants import DeviceEvent, MouseButton, Key, KeyModifier
+from ..controllers.constants import DeviceEvent, MouseButton, Key, KeyModifier
 
 __all__ = ['Event', 
            'Action',

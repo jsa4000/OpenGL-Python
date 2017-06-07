@@ -8,12 +8,12 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from e3dpy.model import Camera
-from e3dpy.components import InputComponent
-from e3dpy.core import Base, CoreEngine, SceneGraph, Thread, CatalogueManager
-from e3dpy.core.controllers import DeviceManager, DisplayManager, RenderManager
-from e3dpy.core.utils import get_cmd_parameters
-from e3dpy.controllers import PygameDevice, PygameDisplay, OpenGLRender
+from zero.model import Camera
+from zero.components import InputComponent
+from zero.core import Base, CoreEngine, SceneGraph, Thread, CatalogueManager
+from zero.core.controllers import DeviceManager, DisplayManager, RenderManager
+from zero.core.utils import get_cmd_parameters
+from zero.controllers import PygameDevice, PygameDisplay, OpenGLRender
 
 def create_scene():
     """ Create initial scene
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     # Start the Engine in Mult-thread Mode
     Thread.MULTI_THREAD = False
     # Create the display (main)
-    display_manager = DisplayManager(PygameDisplay("e3dpy render engine", 
+    display_manager = DisplayManager(PygameDisplay("Zero Rendering Engine", 
                                         parameters.width, parameters.height))
     # Create the devices
     device_manager = DeviceManager(PygameDevice())

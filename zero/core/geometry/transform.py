@@ -1,5 +1,5 @@
 from pyrr import Quaternion, matrix44, Matrix44, Vector3
-from ..core.utils import *
+from ..base.utils import *
 
 class Transform:
     """

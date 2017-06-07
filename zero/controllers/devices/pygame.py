@@ -1,7 +1,7 @@
 import pygame
-from ...core.utils import *
+from ...core.base.utils import *
 from ...core import (Event, DeviceEvent, Device, KeyboardDevice, 
-                                MouseDevice, SystemDevice, JoyDevice)
+                     MouseDevice, SystemDevice, JoyDevice)
 
 pygame_events_wrapper = {
     pygame.QUIT: 

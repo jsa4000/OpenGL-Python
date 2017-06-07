@@ -1,8 +1,8 @@
 import numpy as np
 import threading
-from ..core import CatalogueManager
-from ..core.utils import *
-from ..components import ( RenderComponent, MaterialComponent, GeometryComponent,
+from ...core import CatalogueManager
+from ...core.utils import *
+from ...components import ( RenderComponent, MaterialComponent, GeometryComponent,
                            LightComponent, CameraComponent, TransformComponent )
 
 class RenderManager(object):

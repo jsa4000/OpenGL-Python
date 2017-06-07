@@ -1,5 +1,5 @@
-from ..core.utils import *
-from ..core import DBase
+from ..base.utils import *
+from ..base import DBase
 
 class Material(DBase):
     """ Material Class Definition

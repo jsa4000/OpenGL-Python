@@ -1,5 +1,5 @@
 from .utils import *
-from ..geometry.defaults import *
+from ..geometry.create import *
 
 class Settings:
     """ Material Class Definition

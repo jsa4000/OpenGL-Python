@@ -1,8 +1,8 @@
 import numpy as np
 import threading
-from ..core import CatalogueManager, Actions
-from ..core.utils import *
-from ..components import InputComponent
+from ...core import CatalogueManager, Actions
+from ...core.utils import *
+from ...components import InputComponent
 
 class InputManager(object):
     """ Input Worker Class

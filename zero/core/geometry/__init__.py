@@ -5,6 +5,6 @@ from .camera import Camera, ProjectionType
 from .geometry import Geometry
 from .material import Material
 from .transform import Transform
-from .defaults import *
+from .create import *
 
 

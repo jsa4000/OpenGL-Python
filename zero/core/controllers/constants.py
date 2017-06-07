@@ -1,4 +1,4 @@
-from ..core.utils import *
+from ..base.utils import *
 
 __all__ = ['DisplayMode',
            'DrawMode',

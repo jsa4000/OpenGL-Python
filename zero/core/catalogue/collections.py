@@ -1,5 +1,5 @@
 from collections import OrderedDict as dict
-from ..utils import *
+from ..base.utils import *
 from ..base import Base
 from .catalogue import CatalogueManager
 

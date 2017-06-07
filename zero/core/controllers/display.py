@@ -1,6 +1,6 @@
 from collections import OrderedDict as dict
-from ..core.utils import *
-from .base import Defaults, DBase
+from ..base.utils import *
+from ..base import Defaults, DBase
 from .constants import *
 
 __all__ = ['DisplayManager',
