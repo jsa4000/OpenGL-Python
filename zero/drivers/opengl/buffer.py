@@ -2,8 +2,8 @@ import ctypes
 import numpy as np
 import OpenGL.GL as GL
 from ...core.base.utils import *
-from .wrapper import UsageMode
-
+from ...core import Geometry, UsageMode
+from .wrapper import opengl_usagemode_wrapper
 
 
 class OpenGLBuffer(object):
@@ -12,7 +12,7 @@ class OpenGLBuffer(object):
         to Render a Geometrt
     """
   
-    def __init__(self, usage=UsageMode.static_draw):
+    def __init__(self, geometry, shader, usage=UsageMode.static_draw):
         # Initialize all the variables
         self.usage = usage
         # Vertex Array Object for all the Attributtes, elements, etc.
@@ -21,6 +21,9 @@ class OpenGLBuffer(object):
         self._VAB = {}
         # Element Array Buffers for all the Attrbiutes
         self._EAB = None
+        # Geometry to be used for the buffer
+        self.geometry = geometry
+        self.shader = shader
 
     def _dispose(self):
         # Dispose all the objects and memory allocated
@@ -39,11 +42,11 @@ class OpenGLBuffer(object):
         if attribute_name is None:
             attribute_name = name
         # Get the current vertices (flatten is not needed)
-        vertices = self._dfPoints[self._pointAttribCols[name]].values
+        vertices =  self.geometry.get_point_attrib(name)
         # Create the vertex array buffer and send the positions into the GPU buffers
         self._VAB[name] = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self._VAB[name] )
-        GL.glBufferData(GL.GL_ARRAY_BUFFER, vertices.nbytes, vertices, self.usage)
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, vertices.nbytes, vertices, opengl_usagemode_wrapper[self.usage])
 
         # Bind Attribute to the current shader. 
         return self.shader.bind(attribute_name, len(vertices[0]), vertices.dtype)
@@ -63,19 +66,19 @@ class OpenGLBuffer(object):
         GL.glBindVertexArray(self._VAO)
 
         # Create the first attribute "position" (location = 0) (Mandatory)
-        shader_attributes.append(self._create_vertex_buffer_array("P","position"))
+        shader_attributes.append(self._create_vertex_buffer_array(Geometry.point.position,"position"))
         
         # Check wether the geometry has indexes
-        if self._has_indices():
+        if self.geometry.indexed:
             # Get the current indices (flatten)
-            indices = self._dfPrims[self._primAttribCols["Id"]].values
+            indices = self.geometry.get_prim_attrib(Geometry.primitive.indices)
             # Create the element array buffer and send the positions into the GPU buffers
             self._EAB = GL.glGenBuffers(1)
             GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER,  self._EAB);
-            GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, self.usage);
+            GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, opengl_usagemode_wrapper[self.usage]);
         
         # Create and bind other Attributes
-        for attrib in self._pointAttribCols.keys():
+        for attrib in self.geometry.attributes[Geometry.geometry_types.points].keys():
             if attrib != "P":
                 shader_attributes.append(self._create_vertex_buffer_array(attrib))
 

@@ -4,6 +4,7 @@ from ...core import CatalogueManager
 from ...core.base.utils import *
 from ...components import ( RenderComponent, MaterialComponent, GeometryComponent,
                            LightComponent, CameraComponent, TransformComponent )
+from ...drivers.opengl import OpenGLBuffer, OpenGLShader, OpenGLRender, OpenGLTexture
 
 class RenderManager(object):
     """ Render Manager Class
@@ -97,6 +98,7 @@ class RenderManager(object):
      
         # Search for the active camera to render
         cameras = self.search(CameraComponent.DEFAULT_TYPE)
+        camera = cameras[0][CameraComponent.DEFAULT_TYPE].camera
        
         # Search for all the lights in the scene
         lights = self.search(LightComponent.DEFAULT_TYPE)
@@ -113,7 +115,31 @@ class RenderManager(object):
             # Get the material
             material = obj[MaterialComponent.DEFAULT_TYPE].material
             # Bind the things
-            print("OK")
+            # OpenGLBuffer, OpenGLShader, OpenGLRender, OpenGLTexture
+            shader = OpenGLShader("default_shader", "./assets/shaders")
+            buffer = OpenGLBuffer(geometry, shader)
+            render = OpenGLRender()
+            texture = OpenGLTexture("./assets/images/texture.png")
+            buffer.update()
+
+
+
+            render.clear()
+            
+            # Render all the elements that share the same shader.
+            # Use the current Shader configuration
+            shader.use()
+            # Use the current texture after the shader
+            texture.bind(0)
+  
+            shader.update("WORLD_MATRIX",transform.model)
+            shader.update("VIEW_MATRIX",camera.view_matrix())
+            shader.update("PROJECTION_MATRIX",camera.projection_matrix())
+
+            # Render the  geometry
+            render.render(buffer)
+            # End Use the current Shader configuration
+            shader.use(False)
 
 
         # In this case I have to go through all the components first

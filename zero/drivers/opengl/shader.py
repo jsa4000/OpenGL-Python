@@ -2,6 +2,7 @@ import ctypes
 import numpy as np
 import OpenGL.GL as GL
 from ...core.base.utils import *
+from .wrapper import gldtype
 
 # Shader typas allow and extension for the files to use
 ShaderTypes = {
@@ -110,7 +111,7 @@ class OpenGLShader:
         self.initialized = True
 
     def _get_location_uniforms(self):
-        for key,value in Shader.uniform_transforms.items():
+        for key,value in TransformTypes.items():
             # Get the location for the curren shader loaded
             self._uniforms[key] = GL.glGetUniformLocation(self._program, value["name"])
 
@@ -121,7 +122,7 @@ class OpenGLShader:
         # Generate the main path for the shaders to load
         filename = self.filepath + "/" + self.name + "."
         # Read all shader type files and link into the progrma
-        for key,value in Shader.shader_types.items():
+        for key,value in ShaderTypes.items():
             shader = self._load_shader(filename + value["id"], value["type"])
             # Check the current shader has been loaded correctly
             if shader:

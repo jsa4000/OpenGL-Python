@@ -2,7 +2,9 @@ import ctypes
 import numpy as np
 import OpenGL.GL as GL
 from ...core.base.utils import *
-from .wrapper import DrawMode
+from ...core import DrawMode
+from .wrapper import opengl_drawmode_wrapper
+from .wrapper import gldtype
 
 class OpenGLRender(object):
     """
@@ -14,10 +16,10 @@ class OpenGLRender(object):
     # Default Background Color
     defaulBGColor = [0.0, 0.0, 0.0, 1.0]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, mode=DrawMode.triangles):
         """ Initialize the Render Class
         """
-        super().__init__(*args, **kwargs)
+        self.mode = mode
 
     def init(self):
          """ This function will initialize OpenGL with some functions
@@ -31,17 +33,17 @@ class OpenGLRender(object):
         GL.glClearColor(*color)
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
-    def render(self):
+    def render(self, buffer):
         """
         """
         # Bind the created Vertex Array Object
-        GL.glBindVertexArray(self._VAO)
+        GL.glBindVertexArray(buffer._VAO)
         # Draw the current geoemtry. Check if indices have been added
-        if self._has_indices():
-            GL.glDrawElements(self.mode, len(self._dfPrims.index) * 3, 
-                              typeGL(Geometry.index_type), ctypes.c_void_p(0))
+        if buffer.geometry.indexed:
+            GL.glDrawElements(opengl_drawmode_wrapper[self.mode], 3 * 3, 
+                              gldtype(buffer.geometry.index_type), ctypes.c_void_p(0))
         else:
-            GL.glDrawArrays(self.mode, 0, len(self._dfPoints.index))
+            GL.glDrawArrays(opengl_drawmode_wrapper[self.mode], 0, 1)
         # Unbind VAO from GPU
         GL.glBindVertexArray(0)
      

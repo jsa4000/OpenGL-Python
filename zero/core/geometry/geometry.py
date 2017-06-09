@@ -72,7 +72,7 @@ class Geometry(Datasheet):
     def indexed(self):
         """ Property to return if the geometry has vertex indexing (faces)
         """
-        if self.primitive.indexes in self.attributes[self._prims_index]:
+        if self.primitive.indices in self.attributes[self._prims_index]:
             return True
         return False
     

@@ -1,3 +1,4 @@
+import numpy as np
 from pyrr import Quaternion, matrix44, Matrix44, Vector3
 from ..base.utils import *
 
