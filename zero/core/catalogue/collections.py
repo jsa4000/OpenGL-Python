@@ -1,33 +1,66 @@
 from collections import OrderedDict as dict
+from .catalogue import Catalogue
 from ..base.utils import *
 from ..base import Base
-from .catalogue import CatalogueManager
 
-__all__ = ['CatalogueBase', 
+__all__ = ['CatalogueDict', 
            'CatalogueTree']
 
-class CatalogueBase(Base):
-    """ CatalogueBase class.
+class CatalogueDict(Base):
+    """ CatalogueDict class.
 
-   # Subclas of CatalogueBase is needed to bind elementes
+    Thisclass allows to create elements that will be added to a
+    Catalogue automatically.
+    
+     The catalaogue will be created for instances o the same
+     class type. This means the class that will inherit from
+     this metaclass all the instances will share the same Catalog.
+
+     This Catalog could be replaced by a Global one in case all the
+     instances need to be in the same Catalog to share the instances.
+     In order to do this create a cnew Catalogue in the default one.
+     The class will check if this golbal variable (per class) is none
+     to know if it needed to create a new one.
+     To overwrite the Catalogue overwrite the default catalogue:
+
+    # Main Catalogue to add items and bind
+    Catalogue = Catalogue("index_name")
+
+    # DEFAULT_KEY is the default key name that will be used to
+    create the catalogue. This is the ke name that will be used
+    to create the Groups inside the Catalogue. 
+
+    You can use the name, type, or id to group the elements. This 
+    can be done globally to all the instances and Subclasses by
+    overrriding the variable:
+
+    DEFAULT_KEY = "name"
+
+    Or it could be given at the constructor, so each instances will
+    behave different from the main class.
+
+     transform1 = CatalogueDict("tranform1",key="name")
+
+
+    # Subclasses of CatalogueDict is needed to bind elements 
 
     Example:
 
-        class Category1(CatalogueBase): pass
-        class Category2(CatalogueBase): pass
-        class Category3(CatalogueBase): pass
-        class Category4(CatalogueBase): pass
-        class Category5(CatalogueBase): pass
+        class Category1(CatalogueDict): pass
+        class Category2(CatalogueDict): pass
+        class Category3(CatalogueDict): pass
+        class Category4(CatalogueDict): pass
+        class Category5(CatalogueDict): pass
 
         # Change current index for the Catalog Manager
         Base.DEFAULT_UUID = Base.UUID1
-        CatalogueManager.DEFAULT_INDEX = "CatalogueBase"
+        CatalogueManager.DEFAULT_INDEX = "CatalogueDict"
         # Create several catalogues to be manager to CatalogManager singletone
-        catalogue1 = CatalogueBase("catalogue1","catalogue1")
-        catalogue2 = CatalogueBase("catalogue2","catalogue2")
-        catalogue3 = CatalogueBase("catalogue3","catalogue3")
-        catalogue4 = CatalogueBase("catalogue4","catalogue4")
-        catalogue5 = CatalogueBase("catalogue5","catalogue5")
+        catalogue1 = CatalogueDict("catalogue1","catalogue1")
+        catalogue2 = CatalogueDict("catalogue2","catalogue2")
+        catalogue3 = CatalogueDict("catalogue3","catalogue3")
+        catalogue4 = CatalogueDict("catalogue4","catalogue4")
+        catalogue5 = CatalogueDict("catalogue5","catalogue5")
         # Create several items for the caralogue to bind
         items1 = [None                    , Category2("item12","12"), None                    , Category4("item14","14"), Category5("item15","15") ]
         items2 = [Category1("item21","21"), None                    , Category3("item23","23"), None                    , None                   ]
@@ -37,41 +70,41 @@ class CatalogueBase(Base):
         # Start adding the items into the catalogs
         print("START ADDING CATALOGUE BY CONSTRUCTOR")
         print("---------------------------------------")
-        catalogue1 = CatalogueBase("catalogue1","catalogue1",catalogue=items1)
+        catalogue1 = CatalogueDict("catalogue1","catalogue1",catalogue=items1)
         print(catalogue1.catalogue.keys())
         # Change name instead the type to create the catalogues
-        catalogue1 = CatalogueBase("catalogue1","catalogue1",catalogue=items1, key="name")
+        catalogue1 = CatalogueDict("catalogue1","catalogue1",catalogue=items1, key="name")
         print(catalogue1.catalogue.keys())
-        print(CatalogueBase.Catalogue.dataframe.head(10))
+        print(CatalogueDict.Catalogue.dataframe.head(10))
 
         # Add catalogue using indexing. Key is irrelevant
         print("ADDING MULTIPLE CATEGORIES BY INDEXING")
         print("---------------------------------------")
         catalogue2[None] = items2
         print(catalogue2.catalogue.keys())
-        print(CatalogueBase.Catalogue.dataframe.head(10))
+        print(CatalogueDict.Catalogue.dataframe.head(10))
         # Add another category (single element)
         print("ADDING SINGLE A CATEGORY BY INDEXING")
         print("---------------------------------------")
         catalogue2[None] = Category2("item22",22)
         print(catalogue2.catalogue.keys())
-        print(CatalogueBase.Catalogue.dataframe.head(10))
+        print(CatalogueDict.Catalogue.dataframe.head(10))
         # Remove categories (and bings)
         print("REMOVE SINGLE A CATEGORY BY INDEXING")
         print("---------------------------------------")
         del catalogue2["21"]
         print(catalogue2.catalogue.keys())
-        print(CatalogueBase.Catalogue.dataframe.head(10))
+        print(CatalogueDict.Catalogue.dataframe.head(10))
         print("REMOVE SINGLE A CATEGORY BY MULTIPLE  INDEXING")
         print("-----------------------------------------------")
         del catalogue1[("12","14")]
         print(catalogue1.catalogue.keys())
-        print(CatalogueBase.Catalogue.dataframe.head(10))
+        print(CatalogueDict.Catalogue.dataframe.head(10))
 
         print("REPORT CATALOGUE")
 
-        print(CatalogueBase.Catalogue)
-        print(CatalogueBase.Catalogue.dataframe.head(10))
+        print(CatalogueDict.Catalogue)
+        print(CatalogueDict.Catalogue.dataframe.head(10))
       
     Output:
 
@@ -101,60 +134,71 @@ class CatalogueBase(Base):
         catalogue2        22       NaN       NaN       NaN        23
     """
 
-    Catalogue = CatalogueManager.instance()
+    # Main Catalogue to use when item is added or bind
+    Catalogue = None
 
-    # Default key used in the catalogue
+    # Default key used ti group the items in the Catalogue
     DEFAULT_KEY = "type"
 
     # Slots that allows instances of Tree class
-    __slots__ = ["name","id","type","catalogue","key"]
+    __slots__ = ["name","id","type","items","key"]
+
+    def __new__(cls, *args, **kwargs):
+        """ Class Constructor
+        This function will create a new catalogue for each class type.
+        With Catalogue instancce it could be binded items from another
+        catalogue to this one and viceversa.
+        """
+        if cls.Catalogue is None:
+            cls.Catalogue = Catalogue(cls.__name__)
+        return super(CatalogueDict, cls).__new__(cls)
 
     def __init__(self, *args, **kwargs):
         """ Initialize CatalogBase Class
         """
-        super(CatalogueBase,self).__init__(*args,**kwargs)
+        super(CatalogueDict,self).__init__(*args,**kwargs)
         # Init the catalogue
-        catalogue = self.catalogue 
-        self.catalogue = dict()
-        self.key = self.key or CatalogueBase.DEFAULT_KEY
-        # Extract current Catalogue and update
-        self._update_catalogue(catalogue)
-        # Add current instance to the catalog manager
-        CatalogueBase.Catalogue[getattr(self,self.key)][self.id] = self
+        items = self.items
+        self.items = dict()
+        self.key = self.key or CatalogueDict.DEFAULT_KEY
+        # Extract from parameters and update items instance
+        self._update_items(items)
+         # Add current instance to the catalogue set
+        self.Catalogue[getattr(self,self.key)][self.id] = self
 
-    def _update_catalogue(self, catalogue):
+    def _update_items(self, catalogue):
         """ Update catalogue based on the 
         """
         # Create and ordered dict for the components
-        self.catalogue.update(self._get_items(catalogue, default_key=self.key,
-                                              format_key="{}.lower()"))
+        self.items.update(self._get_items(catalogue, default_key=self.key,
+                                                  format_key="{}.lower()"))
         # Bind components to the current entity                                  
-        for item in self.catalogue:
-            item = self.catalogue[item]
+        for item in self.items:
+            item = self.items[item]
             # Bind current items that are derived from Base class
             if isinstance(item,(Base)):                        
-                CatalogueBase.Catalogue.bind(self.id, getattr(item,item.key), item.id)
+                self.Catalogue.bind(self.id, getattr(item,item.key), item.id)
 
-    def _substract_catalogue(self, catalogue):
+    def _remove_items(self, catalogue):
         # Remove given items from catalogue
-        catalogue_keys = self._get_keys_from_dict(self.catalogue,catalogue)
+        catalogue_keys = self._get_keys_from_dict(self.items,catalogue)
         for key in catalogue_keys:
-            item = self.catalogue[key]
+            item = self.items[key]
             # Bind current items that are derived from Base class
             if isinstance(item,(Base)):   
                 # unbind current component (Not shared component yet)
-                CatalogueBase.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
+                self.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
             # Finally remove the item from the dictionary
-            del self.catalogue[key]
+            del self.items[key]
 
     def _get_item(self, value):
         """ Check if the current value is already a Base object.
-        If the object is nos an instance of a Base object, then
+        If the object is not an instance of a Base object, then
         it will use the catalog to search the current value in the 
         catalog Manager.
         """
         if value and not isinstance(value,(Base)):
-            value = CatalogueBase.Catalogue.get(value)
+            value = self.Catalogue.get(value)
         return value
 
     def _get_items(self, values, default_key="id", format_key=None):
@@ -226,34 +270,34 @@ class CatalogueBase(Base):
         if key in self.__slots__:
             return getattr(self, key)
         else:
-            return self.catalogue[key]
+            return self.items[key]
 
     def __setitem__(self, key, value):
-        """ Insert the current current values, ifnoring the key
+        """ Insert the current current values, ignoring the key
         """
-        self._update_catalogue(value)
+        self._update_items(value)
  
     def __getitem__(self, key):
         """Retrieve the items with the given key
         """
-        return self.catalogue[key]
+        return self.items[key]
 
     def __delitem__(self, key):
         """ Remove the items using keys
         """
-        self._substract_catalogue(key)       
+        self._remove_items(key)       
 
     def __contains__(self, key):
         """Returns whether the key is in items or not.
         """
-        return key in self.catalogue
+        return key in self.items
 
     def __iter__(self):
         """Retrieve the items elements using loops
         statements. This usually are more efficent in
         term of memory
         """
-        for item in self.catalogue:
+        for item in self.items:
             yield item
  
     def __del__(self):
@@ -262,24 +306,40 @@ class CatalogueBase(Base):
         inside the for loop. This warranty no errors during the deletion.
         """
         # Remove all the components
-        for key in self.catalogue.keys():
-            item = self.catalogue[key]
+        for key in self.items.keys():
+            item = self.items[key]
             # Bind current items that are derived from Base class
             if isinstance(item,(Base)):   
                 # unbind current component (Not shared component yet)
-                CatalogueBase.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
-            # Finally remove the item from the dictionary
-            del self.catalogue[key]
-        # Remove also the references to the catalog
-        del CatalogueBase.Catalog[getattr(self,self.key)][self.id]
+                self.Catalogue.unbind(self.id, getattr(item,item.key), item.id)
+        # Clean all the items
+        self.items.clear()
+         # Remove also the references from the catalog
+        del self.Catalogue[getattr(self,self.key)][self.id]
         # Finally del base class
-        super(CatalogueBase, self).__del__()
+        super(CatalogueDict, self).__del__()
+
+    def set_items(self,value):
+        """ Add/Modify the current current values, ignoring the key
+        It's the same as CatalogueList_instance[None] = Element
+        """
+        self._update_items(value)
+    
+    def remove_items(self,key):
+        """ Remove the item given the key provided
+        """
+        self._remove_items(key) 
+    
+    def get_item(self,key):
+        """ get the current itel
+        """
+        return self.items[key]
 
     def __str__(self):
         """Returns the string representation of this instance
         """
         #Create components deserialization
-        catalogue = [self.catalogue[item] for item in self.catalogue]
+        catalogue = [self.items[item] for item in self.items]
         return "{}({},{},{})".format(self.__class__.__name__,self.name, 
                                         self.id, catalogue)
 
@@ -287,13 +347,13 @@ class CatalogueBase(Base):
         """Returns the string representation of this instance
         """
         #Create components deserialization
-        catalogue = [self.catalogue[item].id for item in self.catalogue]
+        catalogue = [self.items[item].id for item in self.items]
         return "{}('{}','{}',{})".format(self.__class__.__name__,self.name, 
                                         self.id, catalogue)
 
 
-class CatalogueTree(CatalogueBase):
-    """ CatalogueBase Tree Base class.
+class CatalogueTree(CatalogueDict):
+    """ CatalogueDict Tree Base class.
 
     This is similar as the Catalogue Base, however this allows the 
     possibility to build more complex Structures. In this Case it's
@@ -358,7 +418,7 @@ class CatalogueTree(CatalogueBase):
     """
 
     # Slots that allows the instances based on Tree class
-    __slots__ = ["name","id","type","catalogue","key","parent","children"]
+    __slots__ = ["name","id","type","items","key","parent","children"]
 
     def __init__(self, *args, **kwargs):
         """This is the main contructor of the class.
@@ -381,7 +441,7 @@ class CatalogueTree(CatalogueBase):
         self.parent = self._get_item(value)
         # Aso add self to the parents childs
         if self.parent:
-            self.parent.add(children=self)
+            self.parent.set_children(children=self)
 
     def _update_children(self, children):
         """Update children or child into the Tree
@@ -418,7 +478,7 @@ class CatalogueTree(CatalogueBase):
         # Check if has parent to unset this child.
         if self.parent is not None:
             # Remove current entity from the parent childs
-            parent.remove(children=self.id)
+            parent.remove_children(children=self.id)
         # Finally del base class
         super(CatalogueTree, self).__del__()
 
@@ -428,198 +488,29 @@ class CatalogueTree(CatalogueBase):
         self._set_parent(value)
         return self
     
-    def add(self, children):
+    def set_children(self, children):
         """Add new children into the Tree.
         """
         self._update_children(children)
         return self
 
-    def remove(self, children):
+    def remove_children(self, children):
         """ Remove given children from tree
         """
         self._remove_children(children)
         return self
 
+    def get_children(self, key):
+        """ Remove given children from tree
+        """
+        return self.children[key]
+
     def __str__(self):
         """Returns the string representation of this instance
         """
         #Create components deserialization
-        catalogue = " \n    ".join([str(self.catalogue[item]) for item in self.catalogue])
+        catalogue = " \n    ".join([str(self.items[item]) for item in self.items])
         children =  " \n   ".join([str(self.children[item]) for item in self.children])
         return " {} ( name:{}, id:{} )\n Catalogue: \n    {}\n Children: \n   {}".format(
                                             self.__class__.__name__,self.name, self.id, 
                                             catalogue, children)
-
-class Entity(CatalogueTree):
-    """ Entity class.
-
-    Example:
-
-        class SubEntity(Entity):
-            pass
-
-        entity = Entity("Javier")
-        print(repr(entity))
-        print(entity.type)
-
-        entity = SubEntity("SubJavier")
-        print(repr(entity))
-        print(entity.type)
-   
-    Outputs:
-
-        Entity('Javier','6b8f0077-5c4d-45ff-a6b0-a38d746b79aa',[])
-        Entity
-        SubEntity('SubJavier','e1ff3be1-f1a9-4e71-9c7c-887f00594136',[])
-        Entity
-
-    Example 2: Entities and Components
-
-        transform = Transform("tranform1")
-        print(transform.catalogue)
-        print(transform.position)
-
-        camera = Camera("Camera1")
-        print(camera.mode)
-        print(camera.orbit)
-        print(camera.view)
-
-        entity = Entity("root", catalogue=[transform,camera])
-        print(repr(entity))
-
-        entity = Entity("root")
-        entity[None] = Transform("tranform1")
-        entity[None] = camera.id
-        print(repr(entity))
-
-        print(CatalogueManager.instance())
-        print(CatalogueManager.instance().dataframe.head())
-
-    Output:
-
-        OrderedDict([('position', [0, 1, 2, 3]), ('rotation', array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))])
-        [0, 1, 2, 3]
-        0
-        False
-        [[0 1 2]
-        [3 4 5]
-        [6 7 8]]
-        Entity('root','4b7b2568-6001-4a5d-8ac6-14be43214e16',['00471c63-0f1d-44a5-a5fe-8159606a6589', 'b5037de0-95cb-48a0-9e2f-e0b887af7a47'])
-        Entity('root','d476e541-f1a6-432f-b385-b424045285b3',['174e81bb-330f-4f7c-95f3-e75cb89524ab', 'b5037de0-95cb-48a0-9e2f-e0b887af7a47'])
-        ITEM Transform:
-        item 0 <00471c63-0f1d-44a5-a5fe-8159606a6589> : <Transform,Transform>, tranform1, 00471c63-0f1d-44a5-a5fe-8159606a6589 
-        item 1 <174e81bb-330f-4f7c-95f3-e75cb89524ab> : <Transform,Transform>, tranform1, 174e81bb-330f-4f7c-95f3-e75cb89524ab 
-        ITEM Camera:
-        item 0 <b5037de0-95cb-48a0-9e2f-e0b887af7a47> : <Camera,Camera>, Camera1, b5037de0-95cb-48a0-9e2f-e0b887af7a47 
-        ITEM Entity:
-        item 0 <4b7b2568-6001-4a5d-8ac6-14be43214e16> : <Entity,Entity>, root, 4b7b2568-6001-4a5d-8ac6-14be43214e16 
-        item 1 <d476e541-f1a6-432f-b385-b424045285b3> : <Entity,Entity>, root, d476e541-f1a6-432f-b385-b424045285b3 
-                                                                        Transform  \
-        4b7b2568-6001-4a5d-8ac6-14be43214e16  00471c63-0f1d-44a5-a5fe-8159606a6589   
-        d476e541-f1a6-432f-b385-b424045285b3  174e81bb-330f-4f7c-95f3-e75cb89524ab   
-                                                                            Camera  
-        4b7b2568-6001-4a5d-8ac6-14be43214e16  b5037de0-95cb-48a0-9e2f-e0b887af7a47  
-        d476e541-f1a6-432f-b385-b424045285b3  b5037de0-95cb-48a0-9e2f-e0b887af7a47 
-
-    
-    Instead using key = "type", catalogue support to add more than one category by changeing the key
-    in the contructor. This wat the Component will be binded by name instead.
-
-    Example
-
-        transform1 = Transform("tranform1",key="name")
-        transform2 = Transform("tranform2",key="name")
-
-        camera = Camera("Camera1")
-
-        entity = Entity("root", catalogue=[transform1,camera])
-        entity[None] = transform2.id
-        print(repr(entity))
-
-    
-        print(CatalogueManager.instance())
-        print(CatalogueManager.instance().dataframe.head())
-
-    Output
-
-        ITEM tranform1:
-        item 0 <4aebc2f4-b54a-4364-b633-16f9ed8fad9c> : <Transform,Transform>, tranform1, 4aebc2f4-b54a-4364-b633-16f9ed8fad9c 
-        ITEM tranform2:
-        item 0 <ff89bc9b-cd91-4ac9-ac7c-ff355576add0> : <Transform,Transform>, tranform2, ff89bc9b-cd91-4ac9-ac7c-ff355576add0 
-        ITEM Camera:
-        item 0 <790a1400-f794-4316-ab8e-ad43c276059d> : <Camera,Camera>, Camera1, 790a1400-f794-4316-ab8e-ad43c276059d 
-        ITEM Entity:
-        item 0 <815d3b9c-a111-414d-9650-c21e67b37729> : <Entity,Entity>, root, 815d3b9c-a111-414d-9650-c21e67b37729 
-
-                                                                        tranform1  \
-        815d3b9c-a111-414d-9650-c21e67b37729  4aebc2f4-b54a-4364-b633-16f9ed8fad9c   
-                                                                            Camera  \
-        815d3b9c-a111-414d-9650-c21e67b37729  790a1400-f794-4316-ab8e-ad43c276059d   
-                                                                        tranform2  
-        815d3b9c-a111-414d-9650-c21e67b37729  ff89bc9b-cd91-4ac9-ac7c-ff355576add0  
-
-    """
-
-    # This default type, it's important to maintain the current type as an
-    # "Entity". In case this class will be inherited from another sub-class,
-    # this type will be maintained. This si like using __new__ to create
-    # Singletone instances.
-    DEFAULT_TYPE = "Entity"
-
-    @property
-    def active(self):
-        """ Get wether the entity is active or not
-        """
-        return self._active
-
-    @active.setter
-    def active(self,value):
-        """ Set wether the entity is active or not
-        """
-        self._active = value
-
-    def __init__(self, *args, **kwargs):
-        """This is the main contructor of the class.
-
-        Initially set the dafult items like name, childs, componets
-        (as catalogue) and parent. Additionally Entities have
-        another paramter such as active or functions to initialize,
-        update or destroy all the collecions.
-
-        """
-        super(Entity,self).__init__(*args,**kwargs)
-        # Set default variables
-        self._active = True
-
-class Component(CatalogueBase):
-    """ Component Class
-    This is the base component class that all component must
-    inherit from.
-
-    In classes create from this base class propoerties and
-    default paramters can be given by the defaults variable
-
-    class Camera(Component):
-        defaults = dict({"mode":0,
-                         "orbit":False,
-                         "view": np.reshape(range(9),(3,3))})
-    """
-
-    # Default dinctionary with properties
-    defaults = dict()
-
-    def __init__(self,  *args, **kwargs):
-        """This is the main contructor of the class
-           Initially set the dafult valiues
-        """
-        super().__init__(*args,**kwargs)
-        # Update the default properties if None
-        self._update_properties(self.defaults, False)
-                
-    def _update_properties(self, properties, force=True):
-        """ Update current properties given in the parameters
-        """ 
-        for param in properties:
-            if force or (not force and param not in self.catalogue):
-                 self.catalogue[param] = properties[param] 
-       

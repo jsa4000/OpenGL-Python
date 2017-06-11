@@ -355,6 +355,12 @@ class Datasheet(DBase):
         small dataframes. Data frames can be accessed by a 
         Key methods sinde the are going to e stored in a dict.
 
+        This class manages two types of collections data and 
+        attrbiutes that are connected together. The attributes
+        for each index are the attributes with the same index
+            data[0] ~ attributes[0]
+            data[1] ~ attributes[1] ...
+
         Parameters:
             name, id and type wil be inherited from Base
 

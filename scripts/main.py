@@ -9,7 +9,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from zero.components import InputComponent
-from zero.core import (Base, CoreEngine, SceneGraph, Thread, CatalogueManager,
+from zero.core import (Base, CoreEngine, SceneGraph, Thread, EntityCatalogue,
                       DeviceController, DisplayController, RenderController)
 from zero.core.geometry import Camera, Material, Geometry                 
 from zero.core.base.utils import get_cmd_parameters
@@ -55,11 +55,11 @@ def create_scene():
                                         actions=SceneGraph.DEFAULT_INPUT)
     
     # Add a hierarchy
-    geometry_entity.add(children=[geometry_entity2,geometry_entity3])
+    geometry_entity.set_children(children=[geometry_entity2,geometry_entity3])
 
 
     # Add entitys to the root object
-    root.add(children=[camera_entity, geometry_entity, light_entity])
+    root.set_children(children=[camera_entity, geometry_entity, light_entity])
 
     # Finally return the childs
     return root
@@ -68,7 +68,7 @@ def create_scene():
 if __name__ == '__main__':  
     # Program Start
     print('##############################')
-    print('Starting e3dpy main')
+    print('Starting Zero main')
     print('##############################')
 
     # Parameters to be processed at start    
@@ -87,9 +87,9 @@ if __name__ == '__main__':
     scene_grapgh = SceneGraph(create_scene()).init()
 
     ###################################################
-    #print(scene)
-    #print(CatalogueManager.instance())
-    print(repr(CatalogueManager.instance().head(20)))
+    #print(scene_grapgh)
+    # print(EntityCatalogue.instance())
+    print(repr(EntityCatalogue.instance().head(20)))
     ###################################################
 
     # Start the Engine in Mult-thread Mode

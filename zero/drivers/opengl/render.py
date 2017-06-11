@@ -40,6 +40,7 @@ class OpenGLRender(object):
         GL.glBindVertexArray(buffer._VAO)
         # Draw the current geoemtry. Check if indices have been added
         if buffer.geometry.indexed:
+            thistype =  gldtype(buffer.geometry.index_type)
             GL.glDrawElements(opengl_drawmode_wrapper[self.mode], 3 * 3, 
                               gldtype(buffer.geometry.index_type), ctypes.c_void_p(0))
         else:

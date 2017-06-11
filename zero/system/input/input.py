@@ -1,6 +1,6 @@
 import numpy as np
 import threading
-from ...core import CatalogueManager, Actions
+from ...core import EntityCatalogue, Actions
 from ...core.base.utils import *
 from ...components import InputComponent
 
@@ -42,7 +42,7 @@ class InputManager(object):
         # This is only when it's in game mode and not in develop mode
 
         # Get the current Catalog
-        df = CatalogueManager.instance().dataframe
+        df = EntityCatalogue.instance().dataframe
         column = InputComponent.DEFAULT_TYPE
         # Get the current input actors
         entity_component = df[column].dropna(axis=0)
@@ -74,7 +74,7 @@ class InputManager(object):
         """ Function to process all the events for the current component
         """
         #Get the inputs/actions from the current component
-        entity = CatalogueManager.instance().get(entity)
+        entity = EntityCatalogue.instance().get(entity)
         actions = entity[InputComponent.DEFAULT_TYPE].actions
 
         # Check if any action satisfy any event

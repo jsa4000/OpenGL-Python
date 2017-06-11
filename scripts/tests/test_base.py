@@ -3,11 +3,11 @@ import sys
 import numpy as np
 
 # Add the currnent parent path so it recognize rendegl package entirely
-PACKAGE_PARENT = '..'
+PACKAGE_PARENT = '../../'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from e3dpy.core import Base, DataBase, Defaults, DefaultBase
+from  zero.core import Base, DataBase, Defaults, DefaultBase
 
 class Geometry(DataBase):
     

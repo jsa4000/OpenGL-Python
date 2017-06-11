@@ -15,7 +15,7 @@ class SceneGraph(object):
     In Scene graph the default scenario is created as follows:
 
          # Create the main roor for all the sub-entities
-        root = Entity("root", catalogue = Transform("transform_component"))
+        root = Entity("root", items = Transform("transform_component"))
        
         # Create the default camera
         camera_entity = Entity("Camera")
@@ -128,7 +128,7 @@ class SceneGraph(object):
                                                position=[0.0,1.0,0.0])
       
         # Add entitys to the root object
-        root.add(children=[camera_entity, geometry_entity, light_entity])
+        root.set_children(children=[camera_entity, geometry_entity, light_entity])
 
         # Finally return the childs
         return root
@@ -154,7 +154,7 @@ class SceneGraph(object):
     def create_empty(name="Empty", position=None, active=True):  
         """ Create an empty object with only transformation
         """
-        return Entity(name, active=active,catalogue=TransformComponent("transform_component",
+        return Entity(name, active=active,items=TransformComponent("transform_component",
                                                         transform=Transform(position)))
 
     def create_geometry(name="Geometry", position=None, geometry=None, material=None, active=True):
@@ -173,7 +173,7 @@ class SceneGraph(object):
         components = [geometry_component,transform_component, 
                       material_component,render_component]
         # Create a default Geometrty with components 
-        geometry_entity = Entity(name,catalogue=components,active=active)
+        geometry_entity = Entity(name,items=components,active=active)
         return geometry_entity
 
     def create_camera(name="Camera", position=None, camera=None, active=True):
@@ -213,8 +213,8 @@ class SceneGraph(object):
                                                         node.name, node.id)
        #result += "----------------------------------------------------------------------\n"
        result +=  zeros + "  Components: \n"
-       for item in node.catalogue:
-            item = node.catalogue[item]
+       for item in node.items:
+            item = node.items[item]
             result +=  zeros + "      {} ( name:{}, id:{} )\n".format(item.type,
                                                                    item.name, item.id)
        #result += "---------------------------------------------------------------------\n"

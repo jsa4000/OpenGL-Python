@@ -2,29 +2,35 @@ from collections import OrderedDict as dict
 import pandas as pd
 import numpy as np
 
-__all__ = ['BaseDictionay', 
-           'Catalogue',
-           'CatalogueManager']
+__all__ = ['CatalogueGroup', 
+           'Catalogue']
 
-class BaseDictionay(object):
-    """ BaseDictionay class.
+class CatalogueGroup(object):
+    """ CatalogueGroup class.
     
-    This is the dictionaty used by Catalogue class. The idea is to be able 
-    store different type of data inside the main catalogue instance. 
-    Since it's a Sorted Dictionary all the data main remain in order 
-    and the performances are better than standard lists.
+    This is basically a dictionary used by Catalogue class. The idea is 
+    to be able to store different types of data inside the main catalogue 
+    instance. 
 
-    This catalogue will manage the callbacks so the catalogue will be able
+    Since it's a Sorted Dictionary all the data remain in order as they
+    are inserted, and the performances are better than standard lists.
+
+    CatalogueGroup class store similar items or relationship. This collections of items
+    could be seen as a group. The group could be defined by the type
+    of the class, name, tag or anything. It's will depend on the needs
+    and this will be managed for the main catalog class.
+
+    This class will also manage the callbacks so the catalogue will be able
     to know whether an element has been added, removed or modified.
 
-    Each BaseDictionay has a (name) and a function (callback) when action is 
+    Each CatalogueGroup has a (name) and a function (callback) when action is 
     performed inside the dictionary.
 
     The function callback need to be implemented as follows:
         def callback_name(id, key, option):
  
     Where:
-        name: name of the current BaseDictionay
+        name: name of the current GRoup or dictionary
         key: the item that has been, added, removed or modifed
         option: action performed added, removed or modifed
     """
@@ -57,9 +63,9 @@ class BaseDictionay(object):
         """Add a new items into the items list.
         """
         if key in self._items:
-            option = BaseDictionay.MODIFIED
+            option = CatalogueGroup.MODIFIED
         else:
-            option = BaseDictionay.ADDED
+            option = CatalogueGroup.ADDED
         #Set the current item (added or modified)
         self._items[key] = value
         # Finally callback to the function
@@ -70,7 +76,7 @@ class BaseDictionay(object):
          """
          del self._items[key] 
          # Finally notify to the callback
-         self._notify(key, BaseDictionay.REMOVED)
+         self._notify(key, CatalogueGroup.REMOVED)
 
     def __getitem__(self, key):
         """Retrieve the items with the given key
@@ -101,12 +107,38 @@ class BaseDictionay(object):
 class Catalogue(object):
     """ Catalogue Class
 
-    This class will be used to store all the entities, components
-    and any other type of data. The class will manage different
-    dictionaries depending on the types to be stored. One of these
-    types need to be the index for the main catalogue. The index
-    is given in the contructor of the class, where index is the name
-    of the dcitionaries that will be used as an index.
+    This class will be used to store different types of data and 
+    bind them. The class will manage different groups or dictionaries 
+    depending on the types to be stored. 
+    
+    Catalogue works as a database. For this particular reason it will need 
+    columns and indexes in order to works properly. In the constructor
+    we have to pass he index name of the group that will be used to
+    indexing the data.
+
+    ej. You have three groups: Entity, Component_type2 and Component_type2.
+    
+    (The same catalog should be shared between the three groups)
+
+    The index will be "Entity", this means we can bind and Entity with a 
+    component_typeXX. Then we can use the pandas dataframe to pick
+    the elements you need.
+
+        >> #Get the dataframe form the catalogue
+        >> df = Catalogue.dataframe
+
+        >> # Get the current entity-components
+        >> entity_component = df.loc[:,component_types].dropna(axis=0)
+
+        >> print(df.head())
+    
+                 Component_type1 Component_type2 
+        entity02          NaN        NaN   
+        entity03  Transform03        NaN   
+        entity05          NaN        NaN   
+
+    The index is given in the contructor of the class, where index is 
+    the name of a group (existing) in the catalogue.
 
     However this Class could be used for any other pourpose
     like managing resources, references or any map-reduce 
@@ -114,6 +146,7 @@ class Catalogue(object):
     and make relation between data
 
     Basically, Catalogue will store:
+
     - Entities created (depending on the type)
     - Components created (depensding on the type)
     - Systems created ( depending on the type)
@@ -173,19 +206,19 @@ class Catalogue(object):
 
     Output:
 
-    ITEM Entity:
+    GROUP Entity:
         item 0 <entity01> : entity01 
         item 1 <entity02> : entity02 
         item 2 <entity03> : entity03 
         item 3 <entity04> : entity04 
         item 4 <entity05> : entity05 
-    ITEM Transform:
+    GROUP Transform:
         item 0 <Transform01> : Transform01 
         item 1 <Transform02> : Transform02 
         ...
         item 1 <Health04> : Health04 
         item 2 <Health05> : Health05 
-    ITEM Position:
+    GROUP Position:
         item 0 <Position03> : Position03 
         item 1 <Position04> : Position04 
 
@@ -230,8 +263,8 @@ class Catalogue(object):
 
         """
         # Create a catalogue with all the entities and components
+        self._groups = dict()
         self._items = dict()
-        self._all = dict()
         self._index = index
         # Create the datafram to map the entity - components
         self._dataframe = pd.DataFrame()
@@ -245,21 +278,21 @@ class Catalogue(object):
         """Retrieve the items with the given key
         """
         # Check if the calalogue has been already created.
-        if key not in self._items:
-            self._items[key] = BaseDictionay(key, self._callback_items)
-        return self._items[key]
+        if key not in self._groups:
+            self._groups[key] = CatalogueGroup(key, self._callback_group)
+        return self._groups[key]
 
     def __contains__(self, key):
         """Returns whether the key is in items or not.
         """
-        return key in self._items
+        return key in self._groups
 
     def __iter__(self):
         """Retrieve the items elements using loops statements. 
         This usually are more efficent in terms of memory
         """
-        for item in self._items:
-            yield item
+        for group in self._groups:
+            yield group
 
     def __getattr__(self, key):
         """  If not in attrbites the search on pandas dataframe
@@ -274,9 +307,9 @@ class Catalogue(object):
         user friendly
         """
         result = ""
-        for key, value in self._items.items():
-            result += "ITEM {}:\n".format(key)
-            result += str(self._items[key])
+        for key, value in self._groups.items():
+            result += "GROUP {}:\n".format(key)
+            result += str(self._groups[key])
         return result
 
     def __repr__(self):
@@ -285,90 +318,68 @@ class Catalogue(object):
         """
         pass
 
-    def _subitem_added(self, key, subitem):
+    def _item_added(self, key, item):
         """ Iten has been added
         """    
         #print("Element added in {}: {}".format(id,key))
         # Add current iten into the all list
-        self._all[subitem] = self[key][subitem]
+        self._items[item] = self[key][item]
     
-    def  _subitem_removed(self, key, subitem):
+    def  _item_removed(self, key, item):
         """ Item has been removed from the Dict
         """   
         #print("Element removed in {}: {}".format(id,key))
         if key == self._index and key in self._dataframe.index:
             # Remove the current row
-            self._dataframe.drop(subitem, inplace=True)
+            self._dataframe.drop(item, inplace=True)
         else:
             # Remove the element from the curren col
-            self.unbind(key, subitem)
+            self.unbind(key, item, None)
         # Remove the item from the full list
-        del self._all[subitemd]
+        del self._items[item]
 
-    def _subitem_modified(self, key, subitem):
+    def _item_modified(self, key, item):
         """ Item has been modified
         """  
-        # Replace the subitem 
-        self._all[subitem] = self[key][subitem]
+        # Replace the item 
+        self._items[item] = self[key][item]
     
-    def _callback_items(self, key, subitem, option):
+    def _callback_group(self, key, item, option):
         """ Function call-call back when new element is
         inserted into a list.
         """
-        if option == BaseDictionay.ADDED:
+        if option == CatalogueGroup.ADDED:
             # Create new mapping based on the added item
-            self._subitem_added(key, subitem)
-        elif option == BaseDictionay.REMOVED:
+            self._item_added(key, item)
+        elif option == CatalogueGroup.REMOVED:
             # Create new mapping based on the added item
-            self._subitem_removed(key, subitem)
+            self._item_removed(key, item)
         else:
             # Create new mapping based on the added item
-            self._subitem_modified(key, subitem)
+            self._item_modified(key, item)
 
-    def get(self, subitem):
-        """ This function will look for the current value
+    def get(self, item):
+        """ This function will look for the current key item
         inside all the items stored
         """
-        # for item in self:
-        #     if (subitem in self[item]):
-        #         return self[item][subitem]
-        return self._all[subitem]
+        return self._items[item]
             
-    def bind(self, index, column, subitem):
-        """ This function will map the current subitem with the
+    def bind(self, index, column, item):
+        """ This function will map the current item with the
         given index and col.
         """
         # Bind the current index, col using dataframe
         if self._dataframe.empty:
             # Add the current data into the attributes frame
-            self._dataframe = pd.DataFrame([subitem], index = [index], columns=[column])
+            self._dataframe = pd.DataFrame([item], index = [index], columns=[column])
         else:
             # Add the current data into the attributes frame
-            self._dataframe.loc[index,column] = subitem
+            self._dataframe.loc[index,column] = item
     
-    def unbind(self, index, column, subitem):
+    def unbind(self, index, column, item):
         """ This function will unbind the current key from the catalogue.
         """
         if column in self._dataframe.columns and index in self._dataframe.index:
             # Remove the element from the curren col
             self._dataframe.loc[index,column] = np.NaN
        
-   
-class CatalogueManager(object):
-    """Create a global instance of a Catalog
-    """
-
-    # Singletone instance    
-    _catalogue = None
-
-    # Main data index type to use within the catalog
-    DEFAULT_INDEX = "Entity"
-    
-    def instance():
-        """ Return a singletone instance
-        """
-        if CatalogueManager._catalogue is None:
-            CatalogueManager._catalogue = Catalogue(CatalogueManager.DEFAULT_INDEX)
-        return CatalogueManager._catalogue
-
-

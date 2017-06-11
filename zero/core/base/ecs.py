@@ -1,11 +1,31 @@
 from collections import OrderedDict as dict
 from .utils import *
 from .base import Base
-from ..catalogue import CatalogueManager, CatalogueTree, CatalogueBase
+from ..catalogue import Catalogue, CatalogueTree, CatalogueDict
 
-__all__ = ['Entity', 
+__all__ = ['EntityCatalogue',
+           'Entity', 
            'Component']
 
+class EntityCatalogue(object):
+    """Create a global instance for Entity-Component
+    """
+
+    # Singletone instance    
+    __catalogue = None
+
+    # Main data index type to use within the catalog
+    #DEFAULT_INDEX == Entity.DAFAULT_TYPE
+    DEFAULT_INDEX = "Entity"
+    
+    def instance():
+        """ Return a singletone instance
+        """
+        if EntityCatalogue.__catalogue is None:
+            EntityCatalogue.__catalogue = Catalogue(EntityCatalogue.DEFAULT_INDEX)
+        return EntityCatalogue.__catalogue
+
+   
 class Entity(CatalogueTree):
     """ Entity class.
 
@@ -122,6 +142,9 @@ class Entity(CatalogueTree):
     # Singletone instances.
     DEFAULT_TYPE = "Entity"
 
+    # Get the current Vatalogue to manage the entity and component bindings
+    Catalogue = EntityCatalogue.instance()
+
     @property
     def active(self):
         """ Get wether the entity is active or not
@@ -147,7 +170,7 @@ class Entity(CatalogueTree):
         # Set default variables
         self._active = True
 
-class Component(CatalogueBase):
+class Component(CatalogueDict):
     """ Component Class
     This is the base component class that all component must
     inherit from.
@@ -164,6 +187,9 @@ class Component(CatalogueBase):
     # Default dinctionary with properties
     defaults = dict()
 
+    # Get the current Vatalogue to manage the entity and component bindings
+    Catalogue = EntityCatalogue.instance()
+
     def __init__(self,  *args, **kwargs):
         """This is the main contructor of the class
            Initially set the dafult valiues
@@ -176,6 +202,6 @@ class Component(CatalogueBase):
         """ Update current properties given in the parameters
         """ 
         for param in properties:
-            if force or (not force and param not in self.catalogue):
-                 self.catalogue[param] = properties[param] 
+            if force or (not force and param not in self.items):
+                 self.items[param] = properties[param] 
        

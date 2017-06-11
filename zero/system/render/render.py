@@ -1,6 +1,6 @@
 import numpy as np
 import threading
-from ...core import CatalogueManager
+from ...core import EntityCatalogue
 from ...core.base.utils import *
 from ...components import ( RenderComponent, MaterialComponent, GeometryComponent,
                            LightComponent, CameraComponent, TransformComponent )
@@ -13,13 +13,13 @@ class RenderManager(object):
     will take the scene and render all the renderable elements elements
 
     Systems will be used as an interface between the components,
-    Geometry definition (vertices, primitives, etc..), shaders, material,
-    light, etc.. and the way they are manipulated for the drivers (OpenGL).
-
     This Systems could be for Rendering, physics, manipulation,
     Solvers, etc..
 
-    Also this class will optimize the scene so only the visible and
+    Also this class will optimize the scene so only the visibl
+    Geometry definition (vertices, primitives, etc..), shaders, material,
+    light, etc.. and the way they are manipulated for the drivers (OpenGL).
+e and
     active elements will be renderd. Another aspects that will manage
     is the way the scene will be render. This couls called the "Techinque"
     that will be used for the rendering or the passes that will be applied
@@ -71,7 +71,7 @@ class RenderManager(object):
         specified
         """
          # Get the current Catalog Manager
-        df = CatalogueManager.instance().dataframe
+        df = EntityCatalogue.instance().dataframe
 
         # Get the current entity-components
         entity_component = df.loc[:,component_types].dropna(axis=0)
@@ -79,7 +79,7 @@ class RenderManager(object):
         # Search for the current active ones
         for index in entity_component.index:
             # Get the entity to get if it's the active one
-            entity = CatalogueManager.instance().get(index) 
+            entity = EntityCatalogue.instance().get(index) 
             if entity.active:
                 result.append(entity)
         # Finally return the results founded
@@ -95,7 +95,13 @@ class RenderManager(object):
         Also, it will take another components such as lights,
         materials, textures, etc that will be on scene
         """
-     
+
+        render = OpenGLRender()
+        render.init()
+        render.clear()
+        shader = OpenGLShader("default_shader", "./assets/shaders")
+        shader.use()
+
         # Search for the active camera to render
         cameras = self.search(CameraComponent.DEFAULT_TYPE)
         camera = cameras[0][CameraComponent.DEFAULT_TYPE].camera
@@ -114,33 +120,29 @@ class RenderManager(object):
             geometry = obj[GeometryComponent.DEFAULT_TYPE].geometry
             # Get the material
             material = obj[MaterialComponent.DEFAULT_TYPE].material
+            
             # Bind the things
             # OpenGLBuffer, OpenGLShader, OpenGLRender, OpenGLTexture
-            shader = OpenGLShader("default_shader", "./assets/shaders")
+          
             buffer = OpenGLBuffer(geometry, shader)
-            render = OpenGLRender()
             texture = OpenGLTexture("./assets/images/texture.png")
-            buffer.update()
-
-
-
-            render.clear()
+            #buffer.update()
+           
+            # # Render all the elements that share the same shader.
+            # # Use the current Shader configuration
             
-            # Render all the elements that share the same shader.
-            # Use the current Shader configuration
-            shader.use()
-            # Use the current texture after the shader
+            # # Use the current texture after the shader
             texture.bind(0)
   
             shader.update("WORLD_MATRIX",transform.model)
             shader.update("VIEW_MATRIX",camera.view_matrix())
             shader.update("PROJECTION_MATRIX",camera.projection_matrix())
 
-            # Render the  geometry
+            # # Render the  geometry
             render.render(buffer)
             # End Use the current Shader configuration
-            shader.use(False)
-
+            
+        shader.use(False)
 
         # In this case I have to go through all the components first
         #That satisfy those conditions
